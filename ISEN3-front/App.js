@@ -12,6 +12,7 @@ function HomeScreen({ navigation }) {
             title="Créer une asso"
             onPress={() => navigation.navigate('CreateAsso')}
         />
+          <View style={styles.space} />
         <Button
             title="Rejoindre une asso"
             onPress={() => navigation.navigate('JoinAsso')}
@@ -58,4 +59,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
   },
+    space:{
+        height: 20,
+    }
 });
