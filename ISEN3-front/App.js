@@ -1,65 +1,57 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { Button, View, Text, StyleSheet } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {createStackNavigator} from "@react-navigation/stack";
+import Icon from 'react-native-vector-icons/Ionicons';
 
+// Importez vos composants d'écran
+import ProfileScreen from './screens/ProfileScreen';
+import HomeScreen from './screens/HomeScreen';
+import CalendarScreen from "./screens/CalendarScreen";
+import JoinOrCreateScreen from "./screens/JoinOrCreateScreen";
+
+const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-function HomeScreen({ navigation }) {
-  return (
-      <View style={styles.container}>
-        <Button
-            title="Créer une asso"
-            onPress={() => navigation.navigate('CreateAsso')}
-        />
-          <View style={styles.space} />
-        <Button
-            title="Rejoindre une asso"
-            onPress={() => navigation.navigate('JoinAsso')}
-        />
-      </View>
-  );
+function TabNavigator() {
+    return (
+            <Tab.Navigator
+                screenOptions={({ route }) => ({
+                    tabBarIcon: ({ focused, color, size }) => {
+                        let iconName;
+
+                        if (route.name === 'Home') {
+                            iconName = focused ? 'home' : 'home-outline';
+                        } else if (route.name === 'Calendar') {
+                            iconName = focused ? 'calendar' : 'calendar-outline';
+                        } else if (route.name === 'Profile') {
+                            iconName = focused ? 'list' : 'list-outline';
+                        }
+
+
+                        return <Icon name={iconName} size={size} color={color} />;
+                    },
+                    headerShown: false, // Désactive le titre en haut
+                    activeTintColor: 'tomato',
+                    inactiveTintColor: 'gray',
+                })}
+            >
+                <Tab.Screen name="Home" component={HomeScreen} />
+                <Tab.Screen name="Calendar" component={CalendarScreen} />
+                <Tab.Screen name="Profile" component={ProfileScreen} />
+            </Tab.Navigator>
+    );
 }
 
-function CreateAssoScreen() {
-  return (
-      <View style={styles.container}>
-        <Text style={styles.text}>Page de création d'une association</Text>
-      </View>
-  );
+function App() {
+    return (
+        <NavigationContainer>
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="JoinOrCreate" component={JoinOrCreateScreen} />
+                <Stack.Screen name="Tabs" component={TabNavigator} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
 }
 
-function JoinAssoScreen() {
-  return (
-      <View style={styles.container}>
-        <Text style={styles.text}>Page pour rejoindre une association</Text>
-      </View>
-  );
-}
-
-export default function App() {
-  return (
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Accueil' }} />
-          <Stack.Screen name="CreateAsso" component={CreateAssoScreen} options={{ title: 'Créer une asso' }} />
-          <Stack.Screen name="JoinAsso" component={JoinAssoScreen} options={{ title: 'Rejoindre une asso' }} />
-        </Stack.Navigator>
-      </NavigationContainer>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  text: {
-    fontSize: 20,
-  },
-    space:{
-        height: 20,
-    }
-});
+export default App;
