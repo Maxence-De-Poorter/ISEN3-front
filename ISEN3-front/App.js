@@ -32,8 +32,8 @@ function TabNavigator() {
                         return <Icon name={iconName} size={size} color={color} />;
                     },
                     headerShown: false, // Désactive le titre en haut
-                    activeTintColor: 'tomato',
-                    inactiveTintColor: 'gray',
+                    tabBarActiveTintColor: "tomato",
+                    tabBarInactiveTintColor: "gray",
                 })}
             >
                 <Tab.Screen name="Home" component={HomeScreen} />
