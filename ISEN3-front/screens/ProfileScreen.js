@@ -61,7 +61,7 @@ const LoginForm = ({ email, setEmail, password, setPassword, handleLogin }) => (
 );
 
 function ProfileScreen({ navigation }) {
-    const { isLoggedIn, login, logout, token } = useContext(AuthContext);
+    const { isLoggedIn, login, logout, token, refreshJwtToken, verifyToken } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const userName = "John Doe";
@@ -71,7 +71,19 @@ function ProfileScreen({ navigation }) {
         const checkLoginStatus = async () => {
             const storedToken = await AsyncStorage.getItem('token');
             if (storedToken) {
-                login(storedToken);
+                const isTokenValid = await verifyToken(storedToken);
+                if (isTokenValid) {
+                    login(storedToken);
+                } else {
+                    const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
+                    const newToken = await refreshJwtToken(storedRefreshToken);
+                    if (newToken) {
+                        login(newToken, storedRefreshToken);
+                    } else {
+                        await AsyncStorage.removeItem('token');
+                        await AsyncStorage.removeItem('refreshToken');
+                    }
+                }
             }
         };
         checkLoginStatus();
@@ -83,8 +95,8 @@ function ProfileScreen({ navigation }) {
                 email: email,
                 password: password,
             });
-            if (response.data.token) {
-                login(response.data.token);
+            if (response.data.token && response.data.refreshToken) {
+                await login(response.data.token, response.data.refreshToken);
                 navigation.navigate('Home');
             } else {
                 Alert.alert('Erreur', 'Email ou mot de passe incorrect');
