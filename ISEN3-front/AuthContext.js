@@ -44,9 +44,7 @@ export const AuthProvider = ({ children }) => {
 
     const verifyToken = async (token) => {
         try {
-            const response = await axios.post('https://isen3-back.onrender.com/api/users/verify-token', {
-                token: token
-            });
+            const response = await axios.post('https://isen3-back.onrender.com/api/users/verify-token', { token });
             return response.data.valid;
         } catch (error) {
             console.error('Failed to verify token', error);
@@ -76,8 +74,12 @@ export const AuthProvider = ({ children }) => {
     };
 
     const login = async (token, refreshToken) => {
-        await AsyncStorage.setItem('token', token);
-        await AsyncStorage.setItem('refreshToken', refreshToken);
+        if (token) {
+            await AsyncStorage.setItem('token', token);
+        }
+        if (refreshToken) {
+            await AsyncStorage.setItem('refreshToken', refreshToken);
+        }
         setToken(token);
         setRefreshToken(refreshToken);
         setIsLoggedIn(true);
@@ -90,10 +92,6 @@ export const AuthProvider = ({ children }) => {
         setRefreshToken(null);
         setIsLoggedIn(false);
     };
-
-    if (loading) {
-        return null; // Optionally return a loading spinner here
-    }
 
     return (
         <AuthContext.Provider value={{ isLoggedIn, login, logout, token, refreshJwtToken, verifyToken }}>
