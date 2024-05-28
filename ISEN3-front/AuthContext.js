@@ -1,18 +1,19 @@
 import React, { createContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Créer le contexte
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [token, setToken] = useState(null);
 
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
-                const loggedInStatus = await AsyncStorage.getItem('isLoggedIn');
-                if (loggedInStatus !== null) {
-                    setIsLoggedIn(loggedInStatus === 'true');
+                const storedToken = await AsyncStorage.getItem('token');
+                if (storedToken) {
+                    setToken(storedToken);
+                    setIsLoggedIn(true);
                 }
             } catch (error) {
                 console.error('Failed to fetch login status from storage', error);
@@ -22,18 +23,20 @@ export const AuthProvider = ({ children }) => {
         checkLoginStatus();
     }, []);
 
-    const login = async () => {
-        await AsyncStorage.setItem('isLoggedIn', 'true');
+    const login = async (token) => {
+        await AsyncStorage.setItem('token', token);
+        setToken(token);
         setIsLoggedIn(true);
     };
 
     const logout = async () => {
-        await AsyncStorage.setItem('isLoggedIn', 'false');
+        await AsyncStorage.removeItem('token');
+        setToken(null);
         setIsLoggedIn(false);
     };
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+        <AuthContext.Provider value={{ isLoggedIn, login, logout, token }}>
             {children}
         </AuthContext.Provider>
     );
