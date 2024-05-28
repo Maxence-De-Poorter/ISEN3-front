@@ -64,8 +64,8 @@ function ProfileScreen({ navigation }) {
     const { isLoggedIn, login, logout, token, refreshJwtToken, verifyToken } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const userName = "John Doe";
-    const userPhoto = "https://imgs.search.brave.com/RcfrjLHnsNTGPLe4i6nhIGpgqXGCWrKWRGS2zDqh0dM/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9jZG4x/Lmljb25maW5kZXIu/Y29tL2RhdGEvaWNv/bnMvZ29vZ2xlLXMt/bG9nbzE1MC9Hb29n/bGVfSWNvbnMtMDkt/MTI4LnBuZw";
+    const [userName, setUserName] = useState('');
+    const [userPhoto, setUserPhoto] = useState('');
 
     useEffect(() => {
         const checkLoginStatus = async () => {
@@ -88,6 +88,26 @@ function ProfileScreen({ navigation }) {
         };
         checkLoginStatus();
     }, []);
+
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const response = await axios.get('https://isen3-back.onrender.com/api/users/me', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setUserName(`${response.data.name} ${response.data.surname}`);
+                setUserPhoto(response.data.photoUrl || 'https://imgs.search.brave.com/RcfrjLHnsNTGPLe4i6nhIGpgqXGCWrKWRGS2zDqh0dM/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9jZG4x/Lmljb25maW5kZXIu/Y29tL2RhdGEvaWNv/bnMvZ29vZ2xlLXMt/bG9nbzE1MC9Hb29n/bGVfSWNvbnMtMDkt/MTI4LnBuZw');
+            } catch (error) {
+                console.error('Failed to fetch user profile', error);
+            }
+        };
+
+        if (isLoggedIn && token) {
+            fetchUserProfile();
+        }
+    }, [isLoggedIn, token]);
 
     const handleLogin = async () => {
         try {
