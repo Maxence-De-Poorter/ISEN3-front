@@ -28,7 +28,7 @@ const ProfileButton = ({ iconName, text, onPress }) => (
     </TouchableOpacity>
 );
 
-const LoginForm = ({ email, setEmail, password, setPassword, handleLogin }) => (
+const LoginForm = ({ email, setEmail, password, setPassword, handleLogin, navigation }) => (
     <View style={styles.loginContainer}>
         <Text style={styles.visitorMessage}>
             Vous êtes actuellement en mode visiteur. Certaines fonctionnalités ne sont pas disponibles. Pour accéder à toutes les fonctionnalités, veuillez vous connecter.
@@ -56,6 +56,12 @@ const LoginForm = ({ email, setEmail, password, setPassword, handleLogin }) => (
             onPress={handleLogin}
         >
             <Text style={styles.buttonText}>Se connecter</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+            style={styles.signUpButton}
+            onPress={() => navigation.navigate('Register')}
+        >
+            <Text style={styles.buttonText}>S'inscrire</Text>
         </TouchableOpacity>
     </View>
 );
@@ -117,7 +123,7 @@ function ProfileScreen({ navigation }) {
             });
             if (response.data.token && response.data.refreshToken) {
                 await login(response.data.token, response.data.refreshToken);
-                navigation.navigate('Home');
+                navigation.navigate('Profile');
             } else {
                 Alert.alert('Erreur', 'Email ou mot de passe incorrect');
             }
@@ -145,7 +151,7 @@ function ProfileScreen({ navigation }) {
                     text: "Déconnexion",
                     onPress: () => {
                         logout();
-                        navigation.navigate('Home');
+                        navigation.navigate('Profile');
                     }
                 }
             ]
@@ -187,6 +193,7 @@ function ProfileScreen({ navigation }) {
                     password={password}
                     setPassword={setPassword}
                     handleLogin={handleLogin}
+                    navigation={navigation} // Passez le prop navigation ici
                 />
             )}
         </View>

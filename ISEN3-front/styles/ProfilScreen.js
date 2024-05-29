@@ -70,7 +70,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'gray',
         borderRadius: 10,
-    },
+    }, signUpButton: undefined
+
 });
 
 export default styles;
