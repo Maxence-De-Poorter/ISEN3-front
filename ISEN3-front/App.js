@@ -10,6 +10,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import HomeScreen from './screens/HomeScreen';
 import CalendarScreen from "./screens/CalendarScreen";
 import JoinOrCreateScreen from "./screens/JoinOrCreateScreen";
+import RegistrationScreen from "./screens/RegistrationScreen"; // Importez le nouvel écran d'inscription
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -50,6 +51,7 @@ function App() {
                 <Stack.Navigator screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="JoinOrCreate" component={JoinOrCreateScreen} />
                     <Stack.Screen name="Tabs" component={TabNavigator} />
+                    <Stack.Screen name="Register" component={RegistrationScreen} />
                 </Stack.Navigator>
             </NavigationContainer>
         </AuthProvider>
