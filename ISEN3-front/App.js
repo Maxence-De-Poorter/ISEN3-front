@@ -81,7 +81,7 @@ function App() {
                 <Stack.Navigator screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="Tabs" component={TabNavigator} />
                     <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false, gestureEnabled: false }} />
-                    <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, gestureEnabled: false }} />
                     <Stack.Screen name="Register" component={RegistrationScreen} options={{ headerShown: false, gestureEnabled: false }} />
                 </Stack.Navigator>
             </NavigationContainer>
