@@ -1,9 +1,90 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-import Swiper from 'react-native-swiper';
-import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
-import styles from '../styles/RegistrationForm';
+import axios from 'axios';
+import styles from '../styles/RegistrationScreen';
+
+const RegistrationForm = ({ email, setEmail, password, setPassword, name, setName, surname, setSurname, birthDate, setBirthDate, handleRegister }) => {
+    const handleBirthDateChange = (text) => {
+        let formattedText = text.replace(/[^0-9]/g, '');
+        if (formattedText.length > 4) {
+            formattedText = formattedText.slice(0, 4) + '-' + formattedText.slice(4);
+        }
+        if (formattedText.length > 7) {
+            formattedText = formattedText.slice(0, 7) + '-' + formattedText.slice(7, 10);
+        }
+        setBirthDate(formattedText);
+    };
+
+    return (
+        <View style={styles.SignUpContainer}>
+            <Text style={styles.SignUpText}>S'inscrire</Text>
+            <TextInput
+                style={styles.SignUpInput}
+                placeholder="Nom"
+                value={surname}
+                onChangeText={(text) => setSurname(text.toUpperCase())}
+            />
+            <TextInput
+                style={styles.SignUpInput}
+                placeholder="Prénom"
+                value={name}
+                onChangeText={setName}
+            />
+            <TextInput
+                style={styles.SignUpInput}
+                placeholder="AAAA-MM-JJ"
+                value={birthDate}
+                onChangeText={handleBirthDateChange}
+                keyboardType="numeric"
+                maxLength={10}
+            />
+            <TextInput
+                style={styles.SignUpInput}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+            />
+            <TextInput
+                style={styles.SignUpInput}
+                placeholder="Mot de passe"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+            />
+            <TouchableOpacity
+                style={styles.SignUpButton}
+                onPress={handleRegister}
+            >
+                <Text>S'inscrire</Text>
+            </TouchableOpacity>
+            {/*<Text style={{ margin: 20 }}>ou</Text>
+            <TouchableOpacity
+                style={styles.firmSignUp}
+                onPress={() => navigation.navigate('Register')}
+            >
+                <Icon name="logo-google" size={20} style={styles.firmIcon} />
+                <Text>Continuer avec Google</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.firmSignUp}
+                onPress={() => navigation.navigate('Register')}
+            >
+                <Icon name="logo-apple" size={20} style={styles.firmIcon} />
+                <Text>Continuer avec Apple</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.firmSignUp}
+                onPress={() => navigation.navigate('Register')}
+            >
+                <Icon name="logo-microsoft" size={20} style={styles.firmIcon} />
+                <Text>Continuer avec Microsoft</Text>
+            </TouchableOpacity>*/}
+        </View>
+    );
+};
 
 const RegistrationScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -11,7 +92,6 @@ const RegistrationScreen = ({ navigation }) => {
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
     const [birthDate, setBirthDate] = useState('');
-    const [currentIndex, setCurrentIndex] = useState(0);
 
     const handleRegister = async () => {
         try {
@@ -20,11 +100,12 @@ const RegistrationScreen = ({ navigation }) => {
                 surname,
                 email,
                 password,
+                birthDate,
             });
 
             if (response.status === 201) {
                 Alert.alert('Succès', 'Inscription réussie. Veuillez vous connecter.');
-                navigation.navigate('Profile');
+                navigation.navigate('Login');
             } else {
                 Alert.alert('Erreur', response.data.message || 'Une erreur est survenue.');
             }
@@ -34,90 +115,27 @@ const RegistrationScreen = ({ navigation }) => {
         }
     };
 
-    const handleBirthDateChange = (text) => {
-        // Remove any non-digit characters
-        let formattedText = text.replace(/[^0-9]/g, '');
-
-        // Insert dashes for the date format AAAA-MM-JJ
-        if (formattedText.length > 4) {
-            formattedText = formattedText.slice(0, 4) + '-' + formattedText.slice(4);
-        }
-        if (formattedText.length > 7) {
-            formattedText = formattedText.slice(0, 7) + '-' + formattedText.slice(7, 10);
-        }
-
-        setBirthDate(formattedText);
-    };
-
     return (
         <View style={styles.container}>
             <TouchableOpacity
                 style={styles.closeButton}
-                onPress={() => navigation.goBack()}
+                onPress={() => navigation.navigate("Login")}
             >
-                <Icon name="close" size={45} color="#000" />
+                <Icon name="arrow-back-outline" size={30} color="black" />
             </TouchableOpacity>
-            <Swiper
-                loop={false}
-                showsPagination={true}
-                index={currentIndex}
-                onIndexChanged={(index) => setCurrentIndex(index)}
-            >
-                <View style={styles.slide}>
-                    <View style={styles.slideContent}>
-                        <Text style={styles.label}>Nom</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Nom"
-                            value={surname}
-                            onChangeText={(text) => setSurname(text.toUpperCase())}
-                        />
-                        <Text style={styles.label}>Prénom</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Prénom"
-                            value={name}
-                            onChangeText={setName}
-                        />
-                        <Text style={styles.label}>Date de naissance (AAAA-MM-JJ)</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="AAAA-MM-JJ"
-                            value={birthDate}
-                            onChangeText={handleBirthDateChange}
-                            keyboardType="numeric"
-                            maxLength={10}  // Ensure maximum length for the date format
-                        />
-                    </View>
-                </View>
-                <View style={styles.slide}>
-                    <View style={styles.slideContent}>
-                        <Text style={styles.label}>Email</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Email"
-                            value={email}
-                            onChangeText={setEmail}
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                        />
-                        <Text style={styles.label}>Mot de passe</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Mot de passe"
-                            value={password}
-                            onChangeText={setPassword}
-                            secureTextEntry
-                        />
-                        <TouchableOpacity
-                            style={styles.submitButton}
-                            onPress={handleRegister}
-                        >
-                            <Text style={styles.submitButtonText}>Valider</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Swiper>
+            <RegistrationForm
+                email={email}
+                setEmail={setEmail}
+                password={password}
+                setPassword={setPassword}
+                name={name}
+                setName={setName}
+                surname={surname}
+                setSurname={setSurname}
+                birthDate={birthDate}
+                setBirthDate={setBirthDate}
+                handleRegister={handleRegister}
+            />
         </View>
     );
 };
