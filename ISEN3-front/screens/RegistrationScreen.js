@@ -100,7 +100,6 @@ const RegistrationScreen = ({ navigation }) => {
                 surname,
                 email,
                 password,
-                birthDate,
             });
 
             if (response.status === 201) {

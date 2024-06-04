@@ -93,7 +93,6 @@ function LoginScreen({ navigation }) {
             <TouchableOpacity
                 style={styles.closeButton}
                 onPress={() => navigation.navigate('Home')}
-                onPress={() => navigation.navigate('Home')}
             >
                 <Icon name="arrow-back-outline" size={30} color="black" />
             </TouchableOpacity>
