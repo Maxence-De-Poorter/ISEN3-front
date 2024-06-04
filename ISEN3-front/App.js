@@ -20,7 +20,7 @@ function HomeStack() {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name="Home"
+                name="HomeScreen"
                 component={HomeScreen}
                 options={{
                     headerTitle: '',
@@ -37,7 +37,7 @@ function CalendarStack() {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name="Calendar"
+                name="CalendarScreen"
                 component={CalendarScreen}
                 options={{
                     headerTitle: '',
