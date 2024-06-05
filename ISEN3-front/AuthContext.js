@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
@@ -11,38 +11,10 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const checkLoginStatus = async () => {
-            try {
-                const storedToken = await AsyncStorage.getItem('token');
-                const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
-                if (storedToken) {
-                    const isTokenValid = await verifyToken(storedToken);
-                    if (isTokenValid) {
-                        setToken(storedToken);
-                        setRefreshToken(storedRefreshToken);
-                        setIsLoggedIn(true);
-                    } else {
-                        const newToken = await refreshJwtToken(storedRefreshToken);
-                        if (newToken) {
-                            setToken(newToken);
-                            setIsLoggedIn(true);
-                        } else {
-                            await AsyncStorage.removeItem('token');
-                            await AsyncStorage.removeItem('refreshToken');
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Failed to fetch login status from storage', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         checkLoginStatus();
     }, []);
 
-    const verifyToken = async (token) => {
+    const verifyToken = useCallback(async (token) => {
         try {
             const response = await axios.post('https://isen3-back.onrender.com/api/users/verify-token', { token });
             return response.data.valid;
@@ -50,9 +22,9 @@ export const AuthProvider = ({ children }) => {
             console.error('Failed to verify token', error);
             return false;
         }
-    };
+    }, []);
 
-    const refreshJwtToken = async (refreshToken) => {
+    const refreshJwtToken = useCallback(async (refreshToken) => {
         try {
             const response = await axios.post('https://isen3-back.onrender.com/api/users/refresh-token', {
                 refreshToken: refreshToken
@@ -71,7 +43,35 @@ export const AuthProvider = ({ children }) => {
             console.error('Failed to refresh token', error);
             return null;
         }
-    };
+    }, []);
+
+    const checkLoginStatus = useCallback(async () => {
+        try {
+            const storedToken = await AsyncStorage.getItem('token');
+            const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
+            if (storedToken) {
+                const isTokenValid = await verifyToken(storedToken);
+                if (isTokenValid) {
+                    setToken(storedToken);
+                    setRefreshToken(storedRefreshToken);
+                    setIsLoggedIn(true);
+                } else {
+                    const newToken = await refreshJwtToken(storedRefreshToken);
+                    if (newToken) {
+                        setToken(newToken);
+                        setIsLoggedIn(true);
+                    } else {
+                        await AsyncStorage.removeItem('token');
+                        await AsyncStorage.removeItem('refreshToken');
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Failed to fetch login status from storage', error);
+        } finally {
+            setLoading(false);
+        }
+    }, [verifyToken, refreshJwtToken]);
 
     const login = async (token, refreshToken) => {
         if (token) {
@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout, token, refreshJwtToken, verifyToken }}>
+        <AuthContext.Provider value={{ isLoggedIn, login, logout, token, refreshJwtToken, verifyToken, loading, checkLoginStatus }}>
             {children}
         </AuthContext.Provider>
     );

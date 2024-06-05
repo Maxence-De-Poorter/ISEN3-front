@@ -1,39 +1,51 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { View, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { AuthProvider, AuthContext } from './AuthContext';
+import { AuthContext, AuthProvider } from './AuthContext';
 import HomeScreen from './screens/HomeScreen';
-import CalendarScreen from "./screens/CalendarScreen";
+import CalendarScreen from './screens/CalendarScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import LoginScreen from './screens/LoginScreen';
-import RegistrationScreen from "./screens/RegistrationScreen";
+import RegistrationScreen from './screens/RegistrationScreen';
+import ProfileButton from './components/ProfileButton';
+import Tickets from './components/Tickets';
+import {View} from "react-native"; // Adjust the path as necessary
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const headerBackgroundColor = 'white';
 
-function HomeStack() {
+function HomeStack({ navigation }) {
+    const { ticketCount } = useContext(AuthContext);
+
     return (
         <Stack.Navigator>
             <Stack.Screen
                 name="HomeScreen"
                 component={HomeScreen}
                 options={{
-                    headerTitle: '',
+                    headerTitle: 'DENSHO',
                     headerStyle: {
                         backgroundColor: headerBackgroundColor,
                     },
+                    headerRight: () => (
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Tickets count={ticketCount} />
+                            <ProfileButton navigation={navigation} />
+                        </View>
+                    ),
                 }}
             />
         </Stack.Navigator>
     );
 }
 
-function CalendarStack() {
+function CalendarStack({ navigation }) {
+    const { ticketCount } = useContext(AuthContext);
+
     return (
         <Stack.Navigator>
             <Stack.Screen
@@ -44,6 +56,12 @@ function CalendarStack() {
                     headerStyle: {
                         backgroundColor: headerBackgroundColor,
                     },
+                    headerRight: () => (
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Tickets count={ticketCount} />
+                            <ProfileButton navigation={navigation} />
+                        </View>
+                    ),
                 }}
             />
         </Stack.Navigator>
@@ -51,25 +69,26 @@ function CalendarStack() {
 }
 
 function TabNavigator() {
+    const { isLoggedIn } = useContext(AuthContext);
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName;
-                    if (route.name === 'Home') {
+                    if (route.name === 'Association') {
                         iconName = focused ? 'home' : 'home-outline';
                     } else if (route.name === 'Calendar') {
                         iconName = focused ? 'calendar' : 'calendar-outline';
                     }
                     return <Icon name={iconName} size={size} color={color} />;
                 },
-                tabBarActiveTintColor: "tomato",
-                tabBarInactiveTintColor: "gray",
+                tabBarActiveTintColor: 'tomato',
+                tabBarInactiveTintColor: 'gray',
                 headerShown: false,
             })}
         >
-            <Tab.Screen name="Home" component={HomeStack} />
-            <Tab.Screen name="Calendar" component={CalendarStack} />
+            <Tab.Screen name="Association" component={HomeStack} />
+            {isLoggedIn && <Tab.Screen name="Calendar" component={CalendarStack} />}
         </Tab.Navigator>
     );
 }

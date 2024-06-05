@@ -90,12 +90,14 @@ function LoginScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => navigation.navigate('Home')}
-            >
-                <Icon name="arrow-back-outline" size={30} color="black" />
-            </TouchableOpacity>
+            <View style={styles.header}>
+                <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={() => navigation.navigate('Association')}
+                >
+                    <Icon name="arrow-back-outline" size={40} color="black" />
+                </TouchableOpacity>
+            </View>
             <LoginForm
                 email={email}
                 setEmail={setEmail}

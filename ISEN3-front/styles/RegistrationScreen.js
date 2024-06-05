@@ -5,15 +5,22 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         height: "100%",
     },
-    closeButton: {
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        padding: 10,
         marginTop: 50,
-        marginLeft: 10,
+
+    },
+    closeButton: {
+        padding: 5,
+        backgroundColor: '#e0e0e0',
+        borderRadius: 10,
     },
     SignUpContainer: {
         flex: 1,
-        justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: 20,
+        marginTop: 50,
     },
     SignUpText:{
         fontSize:40,
