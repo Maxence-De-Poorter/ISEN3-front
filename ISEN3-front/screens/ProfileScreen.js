@@ -1,8 +1,7 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { View, Text, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
-import { AuthContext } from '../AuthContext';
+import { AuthContext } from '../context/AuthContext';
 import styles from '../styles/ProfileScreen';
 
 const ProfileHeader = ({ userName }) => (
@@ -19,42 +18,7 @@ const ProfileButton = ({ iconName, text, onPress }) => (
 );
 
 function ProfileScreen({ navigation }) {
-    const { isLoggedIn, logout, token, verifyToken, refreshJwtToken} = useContext(AuthContext);
-    const [userName, setUserName] = useState('');
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const checkTokenAndFetchProfile = async () => {
-            if (token) {
-                const isTokenValid = await verifyToken(token);
-                if (!isTokenValid) {
-                    const newToken = await refreshJwtToken();
-                    if (!newToken) {
-                        await logout();
-                        navigation.navigate('Login');
-                        return;
-                    }
-                }
-
-                try {
-                    const response = await axios.get('https://isen3-back.onrender.com/api/users/me', {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    setUserName(`${response.data.name} ${response.data.surname}`);
-                } catch (error) {
-                    console.error('Failed to fetch user profile', error);
-                }
-            }
-
-            setLoading(false);
-        };
-
-        if (isLoggedIn && token) {
-            checkTokenAndFetchProfile();
-        } else {
-            setLoading(false);
-        }
-    }, [isLoggedIn, token]);
+    const { isLoggedIn, logout, user, loading } = useContext(AuthContext);
 
     const handleLogout = () => {
         Alert.alert(
@@ -91,7 +55,7 @@ function ProfileScreen({ navigation }) {
             </TouchableOpacity>
             {isLoggedIn ? (
                 <>
-                    <ProfileHeader userName={userName} />
+                    <ProfileHeader userName={`${user.name} ${user.surname}`} />
                     <View style={styles.profileContainer}>
                         <ProfileButton
                             iconName="create-outline"

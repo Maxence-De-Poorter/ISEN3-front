@@ -5,18 +5,6 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         height: "100%",
     },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        padding: 10,
-        marginTop: 50,
-
-    },
-    closeButton: {
-        padding: 5,
-        backgroundColor: '#e0e0e0',
-        borderRadius: 10,
-    },
     SignUpContainer: {
         flex: 1,
         alignItems: 'center',

@@ -18,7 +18,7 @@ const RegistrationForm = ({ email, setEmail, password, setPassword, name, setNam
 
     return (
         <View style={styles.SignUpContainer}>
-            <Text style={styles.SignUpText}>S'inscrire</Text>
+            <Text style={styles.SignUpText}>Inscription</Text>
             <TextInput
                 style={styles.SignUpInput}
                 placeholder="Nom"
@@ -116,14 +116,6 @@ const RegistrationScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.closeButton}
-                    onPress={() => navigation.navigate("Login")}
-                >
-                    <Icon name="arrow-back-outline" size={40} color="black" />
-                </TouchableOpacity>
-            </View>
             <RegistrationForm
                 email={email}
                 setEmail={setEmail}

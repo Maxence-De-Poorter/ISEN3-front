@@ -8,11 +8,8 @@ export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [token, setToken] = useState(null);
     const [refreshToken, setRefreshToken] = useState(null);
+    const [user, setUser] = useState(null); // New state for user data
     const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        checkLoginStatus();
-    }, []);
 
     const verifyToken = useCallback(async (token) => {
         try {
@@ -26,12 +23,8 @@ export const AuthProvider = ({ children }) => {
 
     const refreshJwtToken = useCallback(async (refreshToken) => {
         try {
-            const response = await axios.post('https://isen3-back.onrender.com/api/users/refresh-token', {
-                refreshToken: refreshToken
-            });
-
+            const response = await axios.post('https://isen3-back.onrender.com/api/users/refresh-token', { refreshToken });
             const { token: newToken } = response.data;
-
             if (newToken) {
                 await AsyncStorage.setItem('token', newToken);
                 setToken(newToken);
@@ -45,6 +38,17 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
+    const fetchUserProfile = useCallback(async (token) => {
+        try {
+            const response = await axios.get('https://isen3-back.onrender.com/api/users/me', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setUser(response.data);
+        } catch (error) {
+            console.error('Failed to fetch user profile', error);
+        }
+    }, []);
+
     const checkLoginStatus = useCallback(async () => {
         try {
             const storedToken = await AsyncStorage.getItem('token');
@@ -55,11 +59,13 @@ export const AuthProvider = ({ children }) => {
                     setToken(storedToken);
                     setRefreshToken(storedRefreshToken);
                     setIsLoggedIn(true);
+                    await fetchUserProfile(storedToken); // Fetch user profile if token is valid
                 } else {
                     const newToken = await refreshJwtToken(storedRefreshToken);
                     if (newToken) {
                         setToken(newToken);
                         setIsLoggedIn(true);
+                        await fetchUserProfile(newToken); // Fetch user profile with new token
                     } else {
                         await AsyncStorage.removeItem('token');
                         await AsyncStorage.removeItem('refreshToken');
@@ -71,7 +77,11 @@ export const AuthProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    }, [verifyToken, refreshJwtToken]);
+    }, [verifyToken, refreshJwtToken, fetchUserProfile]);
+
+    useEffect(() => {
+        checkLoginStatus();
+    }, [checkLoginStatus]);
 
     const login = async (token, refreshToken) => {
         if (token) {
@@ -83,6 +93,7 @@ export const AuthProvider = ({ children }) => {
         setToken(token);
         setRefreshToken(refreshToken);
         setIsLoggedIn(true);
+        await fetchUserProfile(token); // Fetch user profile upon login
     };
 
     const logout = async () => {
@@ -91,10 +102,11 @@ export const AuthProvider = ({ children }) => {
         setToken(null);
         setRefreshToken(null);
         setIsLoggedIn(false);
+        setUser(null); // Clear user data on logout
     };
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout, token, refreshJwtToken, verifyToken, loading, checkLoginStatus }}>
+        <AuthContext.Provider value={{ isLoggedIn, login, logout, token, refreshJwtToken, verifyToken, loading, user }}>
             {children}
         </AuthContext.Provider>
     );
