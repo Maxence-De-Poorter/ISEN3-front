@@ -2,16 +2,15 @@ import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
-import { AuthContext } from '../AuthContext';
+import { AuthContext } from '../context/AuthContext';
 import styles from '../styles/LoginScreen';
 
 const LoginForm = ({ email, setEmail, password, setPassword, handleLogin, navigation }) => (
     <View style={styles.loginContainer}>
-        <Text style={styles.logInText}>Se connecter</Text>
+        <Text style={styles.logInText}>Connexion</Text>
         <TextInput
             style={styles.logInInput}
             placeholder="Adresse E-mail"
-            placeholderTextColor="#AAAAAA"
             onChangeText={(text) => setEmail(text)}
             value={email}
             autoCapitalize="none"
@@ -20,7 +19,6 @@ const LoginForm = ({ email, setEmail, password, setPassword, handleLogin, naviga
         <TextInput
             style={styles.logInInput}
             placeholder="Mot de passe"
-            placeholderTextColor="#AAAAAA"
             secureTextEntry
             onChangeText={(text) => setPassword(text)}
             value={password}
@@ -90,12 +88,6 @@ function LoginScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => navigation.navigate('Home')}
-            >
-                <Icon name="arrow-back-outline" size={30} color="black" />
-            </TouchableOpacity>
             <LoginForm
                 email={email}
                 setEmail={setEmail}

@@ -18,7 +18,7 @@ const RegistrationForm = ({ email, setEmail, password, setPassword, name, setNam
 
     return (
         <View style={styles.SignUpContainer}>
-            <Text style={styles.SignUpText}>S'inscrire</Text>
+            <Text style={styles.SignUpText}>Inscription</Text>
             <TextInput
                 style={styles.SignUpInput}
                 placeholder="Nom"
@@ -60,7 +60,7 @@ const RegistrationForm = ({ email, setEmail, password, setPassword, name, setNam
             >
                 <Text>S'inscrire</Text>
             </TouchableOpacity>
-            {/*<Text style={{ margin: 20 }}>ou</Text>
+            <Text style={{ margin: 20 }}>ou</Text>
             <TouchableOpacity
                 style={styles.firmSignUp}
                 onPress={() => navigation.navigate('Register')}
@@ -81,7 +81,7 @@ const RegistrationForm = ({ email, setEmail, password, setPassword, name, setNam
             >
                 <Icon name="logo-microsoft" size={20} style={styles.firmIcon} />
                 <Text>Continuer avec Microsoft</Text>
-            </TouchableOpacity>*/}
+            </TouchableOpacity>
         </View>
     );
 };
@@ -116,12 +116,6 @@ const RegistrationScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => navigation.navigate("Login")}
-            >
-                <Icon name="arrow-back-outline" size={30} color="black" />
-            </TouchableOpacity>
             <RegistrationForm
                 email={email}
                 setEmail={setEmail}

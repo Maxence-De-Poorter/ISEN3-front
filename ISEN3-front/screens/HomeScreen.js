@@ -1,21 +1,99 @@
-import React, { useContext } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { AuthContext } from '../AuthContext';
+import React from 'react';
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 
-function HomeScreen({ navigation }) {
-    const { isLoggedIn } = useContext(AuthContext);
+const danceTypes = [
+    'Ballet',
+    'Hip Hop',
+    'Salsa',
+    'Contemporary',
+    'Jazz',
+    'Tap Dance',
+    'Ballroom',
+    'Folk Dance',
+];
 
+function HomeScreen() {
     return (
-        <View>
-            <Text >Home Screen</Text>
-            <TouchableOpacity
-                onPress={() => navigation.navigate(isLoggedIn ? 'Profile' : 'Login')}
-            >
-                <Icon name="person-circle" size={45} color="black" />
-            </TouchableOpacity>
-        </View>
+        <ScrollView style={styles.container}>
+            <Image
+                source={{ uri: 'https://imgs.search.brave.com/BpTP0DdCllLH5Qtwm_ms44HWa4beypb0o5zWEn5X4vQ/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pc2Vu/LW1lZGl0ZXJyYW5l/ZS5mci93cC1jb250/ZW50L3VwbG9hZHMv/MjAyMi8wOS9jeWJl/ci0xNjAweDEwMzgu/anBn' }} // Replace with the URL of the association's image
+                style={styles.image}
+            />
+            <View style={styles.homeContainer}>
+                <Text style={styles.title}>ISEN</Text>
+                <Text style={styles.address}>41 Boulevard Vauban, 59000 Lille</Text>
+                <Text style={styles.phone}>06.46.12.12.12</Text>
+                <Text style={styles.subtitle}>Types de Danse</Text>
+                <View style={styles.danceList}>
+                    {danceTypes.map((dance, index) => (
+                        <Text key={index} style={styles.danceType}>
+                            {dance}
+                        </Text>
+                    ))}
+                </View>
+                <Text style={styles.subtitle}>A Propos</Text>
+                <Text style={styles.description}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut cursus suscipit laoreet. Quisque mauris sem, lacinia nec vehicula in, ultrices et dolor. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Fusce tempus, lectus non auctor vulputate, ex turpis efficitur justo, in molestie diam odio sit amet ex. Vivamus nulla dolor, fringilla ut nisi ac, semper fringilla leo. Suspendisse a faucibus diam. Curabitur sed magna porttitor, aliquam ipsum vel, accumsan urna. Sed vitae aliquet massa, at aliquam tortor. Nullam a condimentum justo, non lacinia nisi. Maecenas porttitor nibh sed consectetur maximus. Curabitur sit amet venenatis augue.
+                </Text>
+            </View>
+        </ScrollView>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: "white",
+        height: "100%",
+    },
+    homeContainer: {
+        paddingLeft: 20,
+        paddingRight: 20,
+    },
+    image: {
+        width: "100%",
+        height: 200,
+        marginBottom: 20,
+    },
+    title: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    address: {
+        fontSize: 16,
+        color: 'gray',
+        marginBottom: 5,
+    },
+    phone: {
+        fontSize: 16,
+        color: 'gray',
+        marginBottom: 10,
+    },
+    subtitle: {
+        fontSize: 25,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    description: {
+        fontSize: 16,
+        marginBottom: 20,
+    },
+    danceList: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "flex-start",
+        marginBottom: 10,
+    },
+    danceType: {
+        fontSize: 12,
+        color: '#333',
+        margin: 5,
+        backgroundColor: '#f9f9f9',
+        padding: 5,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 10,
+    },
+});
 
 export default HomeScreen;
