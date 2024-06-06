@@ -1,18 +1,26 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import RegistrationScreen from "../screens/RegistrationScreen";
-import {StyleSheet, TouchableOpacity, View} from "react-native";
+import {TouchableOpacity, View} from "react-native";
+import styles from "../styles/LoginScreen";
 import Icon from "react-native-vector-icons/Ionicons";
+import ProfileScreen from "../screens/ProfileScreen";
+import Tickets from "../components/Tickets";
+import ProfileButton from "../components/ProfileButton";
+import {AuthContext} from "../context/AuthContext";
 
 const Stack = createStackNavigator();
 const headerBackgroundColor = 'white';
 
-function RegisterStack({ navigation}) {
+function ProfileStack({ navigation}) {
+    const { isLoggedIn, user } = useContext(AuthContext);
+    const ticket = user ? user.ticket : 0;
+
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name="RegisterScreen"
-                component={RegistrationScreen}
+                name="ProfileScreen"
+                component={ProfileScreen}
                 options={{
                     headerTitle: 'DENSHO',
                     headerStyle: {
@@ -21,11 +29,16 @@ function RegisterStack({ navigation}) {
                     headerLeft: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <TouchableOpacity
-                                style={styles.backButton}
-                                onPress={() => navigation.navigate('LoginScreen')}
+                                style={styles.profileButton}
+                                onPress={() => navigation.navigate("Association")}
                             >
                                 <Icon name="arrow-back-outline" size={30} color="black" />
                             </TouchableOpacity>
+                        </View>
+                    ),
+                    headerRight: () => (
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            {isLoggedIn && <Tickets count={ticket} />}
                         </View>
                     ),
                 }
@@ -35,10 +48,4 @@ function RegisterStack({ navigation}) {
     );
 }
 
-const styles = StyleSheet.create({
-    backButton: {
-        paddingLeft: 20,
-    },
-});
-
-export default RegisterStack;
+export default ProfileStack;

@@ -105,8 +105,13 @@ export const AuthProvider = ({ children }) => {
         setUser(null); // Clear user data on logout
     };
 
+    const updateUser = (updatedUser) => {
+        setUser(updatedUser);
+    };
+
+
     return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout, token, refreshJwtToken, verifyToken, loading, user }}>
+        <AuthContext.Provider value={{ isLoggedIn, login, logout, token, refreshJwtToken, verifyToken, loading, user, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

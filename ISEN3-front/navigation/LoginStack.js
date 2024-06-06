@@ -1,8 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from "../screens/LoginScreen";
-import styles from "../styles/LoginScreen";
-import {TouchableOpacity, View} from "react-native";
+import {StyleSheet, TouchableOpacity, View} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
 const Stack = createStackNavigator();
@@ -22,7 +21,7 @@ function LoginStack({ navigation}) {
                     headerLeft: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <TouchableOpacity
-                                style={styles.profileButton}
+                                style={styles.backButton}
                                 onPress={() => navigation.navigate('HomeScreen')}
                             >
                                 <Icon name="arrow-back-outline" size={30} color="black" />
@@ -34,5 +33,11 @@ function LoginStack({ navigation}) {
         </Stack.Navigator>
     );
 }
+
+const styles = StyleSheet.create({
+    backButton: {
+        paddingLeft: 20,
+    },
+});
 
 export default LoginStack;
