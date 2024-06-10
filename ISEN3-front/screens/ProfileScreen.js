@@ -1,5 +1,5 @@
-import React, { useContext, useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, ActivityIndicator, TextInput, Button, StyleSheet } from 'react-native';
+import React, { useContext, useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Alert, TextInput, Button, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../styles/ProfileScreen';
@@ -12,23 +12,47 @@ const ProfileButton = ({ iconName, text, onPress }) => (
     </TouchableOpacity>
 );
 
-const EditUserInfo = ({ user, token, onUpdate }) => {
-    const [name, setName] = useState(user.name);
-    const [surname, setSurname] = useState(user.surname);
-    const [email, setEmail] = useState(user.email);
+const EditUserInfo = () => {
+    const { user, token, verifyToken, refreshJwtToken, updateUser } = useContext(AuthContext);
+    const [name, setName] = useState('');
+    const [surname, setSurname] = useState('');
+    const [email, setEmail] = useState('');
+
+    useEffect(() => {
+        if (user) {
+            setName(user.name || '');
+            setSurname(user.surname || '');
+            setEmail(user.email || '');
+        }
+    }, [user]);
 
     const handleSave = async () => {
         try {
+            // Verify token validity
+            const isTokenValid = await verifyToken(token);
+            let currentToken = token;
+
+            // Refresh token if necessary
+            if (!isTokenValid) {
+                currentToken = await refreshJwtToken();
+                if (!currentToken) {
+                    Alert.alert("Erreur", "Impossible de mettre à jour les informations. Veuillez vous reconnecter.");
+                    return;
+                }
+            }
+
             const response = await axios.put('https://isen3-back.onrender.com/api/users/update', {
                 name,
                 surname,
                 email
             }, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { Authorization: `Bearer ${currentToken}` }
             });
-            onUpdate(response.data);
+
+            updateUser(response.data);
         } catch (error) {
             console.error('Failed to update user info', error);
+            Alert.alert("Erreur", "La mise à jour des informations a échoué.");
         }
     };
 
@@ -60,7 +84,7 @@ const EditUserInfo = ({ user, token, onUpdate }) => {
 };
 
 function ProfileScreen({ navigation }) {
-    const { logout, user, token, updateUser } = useContext(AuthContext);
+    const { logout, token } = useContext(AuthContext);
 
     const handleLogout = () => {
         Alert.alert(
@@ -105,17 +129,9 @@ function ProfileScreen({ navigation }) {
         );
     };
 
-    if (!user) {
-        return (
-            <View style={styles.container}>
-                <ActivityIndicator size="large" color="#0000ff" />
-            </View>
-        );
-    }
-
     return (
         <View style={styles.container}>
-            <EditUserInfo user={user} token={token} onUpdate={updateUser} />
+            <EditUserInfo />
             <View style={styles.profileContainer}>
                 <ProfileButton
                     iconName="log-out-outline"
@@ -157,6 +173,11 @@ const editStyles = StyleSheet.create({
         paddingLeft: 10,
         borderRadius: 5,
     },
+    buttonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        marginLeft: 10,
+    }
 });
 
 export default ProfileScreen;

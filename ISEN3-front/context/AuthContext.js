@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import {ActivityIndicator} from "react-native";
 
 export const AuthContext = createContext();
 
@@ -8,7 +9,8 @@ export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [token, setToken] = useState(null);
     const [refreshToken, setRefreshToken] = useState(null);
-    const [user, setUser] = useState(null); // New state for user data
+    const [user, setUser] = useState(null);
+    const [association, setAssociation] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const verifyToken = useCallback(async (token) => {
@@ -44,10 +46,22 @@ export const AuthProvider = ({ children }) => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUser(response.data);
+
         } catch (error) {
             console.error('Failed to fetch user profile', error);
         }
     }, []);
+
+    // Fetch association info id =0
+    const fetchAssociationInfo = useCallback(async () => {
+        try {
+            const response = await axios.get('https://isen3-back.onrender.com/api/associations/0');
+            setAssociation(response.data);
+        } catch (error) {
+            console.error('Failed to fetch association info', error);
+        }
+    }, []);
+
 
     const checkLoginStatus = useCallback(async () => {
         try {
@@ -59,13 +73,14 @@ export const AuthProvider = ({ children }) => {
                     setToken(storedToken);
                     setRefreshToken(storedRefreshToken);
                     setIsLoggedIn(true);
-                    await fetchUserProfile(storedToken); // Fetch user profile if token is valid
+                    await fetchUserProfile(storedToken);
                 } else {
                     const newToken = await refreshJwtToken(storedRefreshToken);
                     if (newToken) {
                         setToken(newToken);
+                        setRefreshToken(storedRefreshToken);
                         setIsLoggedIn(true);
-                        await fetchUserProfile(newToken); // Fetch user profile with new token
+                        await fetchUserProfile(newToken);
                     } else {
                         await AsyncStorage.removeItem('token');
                         await AsyncStorage.removeItem('refreshToken');
@@ -80,6 +95,7 @@ export const AuthProvider = ({ children }) => {
     }, [verifyToken, refreshJwtToken, fetchUserProfile]);
 
     useEffect(() => {
+        fetchAssociationInfo();
         checkLoginStatus();
     }, [checkLoginStatus]);
 
@@ -93,7 +109,7 @@ export const AuthProvider = ({ children }) => {
         setToken(token);
         setRefreshToken(refreshToken);
         setIsLoggedIn(true);
-        await fetchUserProfile(token); // Fetch user profile upon login
+        await fetchUserProfile(token);
     };
 
     const logout = async () => {
@@ -102,16 +118,19 @@ export const AuthProvider = ({ children }) => {
         setToken(null);
         setRefreshToken(null);
         setIsLoggedIn(false);
-        setUser(null); // Clear user data on logout
+        setUser(null);
     };
 
     const updateUser = (updatedUser) => {
         setUser(updatedUser);
     };
 
+    if (loading) {
+        return ;
+    }
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout, token, refreshJwtToken, verifyToken, loading, user, updateUser }}>
+        <AuthContext.Provider value={{ isLoggedIn, login, logout, token, refreshJwtToken, verifyToken, loading, user, updateUser, association}}>
             {children}
         </AuthContext.Provider>
     );
