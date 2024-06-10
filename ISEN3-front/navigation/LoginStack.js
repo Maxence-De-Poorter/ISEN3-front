@@ -19,9 +19,8 @@ function LoginStack({ navigation}) {
                         backgroundColor: headerBackgroundColor,
                     },
                     headerLeft: () => (
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 20}}>
                             <TouchableOpacity
-                                style={styles.backButton}
                                 onPress={() => navigation.navigate('HomeScreen')}
                             >
                                 <Icon name="arrow-back-outline" size={30} color="black" />
@@ -33,11 +32,5 @@ function LoginStack({ navigation}) {
         </Stack.Navigator>
     );
 }
-
-const styles = StyleSheet.create({
-    backButton: {
-        paddingLeft: 20,
-    },
-});
 
 export default LoginStack;

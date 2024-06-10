@@ -1,4 +1,4 @@
-import React, { useContext, ActivityIndicator } from 'react';
+import React, { useContext} from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import HomeStack from './HomeStack';

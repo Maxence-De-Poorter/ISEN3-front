@@ -78,7 +78,7 @@ const EditUserInfo = () => {
                 placeholder="Email"
                 keyboardType="email-address"
             />
-            <Button title="Confirmer" onPress={handleSave} />
+            <Button title="Sauvegarder" onPress={handleSave} />
         </View>
     );
 };
