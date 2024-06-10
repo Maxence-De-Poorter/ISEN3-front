@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
 
     const verifyToken = useCallback(async (token) => {
         try {
-            const response = await axios.post('https://isen3-back.onrender.com/api/users/verify-token', { token });
+            const response = await axios.post('https://isen3-back.onrender.com/api/auth/verify-token', { token });
             return response.data.valid;
         } catch (error) {
             console.error('Failed to verify token', error);
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
 
     const refreshJwtToken = useCallback(async (refreshToken) => {
         try {
-            const response = await axios.post('https://isen3-back.onrender.com/api/users/refresh-token', { refreshToken });
+            const response = await axios.post('https://isen3-back.onrender.com/api/auth/refresh-token', { refreshToken });
             const { token: newToken } = response.data;
             if (newToken) {
                 await AsyncStorage.setItem('token', newToken);
@@ -52,7 +52,6 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    // Fetch association info id =0
     const fetchAssociationInfo = useCallback(async () => {
         try {
             const response = await axios.get('https://isen3-back.onrender.com/api/associations/0');
@@ -67,6 +66,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const storedToken = await AsyncStorage.getItem('token');
             const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
+            await fetchAssociationInfo();
             if (storedToken) {
                 const isTokenValid = await verifyToken(storedToken);
                 if (isTokenValid) {
@@ -125,12 +125,16 @@ export const AuthProvider = ({ children }) => {
         setUser(updatedUser);
     };
 
+    const updateAssociation = (updatedAssociation) => {
+        setAssociation(updatedAssociation);
+    }
+
     if (loading) {
         return ;
     }
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout, token, refreshJwtToken, verifyToken, loading, user, updateUser, association}}>
+        <AuthContext.Provider value={{ isLoggedIn, login, logout, token, refreshJwtToken,refreshToken, verifyToken, loading, user, updateUser, association, updateAssociation}}>
             {children}
         </AuthContext.Provider>
     );

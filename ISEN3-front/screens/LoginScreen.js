@@ -68,7 +68,7 @@ function LoginScreen({ navigation }) {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post('https://isen3-back.onrender.com/api/users/login', {
+            const response = await axios.post('https://isen3-back.onrender.com/api/auth/login', {
                 email: email,
                 password: password,
             });

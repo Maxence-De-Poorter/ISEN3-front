@@ -36,7 +36,7 @@ function TabNavigator() {
         >
             <Tab.Screen name="Association" component={HomeStack} />
             {isLoggedIn && <Tab.Screen name="Cours" component={CalendarStack} />}
-            {isLoggedIn && user?.role === 'administrator' && (
+            {isLoggedIn && user?.role !== 'student' && (
                     <Tab.Screen name="Gestion" component={GestionStack} />
             )}
         </Tab.Navigator>
