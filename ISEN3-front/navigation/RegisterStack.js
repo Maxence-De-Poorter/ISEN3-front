@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import RegistrationScreen from "../screens/RegistrationScreen";
-import {StyleSheet, TouchableOpacity, View} from "react-native";
+import {TouchableOpacity, View} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
 const Stack = createStackNavigator();
@@ -19,9 +19,8 @@ function RegisterStack({ navigation}) {
                         backgroundColor: headerBackgroundColor,
                     },
                     headerLeft: () => (
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 20}}>
                             <TouchableOpacity
-                                style={styles.backButton}
                                 onPress={() => navigation.navigate('LoginScreen')}
                             >
                                 <Icon name="arrow-back-outline" size={30} color="black" />
@@ -34,11 +33,5 @@ function RegisterStack({ navigation}) {
         </Stack.Navigator>
     );
 }
-
-const styles = StyleSheet.create({
-    backButton: {
-        paddingLeft: 20,
-    },
-});
 
 export default RegisterStack;

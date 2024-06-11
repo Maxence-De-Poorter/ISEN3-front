@@ -95,7 +95,7 @@ const RegistrationScreen = ({ navigation }) => {
 
     const handleRegister = async () => {
         try {
-            const response = await axios.post('https://isen3-back.onrender.com/api/users/register', {
+            const response = await axios.post('https://isen3-back.onrender.com/api/auth/register', {
                 name,
                 surname,
                 email,

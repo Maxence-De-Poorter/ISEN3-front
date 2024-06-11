@@ -8,93 +8,121 @@ export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [token, setToken] = useState(null);
     const [refreshToken, setRefreshToken] = useState(null);
-    const [user, setUser] = useState(null); // New state for user data
+    const [user, setUser] = useState(null);
+    const [association, setAssociation] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const verifyToken = useCallback(async (token) => {
+    const fetchData = useCallback(async (url, options = {}) => {
         try {
-            const response = await axios.post('https://isen3-back.onrender.com/api/users/verify-token', { token });
+            const response = await axios.get(url, options);
+            return response.data;
+        } catch (error) {
+            console.error(`Failed to fetch ${url}`, error);
+            setError(`Failed to fetch ${url}`);
+            return null;
+        }
+    }, []);
+
+    const verifyToken = useCallback(async () => {
+        try {
+            const response = await axios.post('https://isen3-back.onrender.com/api/auth/verify-token', { token });
             return response.data.valid;
         } catch (error) {
             console.error('Failed to verify token', error);
             return false;
         }
-    }, []);
+    }, [token]);
 
-    const refreshJwtToken = useCallback(async (refreshToken) => {
+    const refreshJwtToken = useCallback(async () => {
         try {
-            const response = await axios.post('https://isen3-back.onrender.com/api/users/refresh-token', { refreshToken });
+            const response = await axios.post('https://isen3-back.onrender.com/api/auth/refresh-token', { refreshToken });
             const { token: newToken } = response.data;
             if (newToken) {
                 await AsyncStorage.setItem('token', newToken);
                 setToken(newToken);
                 return newToken;
-            } else {
-                return null;
             }
+            return null;
         } catch (error) {
             console.error('Failed to refresh token', error);
             return null;
         }
-    }, []);
+    }, [refreshToken]);
 
-    const fetchUserProfile = useCallback(async (token) => {
-        try {
-            const response = await axios.get('https://isen3-back.onrender.com/api/users/me', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setUser(response.data);
-        } catch (error) {
-            console.error('Failed to fetch user profile', error);
-        }
-    }, []);
+    const fetchUserProfile = useCallback(async () => {
+        const data = await fetchData('https://isen3-back.onrender.com/api/users/me', {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        setUser(data);
+    }, [fetchData, token]);
 
-    const checkLoginStatus = useCallback(async () => {
+    const fetchAssociationInfo = useCallback(async () => {
+        const data = await fetchData('https://isen3-back.onrender.com/api/associations/0');
+        setAssociation(data);
+    }, [fetchData]);
+
+    const checkAndRefreshToken = useCallback(async () => {
+        if (!token) return false;
+        const isTokenValid = await verifyToken();
+        if (isTokenValid) return true;
+
+        const newToken = await refreshJwtToken();
+        if (newToken) return true;
+
+        await logout(); // Logout if token refresh fails
+        return false;
+    }, [token, verifyToken, refreshJwtToken]);
+
+    const initialize = useCallback(async () => {
         try {
             const storedToken = await AsyncStorage.getItem('token');
             const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
-            if (storedToken) {
-                const isTokenValid = await verifyToken(storedToken);
-                if (isTokenValid) {
-                    setToken(storedToken);
-                    setRefreshToken(storedRefreshToken);
-                    setIsLoggedIn(true);
-                    await fetchUserProfile(storedToken); // Fetch user profile if token is valid
-                } else {
-                    const newToken = await refreshJwtToken(storedRefreshToken);
-                    if (newToken) {
-                        setToken(newToken);
-                        setIsLoggedIn(true);
-                        await fetchUserProfile(newToken); // Fetch user profile with new token
-                    } else {
-                        await AsyncStorage.removeItem('token');
-                        await AsyncStorage.removeItem('refreshToken');
-                    }
-                }
+            setToken(storedToken);
+            setRefreshToken(storedRefreshToken);
+
+            await fetchAssociationInfo();
+
+            const isAuthenticated = await checkAndRefreshToken();
+            if (isAuthenticated) {
+                await fetchUserProfile();
+                setIsLoggedIn(true);
+            } else {
+                setIsLoggedIn(false);
             }
         } catch (error) {
-            console.error('Failed to fetch login status from storage', error);
+            console.error('Failed to initialize app', error);
         } finally {
             setLoading(false);
         }
-    }, [verifyToken, refreshJwtToken, fetchUserProfile]);
+    }, [checkAndRefreshToken, fetchAssociationInfo, fetchUserProfile]);
 
     useEffect(() => {
-        checkLoginStatus();
-    }, [checkLoginStatus]);
+        initialize();
+    }, [initialize]);
 
-    const login = async (token, refreshToken) => {
-        if (token) {
-            await AsyncStorage.setItem('token', token);
+    const login = useCallback(async (email, password) => {
+        try {
+            const response = await axios.post('https://isen3-back.onrender.com/api/auth/login', {
+                email: email,
+                password: password,
+            });
+            if (response.data.token && response.data.refreshToken) {
+                await AsyncStorage.setItem('token', response.data.token);
+                await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
+                setToken(response.data.token);
+                setRefreshToken(response.data.refreshToken);
+                setIsLoggedIn(true);
+                await fetchUserProfile();
+                return true;
+            } else {
+                throw new Error('Invalid response from server');
+            }
+        } catch (error) {
+            console.error('Failed to login', error);
+            throw error;
         }
-        if (refreshToken) {
-            await AsyncStorage.setItem('refreshToken', refreshToken);
-        }
-        setToken(token);
-        setRefreshToken(refreshToken);
-        setIsLoggedIn(true);
-        await fetchUserProfile(token); // Fetch user profile upon login
-    };
+    }, [fetchUserProfile]);
 
     const logout = async () => {
         await AsyncStorage.removeItem('token');
@@ -102,16 +130,31 @@ export const AuthProvider = ({ children }) => {
         setToken(null);
         setRefreshToken(null);
         setIsLoggedIn(false);
-        setUser(null); // Clear user data on logout
+        setUser(null);
     };
 
-    const updateUser = (updatedUser) => {
-        setUser(updatedUser);
-    };
-
+    if (loading) {
+        return null;
+    }
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout, token, refreshJwtToken, verifyToken, loading, user, updateUser }}>
+        <AuthContext.Provider value={{
+            isLoggedIn,
+            token,
+            refreshToken,
+            user,
+            association,
+            loading,
+            error,
+            fetchData,
+            verifyToken,
+            refreshJwtToken,
+            fetchUserProfile,
+            fetchAssociationInfo,
+            checkAndRefreshToken,
+            login,
+            logout
+        }}>
             {children}
         </AuthContext.Provider>
     );

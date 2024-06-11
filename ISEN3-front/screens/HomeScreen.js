@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import {AuthContext} from "../context/AuthContext";
 
 const danceTypes = [
     'Ballet',
@@ -13,6 +14,8 @@ const danceTypes = [
 ];
 
 function HomeScreen() {
+    const { association } = useContext(AuthContext);
+
     return (
         <ScrollView style={styles.container}>
             <Image
@@ -20,9 +23,9 @@ function HomeScreen() {
                 style={styles.image}
             />
             <View style={styles.homeContainer}>
-                <Text style={styles.title}>ISEN</Text>
-                <Text style={styles.address}>41 Boulevard Vauban, 59000 Lille</Text>
-                <Text style={styles.phone}>06.46.12.12.12</Text>
+                <Text style={styles.title}>{association.name}</Text>
+                <Text style={styles.address}>{association.address}</Text>
+                <Text style={styles.phone}>{association.phone}</Text>
                 <Text style={styles.subtitle}>Types de Danse</Text>
                 <View style={styles.danceList}>
                     {danceTypes.map((dance, index) => (
@@ -32,9 +35,7 @@ function HomeScreen() {
                     ))}
                 </View>
                 <Text style={styles.subtitle}>A Propos</Text>
-                <Text style={styles.description}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut cursus suscipit laoreet. Quisque mauris sem, lacinia nec vehicula in, ultrices et dolor. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Fusce tempus, lectus non auctor vulputate, ex turpis efficitur justo, in molestie diam odio sit amet ex. Vivamus nulla dolor, fringilla ut nisi ac, semper fringilla leo. Suspendisse a faucibus diam. Curabitur sed magna porttitor, aliquam ipsum vel, accumsan urna. Sed vitae aliquet massa, at aliquam tortor. Nullam a condimentum justo, non lacinia nisi. Maecenas porttitor nibh sed consectetur maximus. Curabitur sit amet venenatis augue.
-                </Text>
+                <Text style={styles.description}>{association.description}</Text>
             </View>
         </ScrollView>
     );
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
     },
     image: {
         width: "100%",
-        height: 200,
+        height: 250,
         marginBottom: 20,
     },
     title: {
