@@ -1,7 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {ActivityIndicator} from "react-native";
 
 export const AuthContext = createContext();
 
@@ -12,8 +11,20 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [association, setAssociation] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const verifyToken = useCallback(async (token) => {
+    const fetchData = useCallback(async (url, options = {}) => {
+        try {
+            const response = await axios.get(url, options);
+            return response.data;
+        } catch (error) {
+            console.error(`Failed to fetch ${url}`, error);
+            setError(`Failed to fetch ${url}`);
+            return null;
+        }
+    }, []);
+
+    const verifyToken = useCallback(async () => {
         try {
             const response = await axios.post('https://isen3-back.onrender.com/api/auth/verify-token', { token });
             return response.data.valid;
@@ -21,9 +32,9 @@ export const AuthProvider = ({ children }) => {
             console.error('Failed to verify token', error);
             return false;
         }
-    }, []);
+    }, [token]);
 
-    const refreshJwtToken = useCallback(async (refreshToken) => {
+    const refreshJwtToken = useCallback(async () => {
         try {
             const response = await axios.post('https://isen3-back.onrender.com/api/auth/refresh-token', { refreshToken });
             const { token: newToken } = response.data;
@@ -31,73 +42,64 @@ export const AuthProvider = ({ children }) => {
                 await AsyncStorage.setItem('token', newToken);
                 setToken(newToken);
                 return newToken;
-            } else {
-                return null;
             }
+            return null;
         } catch (error) {
             console.error('Failed to refresh token', error);
             return null;
         }
-    }, []);
+    }, [refreshToken]);
 
-    const fetchUserProfile = useCallback(async (token) => {
-        try {
-            const response = await axios.get('https://isen3-back.onrender.com/api/users/me', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setUser(response.data);
-
-        } catch (error) {
-            console.error('Failed to fetch user profile', error);
-        }
-    }, []);
+    const fetchUserProfile = useCallback(async () => {
+        const data = await fetchData('https://isen3-back.onrender.com/api/users/me', {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        setUser(data);
+    }, [fetchData, token]);
 
     const fetchAssociationInfo = useCallback(async () => {
-        try {
-            const response = await axios.get('https://isen3-back.onrender.com/api/associations/0');
-            setAssociation(response.data);
-        } catch (error) {
-            console.error('Failed to fetch association info', error);
-        }
-    }, []);
+        const data = await fetchData('https://isen3-back.onrender.com/api/associations/0');
+        setAssociation(data);
+    }, [fetchData]);
 
+    const checkAndRefreshToken = useCallback(async () => {
+        if (!token) return false;
+        const isTokenValid = await verifyToken();
+        if (isTokenValid) return true;
 
-    const checkLoginStatus = useCallback(async () => {
+        const newToken = await refreshJwtToken();
+        if (newToken) return true;
+
+        await logout(); // Logout if token refresh fails
+        return false;
+    }, [token, verifyToken, refreshJwtToken]);
+
+    const initialize = useCallback(async () => {
         try {
             const storedToken = await AsyncStorage.getItem('token');
             const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
+            setToken(storedToken);
+            setRefreshToken(storedRefreshToken);
+
             await fetchAssociationInfo();
-            if (storedToken) {
-                const isTokenValid = await verifyToken(storedToken);
-                if (isTokenValid) {
-                    setToken(storedToken);
-                    setRefreshToken(storedRefreshToken);
-                    setIsLoggedIn(true);
-                    await fetchUserProfile(storedToken);
-                } else {
-                    const newToken = await refreshJwtToken(storedRefreshToken);
-                    if (newToken) {
-                        setToken(newToken);
-                        setRefreshToken(storedRefreshToken);
-                        setIsLoggedIn(true);
-                        await fetchUserProfile(newToken);
-                    } else {
-                        await AsyncStorage.removeItem('token');
-                        await AsyncStorage.removeItem('refreshToken');
-                    }
-                }
+
+            const isAuthenticated = await checkAndRefreshToken();
+            if (isAuthenticated) {
+                await fetchUserProfile();
+                setIsLoggedIn(true);
+            } else {
+                setIsLoggedIn(false);
             }
         } catch (error) {
-            console.error('Failed to fetch login status from storage', error);
+            console.error('Failed to initialize app', error);
         } finally {
             setLoading(false);
         }
-    }, [verifyToken, refreshJwtToken, fetchUserProfile]);
+    }, [checkAndRefreshToken, fetchAssociationInfo, fetchUserProfile]);
 
     useEffect(() => {
-        fetchAssociationInfo();
-        checkLoginStatus();
-    }, [checkLoginStatus]);
+        initialize();
+    }, [initialize]);
 
     const login = async (token, refreshToken) => {
         if (token) {
@@ -109,7 +111,7 @@ export const AuthProvider = ({ children }) => {
         setToken(token);
         setRefreshToken(refreshToken);
         setIsLoggedIn(true);
-        await fetchUserProfile(token);
+        await fetchUserProfile();
     };
 
     const logout = async () => {
@@ -121,20 +123,28 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
-    const updateUser = (updatedUser) => {
-        setUser(updatedUser);
-    };
-
-    const updateAssociation = (updatedAssociation) => {
-        setAssociation(updatedAssociation);
-    }
-
     if (loading) {
-        return ;
+        return null;
     }
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout, token, refreshJwtToken,refreshToken, verifyToken, loading, user, updateUser, association, updateAssociation}}>
+        <AuthContext.Provider value={{
+            isLoggedIn,
+            token,
+            refreshToken,
+            user,
+            association,
+            loading,
+            error,
+            fetchData,
+            verifyToken,
+            refreshJwtToken,
+            fetchUserProfile,
+            fetchAssociationInfo,
+            checkAndRefreshToken,
+            login,
+            logout
+        }}>
             {children}
         </AuthContext.Provider>
     );

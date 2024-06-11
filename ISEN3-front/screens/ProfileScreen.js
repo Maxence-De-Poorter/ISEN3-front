@@ -13,7 +13,7 @@ const ProfileButton = ({ iconName, text, onPress }) => (
 );
 
 const EditUserInfo = () => {
-    const { user, token, verifyToken, refreshJwtToken, updateUser } = useContext(AuthContext);
+    const { user, token, checkAndRefreshToken, fetchUserProfile } = useContext(AuthContext);
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
     const [email, setEmail] = useState('');
@@ -28,28 +28,22 @@ const EditUserInfo = () => {
 
     const handleSave = async () => {
         try {
-            // Verify token validity
-            const isTokenValid = await verifyToken(token);
-            let currentToken = token;
-
-            // Refresh token if necessary
-            if (!isTokenValid) {
-                currentToken = await refreshJwtToken();
-                if (!currentToken) {
-                    Alert.alert("Erreur", "Impossible de mettre à jour les informations. Veuillez vous reconnecter.");
-                    return;
-                }
+            const isAuthenticated = await checkAndRefreshToken();
+            if (!isAuthenticated) {
+                Alert.alert("Erreur", "Impossible de mettre à jour les informations. Veuillez vous reconnecter.");
+                return;
             }
 
-            const response = await axios.put('https://isen3-back.onrender.com/api/users/update', {
+            await axios.put('https://isen3-back.onrender.com/api/users/update', {
                 name,
                 surname,
                 email
             }, {
-                headers: { Authorization: `Bearer ${currentToken}` }
+                headers: { Authorization: `Bearer ${token}` }
             });
 
-            updateUser(response.data);
+            await fetchUserProfile(token); // Fetch the updated user profile
+            Alert.alert("Succès", "Les informations ont été mises à jour.");
         } catch (error) {
             console.error('Failed to update user info', error);
             Alert.alert("Erreur", "La mise à jour des informations a échoué.");
@@ -84,7 +78,7 @@ const EditUserInfo = () => {
 };
 
 function ProfileScreen({ navigation }) {
-    const { logout, token } = useContext(AuthContext);
+    const { logout, token, checkAndRefreshToken } = useContext(AuthContext);
 
     const handleLogout = () => {
         Alert.alert(
@@ -113,6 +107,12 @@ function ProfileScreen({ navigation }) {
                     text: "Supprimer",
                     onPress: async () => {
                         try {
+                            const isAuthenticated = await checkAndRefreshToken();
+                            if (!isAuthenticated) {
+                                Alert.alert("Erreur", "Impossible de supprimer le profil. Veuillez vous reconnecter.");
+                                return;
+                            }
+
                             await axios.delete('https://isen3-back.onrender.com/api/users/delete', {
                                 headers: { Authorization: `Bearer ${token}` }
                             });
