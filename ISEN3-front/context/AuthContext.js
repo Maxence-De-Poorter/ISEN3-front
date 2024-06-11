@@ -101,18 +101,28 @@ export const AuthProvider = ({ children }) => {
         initialize();
     }, [initialize]);
 
-    const login = async (token, refreshToken) => {
-        if (token) {
-            await AsyncStorage.setItem('token', token);
+    const login = useCallback(async (email, password) => {
+        try {
+            const response = await axios.post('https://isen3-back.onrender.com/api/auth/login', {
+                email: email,
+                password: password,
+            });
+            if (response.data.token && response.data.refreshToken) {
+                await AsyncStorage.setItem('token', response.data.token);
+                await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
+                setToken(response.data.token);
+                setRefreshToken(response.data.refreshToken);
+                setIsLoggedIn(true);
+                await fetchUserProfile();
+                return true;
+            } else {
+                throw new Error('Invalid response from server');
+            }
+        } catch (error) {
+            console.error('Failed to login', error);
+            throw error;
         }
-        if (refreshToken) {
-            await AsyncStorage.setItem('refreshToken', refreshToken);
-        }
-        setToken(token);
-        setRefreshToken(refreshToken);
-        setIsLoggedIn(true);
-        await fetchUserProfile();
-    };
+    }, [fetchUserProfile]);
 
     const logout = async () => {
         await AsyncStorage.removeItem('token');

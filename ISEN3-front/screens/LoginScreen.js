@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../styles/LoginScreen';
 
@@ -11,7 +10,7 @@ const LoginForm = ({ email, setEmail, password, setPassword, handleLogin, naviga
         <TextInput
             style={styles.logInInput}
             placeholder="Adresse E-mail"
-            onChangeText={(text) => setEmail(text)}
+            onChangeText={setEmail}
             value={email}
             autoCapitalize="none"
             keyboardType="email-address"
@@ -20,7 +19,7 @@ const LoginForm = ({ email, setEmail, password, setPassword, handleLogin, naviga
             style={styles.logInInput}
             placeholder="Mot de passe"
             secureTextEntry
-            onChangeText={(text) => setPassword(text)}
+            onChangeText={setPassword}
             value={password}
             autoCapitalize="none"
         />
@@ -68,20 +67,12 @@ function LoginScreen({ navigation }) {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post('https://isen3-back.onrender.com/api/auth/login', {
-                email: email,
-                password: password,
-            });
-            if (response.data.token && response.data.refreshToken) {
-                await login(response.data.token, response.data.refreshToken);
+            const response = await login(email, password);
+            if (response) {
                 navigation.navigate('Profile');
             }
         } catch (error) {
-            if (error.response) {
-                Alert.alert('Erreur', error.response.data.message);
-            } else {
-                Alert.alert('Erreur', 'Une erreur est survenue. Veuillez réessayer.');
-            }
+            Alert.alert('Erreur', error.message || 'Une erreur est survenue. Veuillez réessayer.');
             console.error(error);
         }
     };
