@@ -20,7 +20,7 @@ function HomeScreen() {
     return (
         <ScrollView style={styles.container}>
             <Image
-                source={{ uri: 'https://imgs.search.brave.com/BpTP0DdCllLH5Qtwm_ms44HWa4beypb0o5zWEn5X4vQ/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pc2Vu/LW1lZGl0ZXJyYW5l/ZS5mci93cC1jb250/ZW50L3VwbG9hZHMv/MjAyMi8wOS9jeWJl/ci0xNjAweDEwMzgu/anBn' }} // Replace with the URL of the association's image
+                source={{ uri: 'https://imgs.search.brave.com/NZNa8b8gryIx-GRJxW3dzTKWySXvvqFFTMwLCo50sJE/rs:fit:860:0:0/g:ce/aHR0cHM6Ly93d3cu/anVuaWEuY29tL3dw/LWNvbnRlbnQvdXBs/b2Fkcy8yMDIyLzEw/LzJFM0E0MTkzLTEu/anBn' }} // Replace with the URL of the association's image
                 style={styles.image}
             />
             <View style={styles.homeContainer}>
