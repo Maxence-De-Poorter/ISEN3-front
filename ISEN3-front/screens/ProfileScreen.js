@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../styles/ProfileStyles';
 import axios from 'axios';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function ProfileScreen({ navigation }) {
     const { logout, user, token, checkAndRefreshToken, fetchUserProfile } = useContext(AuthContext);
@@ -24,8 +25,10 @@ function ProfileScreen({ navigation }) {
             const isAuthenticated = await checkAndRefreshToken();
             if (!isAuthenticated) {
                 Alert.alert("Erreur", "Impossible de mettre à jour les informations. Veuillez vous reconnecter.");
-                return;
+                navigation.navigate('Login')
             }
+
+            const token = await AsyncStorage.getItem('token');
 
             await axios.put('https://isen3-back.onrender.com/api/users/update', {
                 name,
@@ -75,6 +78,8 @@ function ProfileScreen({ navigation }) {
                                 Alert.alert("Erreur", "Impossible de supprimer le profil. Veuillez vous reconnecter.");
                                 return;
                             }
+
+                            const token = await AsyncStorage.getItem('token');
 
                             await axios.delete('https://isen3-back.onrender.com/api/users/delete', {
                                 headers: { Authorization: `Bearer ${token}` }
