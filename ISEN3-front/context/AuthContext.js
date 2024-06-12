@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import {Alert} from "react-native";
 
 export const AuthContext = createContext();
 
@@ -51,6 +52,9 @@ export const AuthProvider = ({ children }) => {
     }, [refreshToken]);
 
     const fetchUserProfile = useCallback(async () => {
+
+        const token = await AsyncStorage.getItem('token');
+
         const data = await fetchData('https://isen3-back.onrender.com/api/users/me', {
             headers: { Authorization: `Bearer ${token}` },
         });
@@ -65,12 +69,16 @@ export const AuthProvider = ({ children }) => {
     const checkAndRefreshToken = useCallback(async () => {
         if (!token) return false;
         const isTokenValid = await verifyToken();
+        console.log('Token is valid:', isTokenValid);
         if (isTokenValid) return true;
 
         const newToken = await refreshJwtToken();
+        console.log('New token:', newToken);
         if (newToken) return true;
 
         await logout(); // Logout if token refresh fails
+        Alert.alert('Session expirée', 'Votre session a expiré. Veuillez vous reconnecter.');
+
         return false;
     }, [token, verifyToken, refreshJwtToken]);
 
@@ -99,6 +107,7 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         initialize();
+        console.log('Initialized AuthProvider');
     }, [initialize]);
 
     const login = useCallback(async (email, password) => {
@@ -116,13 +125,13 @@ export const AuthProvider = ({ children }) => {
                 await fetchUserProfile();
                 return true;
             } else {
-                throw new Error('Invalid response from server');
+                return false;
             }
         } catch (error) {
             console.error('Failed to login', error);
             throw error;
         }
-    }, [fetchUserProfile]);
+    }, []);
 
     const logout = async () => {
         await AsyncStorage.removeItem('token');

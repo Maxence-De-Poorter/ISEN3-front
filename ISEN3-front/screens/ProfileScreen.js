@@ -1,19 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Alert, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, TextInput, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../context/AuthContext';
-import styles from '../styles/ProfileScreen';
+import styles from '../styles/ProfileStyles';
 import axios from 'axios';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const ProfileButton = ({ iconName, text, onPress }) => (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-        <Icon name={iconName} size={20} color="#FFFFFF" style={styles.icon} />
-        <Text style={styles.buttonText}>{text}</Text>
-    </TouchableOpacity>
-);
-
-const EditUserInfo = () => {
-    const { user, token, checkAndRefreshToken, fetchUserProfile } = useContext(AuthContext);
+function ProfileScreen({ navigation }) {
+    const { logout, user, token, checkAndRefreshToken, fetchUserProfile } = useContext(AuthContext);
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
     const [email, setEmail] = useState('');
@@ -30,9 +24,10 @@ const EditUserInfo = () => {
         try {
             const isAuthenticated = await checkAndRefreshToken();
             if (!isAuthenticated) {
-                Alert.alert("Erreur", "Impossible de mettre à jour les informations. Veuillez vous reconnecter.");
-                return;
+                navigation.navigate('Login')
             }
+
+            const token = await AsyncStorage.getItem('token');
 
             await axios.put('https://isen3-back.onrender.com/api/users/update', {
                 name,
@@ -42,43 +37,12 @@ const EditUserInfo = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            await fetchUserProfile(token); // Fetch the updated user profile
+            await fetchUserProfile();
             Alert.alert("Succès", "Les informations ont été mises à jour.");
         } catch (error) {
             console.error('Failed to update user info', error);
-            Alert.alert("Erreur", "La mise à jour des informations a échoué.");
         }
     };
-
-    return (
-        <View style={editStyles.container}>
-            <Text style={editStyles.title}>Mes informations</Text>
-            <TextInput
-                style={editStyles.input}
-                value={name}
-                onChangeText={setName}
-                placeholder="Nom"
-            />
-            <TextInput
-                style={editStyles.input}
-                value={surname}
-                onChangeText={setSurname}
-                placeholder="Prénom"
-            />
-            <TextInput
-                style={editStyles.input}
-                value={email}
-                onChangeText={setEmail}
-                placeholder="Email"
-                keyboardType="email-address"
-            />
-            <Button title="Sauvegarder" onPress={handleSave} />
-        </View>
-    );
-};
-
-function ProfileScreen({ navigation }) {
-    const { logout, token, checkAndRefreshToken } = useContext(AuthContext);
 
     const handleLogout = () => {
         Alert.alert(
@@ -109,9 +73,10 @@ function ProfileScreen({ navigation }) {
                         try {
                             const isAuthenticated = await checkAndRefreshToken();
                             if (!isAuthenticated) {
-                                Alert.alert("Erreur", "Impossible de supprimer le profil. Veuillez vous reconnecter.");
                                 return;
                             }
+
+                            const token = await AsyncStorage.getItem('token');
 
                             await axios.delete('https://isen3-back.onrender.com/api/users/delete', {
                                 headers: { Authorization: `Bearer ${token}` }
@@ -131,53 +96,41 @@ function ProfileScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <EditUserInfo />
+            <View style={styles.infoContainer}>
+                <Text style={styles.title}>Mes informations</Text>
+                <TextInput
+                    style={styles.input}
+                    value={name}
+                    onChangeText={setName}
+                    placeholder="Nom"
+                />
+                <TextInput
+                    style={styles.input}
+                    value={surname}
+                    onChangeText={setSurname}
+                    placeholder="Prénom"
+                />
+                <TextInput
+                    style={styles.input}
+                    value={email}
+                    onChangeText={setEmail}
+                    placeholder="Email"
+                    keyboardType="email-address"
+                />
+                <Button title="Sauvegarder" onPress={handleSave} />
+            </View>
             <View style={styles.profileContainer}>
-                <ProfileButton
-                    iconName="log-out-outline"
-                    text="Déconnexion"
-                    onPress={handleLogout}
-                />
-                <ProfileButton
-                    iconName="trash-outline"
-                    text="Supprimer le profil"
-                    onPress={handleDeleteProfile}
-                />
+                <TouchableOpacity style={styles.button} onPress={handleLogout}>
+                    <Icon name="log-out-outline" size={20} color="black" style={styles.icon} />
+                    <Text style={styles.buttonText}>Déconnexion</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={handleDeleteProfile}>
+                    <Icon name="trash-outline" size={20} color="black" style={styles.icon} />
+                    <Text style={styles.buttonText}>Supprimer le profil</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
 }
-
-const editStyles = StyleSheet.create({
-    container: {
-        padding: 20,
-        backgroundColor: 'white',
-        borderRadius: 10,
-        margin: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        elevation: 5,
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 10,
-        paddingLeft: 10,
-        borderRadius: 5,
-    },
-    buttonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-        marginLeft: 10,
-    }
-});
 
 export default ProfileScreen;

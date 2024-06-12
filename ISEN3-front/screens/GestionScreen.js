@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
+import styles from '../styles/GestionStyles';
 
 function GestionScreen({ navigation }) {
     const { user } = useContext(AuthContext);
@@ -27,24 +28,5 @@ function GestionScreen({ navigation }) {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'white',
-    },
-    button: {
-        backgroundColor: '#007BFF',
-        padding: 15,
-        borderRadius: 10,
-        marginBottom: 20,
-    },
-    buttonText: {
-        color: 'white',
-        fontSize: 18,
-    },
-});
 
 export default GestionScreen;
