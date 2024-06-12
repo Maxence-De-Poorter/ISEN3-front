@@ -99,6 +99,7 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         initialize();
+        console.log('Initialized AuthProvider');
     }, [initialize]);
 
     const login = useCallback(async (email, password) => {
@@ -113,7 +114,7 @@ export const AuthProvider = ({ children }) => {
                 setToken(response.data.token);
                 setRefreshToken(response.data.refreshToken);
                 setIsLoggedIn(true);
-                await fetchUserProfile();
+                //await fetchUserProfile();
                 return true;
             } else {
                 throw new Error('Invalid response from server');
@@ -122,7 +123,7 @@ export const AuthProvider = ({ children }) => {
             console.error('Failed to login', error);
             throw error;
         }
-    }, [fetchUserProfile]);
+    }, []);
 
     const logout = async () => {
         await AsyncStorage.removeItem('token');
