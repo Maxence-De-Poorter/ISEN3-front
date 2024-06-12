@@ -34,7 +34,6 @@ function TabNavigator() {
                 headerShown: false,
                 tabBarStyle: {
                     backgroundColor: '#1C1C1F',
-                    borderTopColor: '#5DA5B3',
                 },
             })}
         >
