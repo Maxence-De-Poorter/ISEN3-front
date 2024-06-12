@@ -24,7 +24,6 @@ function ProfileScreen({ navigation }) {
         try {
             const isAuthenticated = await checkAndRefreshToken();
             if (!isAuthenticated) {
-                Alert.alert("Erreur", "Impossible de mettre à jour les informations. Veuillez vous reconnecter.");
                 navigation.navigate('Login')
             }
 
@@ -75,7 +74,6 @@ function ProfileScreen({ navigation }) {
                         try {
                             const isAuthenticated = await checkAndRefreshToken();
                             if (!isAuthenticated) {
-                                Alert.alert("Erreur", "Impossible de supprimer le profil. Veuillez vous reconnecter.");
                                 return;
                             }
 
