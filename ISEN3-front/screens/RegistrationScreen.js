@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
-import styles from '../styles/RegistrationScreen';
+import styles from '../styles/RegistrationStyles';
 
 const RegistrationScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
