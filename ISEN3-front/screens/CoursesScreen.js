@@ -37,6 +37,11 @@ const CoursesScreen = ({ navigation }) => {
 
     const handleFetchEnrolledCourses = async () => {
         try {
+            const isAuthenticated = await checkAndRefreshToken();
+            if (!isAuthenticated) {
+                navigation.navigate('Login')
+            }
+
             const token = await AsyncStorage.getItem('token');
             const response = await axios.get('https://isen3-back.onrender.com/api/courses/enrolled', {
                 headers: { Authorization: `Bearer ${token}` },
@@ -50,6 +55,11 @@ const CoursesScreen = ({ navigation }) => {
     const handleEnroll = async (courseId) => {
         try {
             if (user && user.ticket > 0) {
+                const isAuthenticated = await checkAndRefreshToken();
+                if (!isAuthenticated) {
+                    navigation.navigate('Login')
+                }
+
                 const token = await AsyncStorage.getItem('token');
                 await axios.post('https://isen3-back.onrender.com/api/courses/enroll', { courseId }, {
                     headers: { Authorization: `Bearer ${token}` },
@@ -67,6 +77,11 @@ const CoursesScreen = ({ navigation }) => {
 
     const handleUnenroll = async (courseId) => {
         try {
+            const isAuthenticated = await checkAndRefreshToken();
+            if (!isAuthenticated) {
+                navigation.navigate('Login')
+            }
+
             const token = await AsyncStorage.getItem('token');
             await axios.post('https://isen3-back.onrender.com/api/courses/unenroll', { courseId }, {
                 headers: { Authorization: `Bearer ${token}` },
