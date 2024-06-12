@@ -4,7 +4,7 @@ import {TouchableOpacity, View} from 'react-native';
 import ProfileButton from '../components/ProfileButton';
 import Tickets from '../components/Tickets';
 import { AuthContext } from '../context/AuthContext';
-import styles from "../styles/LoginScreen";
+import styles from "../styles/LoginStyles";
 import Icon from "react-native-vector-icons/Ionicons";
 import EditMemberScreen from "../screens/EditMemberScreen";
 
