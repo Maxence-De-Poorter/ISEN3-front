@@ -41,7 +41,6 @@ function ProfileScreen({ navigation }) {
             Alert.alert("Succès", "Les informations ont été mises à jour.");
         } catch (error) {
             console.error('Failed to update user info', error);
-            Alert.alert("Erreur", "La mise à jour des informations a échoué.");
         }
     };
 
@@ -122,11 +121,11 @@ function ProfileScreen({ navigation }) {
             </View>
             <View style={styles.profileContainer}>
                 <TouchableOpacity style={styles.button} onPress={handleLogout}>
-                    <Icon name="log-out-outline" size={20} color="#FFFFFF" style={styles.icon} />
+                    <Icon name="log-out-outline" size={20} color="black" style={styles.icon} />
                     <Text style={styles.buttonText}>Déconnexion</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={handleDeleteProfile}>
-                    <Icon name="trash-outline" size={20} color="#FFFFFF" style={styles.icon} />
+                    <Icon name="trash-outline" size={20} color="black" style={styles.icon} />
                     <Text style={styles.buttonText}>Supprimer le profil</Text>
                 </TouchableOpacity>
             </View>
