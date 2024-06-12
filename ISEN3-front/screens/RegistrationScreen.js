@@ -50,26 +50,21 @@ const RegistrationScreen = ({ navigation }) => {
                 <TextInput
                     style={styles.SignUpInput}
                     placeholder="Nom"
+                    placeholderTextColor={"#E0E2E8"}
                     value={surname}
                     onChangeText={(text) => setSurname(text.toUpperCase())}
                 />
                 <TextInput
                     style={styles.SignUpInput}
                     placeholder="Prénom"
+                    placeholderTextColor={"#E0E2E8"}
                     value={name}
                     onChangeText={setName}
                 />
                 <TextInput
                     style={styles.SignUpInput}
-                    placeholder="AAAA-MM-JJ"
-                    value={birthDate}
-                    onChangeText={handleBirthDateChange}
-                    keyboardType="numeric"
-                    maxLength={10}
-                />
-                <TextInput
-                    style={styles.SignUpInput}
                     placeholder="Email"
+                    placeholderTextColor={"#E0E2E8"}
                     value={email}
                     onChangeText={setEmail}
                     keyboardType="email-address"
@@ -78,6 +73,7 @@ const RegistrationScreen = ({ navigation }) => {
                 <TextInput
                     style={styles.SignUpInput}
                     placeholder="Mot de passe"
+                    placeholderTextColor={"#E0E2E8"}
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry
@@ -86,29 +82,29 @@ const RegistrationScreen = ({ navigation }) => {
                     style={styles.SignUpButton}
                     onPress={handleRegister}
                 >
-                    <Text>S'inscrire</Text>
+                    <Text style={{color:"#E0E2E8"}}>S'inscrire</Text>
                 </TouchableOpacity>
-                <Text style={{ margin: 20 }}>ou</Text>
+                <Text style={{ margin: 20, color:"#E0E2E8"}}>ou</Text>
                 <TouchableOpacity
                     style={styles.firmSignUp}
                     onPress={() => navigation.navigate('Register')}
                 >
                     <Icon name="logo-google" size={20} style={styles.firmIcon} />
-                    <Text>Continuer avec Google</Text>
+                    <Text style={styles.firmText}>Continuer avec Google</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.firmSignUp}
                     onPress={() => navigation.navigate('Register')}
                 >
                     <Icon name="logo-apple" size={20} style={styles.firmIcon} />
-                    <Text>Continuer avec Apple</Text>
+                    <Text style={styles.firmText}>Continuer avec Apple</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.firmSignUp}
                     onPress={() => navigation.navigate('Register')}
                 >
                     <Icon name="logo-microsoft" size={20} style={styles.firmIcon} />
-                    <Text>Continuer avec Microsoft</Text>
+                    <Text style={styles.firmText}>Continuer avec Microsoft</Text>
                 </TouchableOpacity>
             </View>
         </View>
