@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { View, Text, Button, FlatList, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Button, FlatList, StyleSheet, SectionList } from 'react-native';
 import { CourseContext } from '../context/CourseContext';
 import { AuthContext } from '../context/AuthContext';
 
@@ -51,72 +51,47 @@ const CoursesScreen = ({ navigation }) => {
         return <Text>Loading...</Text>;
     }
 
+    const renderCourseItem = ({ item }) => (
+        <View style={styles.courseItem}>
+            <Text>{item.name}</Text>
+            <Text>{item.instructor ? `${item.instructor.name} ${item.instructor.surname}` : 'Instructor not assigned'}</Text>
+            <Text>{new Date(item.schedule).toLocaleString()}</Text>
+            <Text>Capacity: {item.enrolled}/{item.capacity}</Text>
+            {isEnrolled(item.id) ? (
+                <Button title="Unenroll" onPress={() => handleUnenroll(item.id)} />
+            ) : (
+                user && user.ticket > 0 ? (
+                    <Button title="Enroll" onPress={() => handleEnroll(item.id)} />
+                ) : (
+                    <Text style={styles.noTicketsText}>Not enough tickets to enroll</Text>
+                )
+            )}
+        </View>
+    );
+
+    const sections = [
+        { title: 'Mes prochains cours', data: futureCourses },
+        { title: 'Mes derniers cours', data: pastCourses },
+        { title: 'Cours disponibles', data: availableCourses }
+    ];
+
     return (
-        <ScrollView style={styles.container}>
-            <Text style={styles.header}>Mes prochains cours</Text>
-            {futureCourses.length > 0 ? (
-                <>
-                    <FlatList
-                        data={futureCourses}
-                        horizontal
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
-                            <View style={styles.courseItem}>
-                                <Text>{item.name}</Text>
-                                <Text>{item.instructor ? `${item.instructor.name} ${item.instructor.surname}` : 'Instructor not assigned'}</Text>
-                                <Text>{new Date(item.schedule).toLocaleString()}</Text>
-                                <Text>Capacity: {item.enrolled}/{item.capacity}</Text>
-                                <Button title="Unenroll" onPress={() => handleUnenroll(item.id)} />
-                            </View>
-                        )}
-                    />
-                    <Button title="Voir plus" onPress={() => navigation.navigate('AllCourses', { type: 'future' })} />
-                </>
-            ) : (
-                <Text style={styles.noCoursesText}>Vous n'avez pas de prochains cours.</Text>
-            )}
-
-            <Text style={styles.header}>Mes derniers cours</Text>
-            {pastCourses.length > 0 ? (
-                <>
-                    <FlatList
-                        data={pastCourses}
-                        horizontal
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
-                            <View style={styles.courseItem}>
-                                <Text>{item.name}</Text>
-                                <Text>{item.instructor ? `${item.instructor.name} ${item.instructor.surname}` : 'Instructor not assigned'}</Text>
-                                <Text>{new Date(item.schedule).toLocaleString()}</Text>
-                                <Text>Capacity: {item.enrolled}/{item.capacity}</Text>
-                            </View>
-                        )}
-                    />
-                    <Button title="Voir plus" onPress={() => navigation.navigate('AllCourses', { type: 'past' })} />
-                </>
-            ) : (
-                <Text style={styles.noCoursesText}>Vous n'avez pas de derniers cours.</Text>
-            )}
-
-            <Text style={styles.header}>Cours disponibles</Text>
-            <FlatList
-                data={availableCourses}
+        <View style={styles.container}>
+            <SectionList
+                sections={sections}
                 keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                    <View style={styles.courseItem}>
-                        <Text>{item.name}</Text>
-                        <Text>{item.instructor ? `${item.instructor.name} ${item.instructor.surname}` : 'Instructor not assigned'}</Text>
-                        <Text>{new Date(item.schedule).toLocaleString()}</Text>
-                        <Text>Capacity: {item.enrolled}/{item.capacity}</Text>
-                        {user && user.ticket > 0 ? (
-                            <Button title="Enroll" onPress={() => handleEnroll(item.id)} />
-                        ) : (
-                            <Text style={styles.noTicketsText}>Not enough tickets to enroll</Text>
-                        )}
+                renderItem={renderCourseItem}
+                renderSectionHeader={({ section: { title } }) => (
+                    <Text style={styles.header}>{title}</Text>
+                )}
+                ListFooterComponent={() => (
+                    <View>
+                        <Button title="Voir plus de prochains cours" onPress={() => navigation.navigate('AllCourses', { type: 'future' })} />
+                        <Button title="Voir plus de derniers cours" onPress={() => navigation.navigate('AllCourses', { type: 'past' })} />
                     </View>
                 )}
             />
-        </ScrollView>
+        </View>
     );
 };
 
@@ -133,7 +108,7 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: 'white',
         borderRadius: 10,
-        margin: 10,
+        marginVertical: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
