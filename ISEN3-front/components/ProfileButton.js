@@ -11,7 +11,7 @@ function ProfileButton({ navigation }) {
             style={styles.profileButton}
             onPress={() => navigation.navigate(isLoggedIn ? 'Profile' : 'Login')}
         >
-            <Icon name="person-circle" size={30} color="black" />
+            <Icon name="person-circle" size={30} color="#E0E2E8" />
         </TouchableOpacity>
     );
 }

@@ -29,9 +29,13 @@ function TabNavigator() {
                     }
                     return <Icon name={iconName} size={size} color={color} />;
                 },
-                tabBarActiveTintColor: 'tomato',
-                tabBarInactiveTintColor: 'gray',
+                tabBarActiveTintColor: '#E0E2E8',
+                tabBarInactiveTintColor: '#394054',
                 headerShown: false,
+                tabBarStyle: {
+                    backgroundColor: '#1C1C1F',
+                    borderTopColor: '#5DA5B3',
+                },
             })}
         >
             <Tab.Screen name="Association" component={HomeStack} />
