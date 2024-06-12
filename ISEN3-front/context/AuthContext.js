@@ -51,6 +51,9 @@ export const AuthProvider = ({ children }) => {
     }, [refreshToken]);
 
     const fetchUserProfile = useCallback(async () => {
+
+        const token = await AsyncStorage.getItem('token');
+
         const data = await fetchData('https://isen3-back.onrender.com/api/users/me', {
             headers: { Authorization: `Bearer ${token}` },
         });
@@ -65,9 +68,11 @@ export const AuthProvider = ({ children }) => {
     const checkAndRefreshToken = useCallback(async () => {
         if (!token) return false;
         const isTokenValid = await verifyToken();
+        console.log('Token is valid:', isTokenValid);
         if (isTokenValid) return true;
 
         const newToken = await refreshJwtToken();
+        console.log('New token:', newToken);
         if (newToken) return true;
 
         await logout(); // Logout if token refresh fails
@@ -114,10 +119,10 @@ export const AuthProvider = ({ children }) => {
                 setToken(response.data.token);
                 setRefreshToken(response.data.refreshToken);
                 setIsLoggedIn(true);
-                //await fetchUserProfile();
+                await fetchUserProfile();
                 return true;
             } else {
-                throw new Error('Invalid response from server');
+                return false;
             }
         } catch (error) {
             console.error('Failed to login', error);
