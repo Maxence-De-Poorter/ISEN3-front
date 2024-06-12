@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import {Alert} from "react-native";
 
 export const AuthContext = createContext();
 
@@ -76,6 +77,8 @@ export const AuthProvider = ({ children }) => {
         if (newToken) return true;
 
         await logout(); // Logout if token refresh fails
+        Alert.alert('Session expirée', 'Votre session a expiré. Veuillez vous reconnecter.');
+
         return false;
     }, [token, verifyToken, refreshJwtToken]);
 
