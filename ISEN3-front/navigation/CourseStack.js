@@ -7,7 +7,6 @@ import Tickets from '../components/Tickets';
 import { AuthContext } from '../context/AuthContext';
 
 const Stack = createStackNavigator();
-const headerBackgroundColor = 'white';
 
 function CourseStack({ navigation }) {
     const { isLoggedIn, user } = useContext(AuthContext);
@@ -21,8 +20,9 @@ function CourseStack({ navigation }) {
                 options={{
                     headerTitle: 'DENSHO',
                     headerStyle: {
-                        backgroundColor: headerBackgroundColor,
+                        backgroundColor: "#1C1C1F",
                     },
+                    headerTintColor: '#E0E2E8',
                     headerRight: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             {isLoggedIn && <Tickets count={ticket} />}

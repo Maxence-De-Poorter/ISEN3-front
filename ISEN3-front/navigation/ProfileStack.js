@@ -7,7 +7,6 @@ import Tickets from "../components/Tickets";
 import {AuthContext} from "../context/AuthContext";
 
 const Stack = createStackNavigator();
-const headerBackgroundColor = 'white';
 
 function ProfileStack({ navigation}) {
     const { isLoggedIn, user } = useContext(AuthContext);
@@ -21,14 +20,15 @@ function ProfileStack({ navigation}) {
                 options={{
                     headerTitle: 'DENSHO',
                     headerStyle: {
-                        backgroundColor: headerBackgroundColor,
+                        backgroundColor: "#1C1C1F",
                     },
+                    headerTintColor: '#E0E2E8',
                     headerLeft: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 20}}>
                             <TouchableOpacity
                                 onPress={() => navigation.navigate("Association")}
                             >
-                                <Icon name="arrow-back-outline" size={30} color="black" />
+                                <Icon name="arrow-back-outline" size={30} color="#E0E2E8" />
                             </TouchableOpacity>
                         </View>
                     ),

@@ -5,7 +5,6 @@ import {StyleSheet, TouchableOpacity, View} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
 const Stack = createStackNavigator();
-const headerBackgroundColor = 'white';
 
 function LoginStack({ navigation}) {
     return (
@@ -16,14 +15,15 @@ function LoginStack({ navigation}) {
                 options={{
                     headerTitle: 'DENSHO',
                     headerStyle: {
-                        backgroundColor: headerBackgroundColor,
+                        backgroundColor: "#1C1C1F",
                     },
+                    headerTintColor: '#E0E2E8',
                     headerLeft: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 20}}>
                             <TouchableOpacity
                                 onPress={() => navigation.navigate('HomeScreen')}
                             >
-                                <Icon name="arrow-back-outline" size={30} color="black" />
+                                <Icon name="arrow-back-outline" size={30} color="#E0E2E8" />
                             </TouchableOpacity>
                         </View>
                     ),

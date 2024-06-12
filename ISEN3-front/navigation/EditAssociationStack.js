@@ -5,7 +5,7 @@ import ProfileButton from '../components/ProfileButton';
 import Tickets from '../components/Tickets';
 import { AuthContext } from '../context/AuthContext';
 import EditAssociationScreen from "../screens/EditAssociationScreen";
-import styles from "../styles/LoginScreen";
+import styles from "../styles/LoginStyles";
 import Icon from "react-native-vector-icons/Ionicons";
 
 const Stack = createStackNavigator();
