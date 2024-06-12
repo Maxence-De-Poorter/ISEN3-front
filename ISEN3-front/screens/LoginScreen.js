@@ -4,62 +4,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../styles/LoginScreen';
 
-const LoginForm = ({ email, setEmail, password, setPassword, handleLogin, navigation }) => (
-    <View style={styles.loginContainer}>
-        <Text style={styles.logInText}>Connexion</Text>
-        <TextInput
-            style={styles.logInInput}
-            placeholder="Adresse E-mail"
-            onChangeText={setEmail}
-            value={email}
-            autoCapitalize="none"
-            keyboardType="email-address"
-        />
-        <TextInput
-            style={styles.logInInput}
-            placeholder="Mot de passe"
-            secureTextEntry
-            onChangeText={setPassword}
-            value={password}
-            autoCapitalize="none"
-        />
-        <TouchableOpacity
-            style={styles.logInButton}
-            onPress={handleLogin}
-        >
-            <Text>Se connecter</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-            style={styles.signUpButton}
-            onPress={() => navigation.navigate('Register')}
-        >
-            <Text>Vous n’avez pas de compte ? Inscription</Text>
-        </TouchableOpacity>
-        <Text style={{ margin: 20 }}>ou</Text>
-        <TouchableOpacity
-            style={styles.firmSignUp}
-            onPress={() => navigation.navigate('Register')}
-        >
-            <Icon name="logo-google" size={20} style={styles.firmIcon} />
-            <Text>Continuer avec Google</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-            style={styles.firmSignUp}
-            onPress={() => navigation.navigate('Register')}
-        >
-            <Icon name="logo-apple" size={20} style={styles.firmIcon} />
-            <Text>Continuer avec Apple</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-            style={styles.firmSignUp}
-            onPress={() => navigation.navigate('Register')}
-        >
-            <Icon name="logo-microsoft" size={20} style={styles.firmIcon} />
-            <Text>Continuer avec Microsoft</Text>
-        </TouchableOpacity>
-    </View>
-);
-
 function LoginScreen({ navigation }) {
     const { login } = useContext(AuthContext);
     const [email, setEmail] = useState('');
@@ -79,14 +23,59 @@ function LoginScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <LoginForm
-                email={email}
-                setEmail={setEmail}
-                password={password}
-                setPassword={setPassword}
-                handleLogin={handleLogin}
-                navigation={navigation}
-            />
+            <View style={styles.loginContainer}>
+                <Text style={styles.logInText}>Connexion</Text>
+                <TextInput
+                    style={styles.logInInput}
+                    placeholder="Adresse E-mail"
+                    onChangeText={setEmail}
+                    value={email}
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                />
+                <TextInput
+                    style={styles.logInInput}
+                    placeholder="Mot de passe"
+                    secureTextEntry
+                    onChangeText={setPassword}
+                    value={password}
+                    autoCapitalize="none"
+                />
+                <TouchableOpacity
+                    style={styles.logInButton}
+                    onPress={handleLogin}
+                >
+                    <Text>Se connecter</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.signUpButton}
+                    onPress={() => navigation.navigate('Register')}
+                >
+                    <Text>Vous n’avez pas de compte ? Inscription</Text>
+                </TouchableOpacity>
+                <Text style={{ margin: 20 }}>ou</Text>
+                <TouchableOpacity
+                    style={styles.firmSignUp}
+                    onPress={() => navigation.navigate('Register')}
+                >
+                    <Icon name="logo-google" size={20} style={styles.firmIcon} />
+                    <Text>Continuer avec Google</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.firmSignUp}
+                    onPress={() => navigation.navigate('Register')}
+                >
+                    <Icon name="logo-apple" size={20} style={styles.firmIcon} />
+                    <Text>Continuer avec Apple</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.firmSignUp}
+                    onPress={() => navigation.navigate('Register')}
+                >
+                    <Icon name="logo-microsoft" size={20} style={styles.firmIcon} />
+                    <Text>Continuer avec Microsoft</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
