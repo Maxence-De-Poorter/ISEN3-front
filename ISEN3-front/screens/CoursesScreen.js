@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { View, Text, Button, SectionList } from 'react-native';
+import { View, Text, Button, SectionList, Alert } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/AuthContext';
@@ -24,7 +24,8 @@ const CoursesScreen = ({ navigation }) => {
             if (user && user.ticket > 0) {
                 const isAuthenticated = await checkAndRefreshToken();
                 if (!isAuthenticated) {
-                    navigation.navigate('Login')
+                    navigation.navigate('Login');
+                    return;
                 }
 
                 const token = await AsyncStorage.getItem('token');
@@ -40,11 +41,29 @@ const CoursesScreen = ({ navigation }) => {
         }
     };
 
+    const confirmEnroll = (courseId, tickets) => {
+        Alert.alert(
+            "Confirmer l'inscription",
+            `Cela vous coûtera ${tickets} ticket(s). Voulez-vous continuer ?`,
+            [
+                {
+                    text: "Annuler",
+                    style: "cancel"
+                },
+                {
+                    text: "Confirmer",
+                    onPress: () => handleEnroll(courseId)
+                }
+            ]
+        );
+    };
+
     const handleUnenroll = async (courseId) => {
         try {
             const isAuthenticated = await checkAndRefreshToken();
             if (!isAuthenticated) {
-                navigation.navigate('Login')
+                navigation.navigate('Login');
+                return;
             }
 
             const token = await AsyncStorage.getItem('token');
@@ -79,12 +98,13 @@ const CoursesScreen = ({ navigation }) => {
             <Text>{item.instructor ? `${item.instructor.name} ${item.instructor.surname}` : 'Instructor not assigned'}</Text>
             <Text>{new Date(item.schedule).toLocaleString()}</Text>
             <Text>Capacity: {item.enrolled}/{item.capacity}</Text>
+            <Text>Prix: {item.tickets} ticket(s)</Text>
             {isLoggedIn && (
                 isEnrolled(item.id) ? (
                     <Button title="Unenroll" onPress={() => handleUnenroll(item.id)} />
                 ) : (
-                    user && user.ticket > 0 ? (
-                        <Button title="Enroll" onPress={() => handleEnroll(item.id)} />
+                    user && user.ticket >= item.tickets ? (
+                        <Button title="Enroll" onPress={() => confirmEnroll(item.id, item.tickets)} />
                     ) : (
                         <Text style={styles.noTicketsText}>Not enough tickets to enroll</Text>
                     )
