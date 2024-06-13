@@ -13,7 +13,7 @@ function GestionScreen({ navigation }) {
                     style={styles.button}
                     onPress={() => navigation.navigate('EditAssociation')}
                 >
-                    <Text style={styles.buttonText}>Modifier l'Association</Text>
+                    <Text style={styles.buttonText}>Gérer les informations de l'association</Text>
                 </TouchableOpacity>
             )}
             {(user.role === 'administrator' || user.role === 'teacher') && (
@@ -21,10 +21,19 @@ function GestionScreen({ navigation }) {
                     style={styles.button}
                     onPress={() => navigation.navigate('EditMember')}
                 >
-                    <Text style={styles.buttonText}>Modifier les Élèves</Text>
+                    <Text style={styles.buttonText}>Gérer les membres</Text>
                 </TouchableOpacity>
+
             )}
-            {/* Ajoutez d'autres boutons ici pour d'autres fonctionnalités */}
+            {(user.role === 'administrator' || user.role === 'teacher') && (
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.navigate('EditCourse')}
+                >
+                    <Text style={styles.buttonText}>Gérer les Cours</Text>
+                </TouchableOpacity>
+
+            )}
         </View>
     );
 }
