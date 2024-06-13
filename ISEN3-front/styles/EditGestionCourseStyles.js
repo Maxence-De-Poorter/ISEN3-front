@@ -62,22 +62,11 @@ export default StyleSheet.create({
     },
     picker: {
         marginLeft: 10,
+        flex: 1,
     },
-    durationContainer: {
+    ticketContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 10,
-    },
-    durationInputInline: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        padding: 10,
-        width: 50,
-        marginHorizontal: 5,
-    },
-    durationText: {
-        marginVertical: 10,
-        fontSize: 16,
     },
 });

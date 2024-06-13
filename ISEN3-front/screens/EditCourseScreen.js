@@ -1,38 +1,69 @@
-import React, { useState } from 'react';
+import React, {useContext, useState} from 'react';
 import { View, TouchableOpacity, Text, Modal, TextInput, Button, ScrollView } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from '../styles/EditGestionCourseStyles';
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {AuthContext} from "../context/AuthContext";
 
-function EditCourseScreen() {
+function EditCourseScreen({ navigation}) {
+    const { checkAndRefreshToken } = useContext(AuthContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [courseName, setCourseName] = useState('');
     const [courseDate, setCourseDate] = useState(new Date());
     const [courseTime, setCourseTime] = useState(new Date());
     const [courseDuration, setCourseDuration] = useState(new Date(0));
-    const [coursePrice, setCoursePrice] = useState('');
-    const [courseType, setCourseType] = useState('');
+    const [courseTickets, setCourseTickets] = useState(0);
+    const [courseCapacity, setCourseCapacity] = useState('');
 
-    const handleCreateCourse = () => {
+    const handleCreateCourse = async () => {
         const durationHours = courseDuration.getUTCHours();
         const durationMinutes = courseDuration.getUTCMinutes();
         const duration = `${durationHours}h ${durationMinutes}m`;
-        // Logique pour créer un cours
-        console.log({
-            name: courseName,
-            date: courseDate.toDateString(),
-            time: courseTime.toTimeString(),
-            duration: duration,
-            price: coursePrice,
-            type: courseType,
-        });
-        setModalVisible(false);
-        // Réinitialiser les champs de saisie
-        setCourseName('');
-        setCourseDate(new Date());
-        setCourseTime(new Date());
-        setCourseDuration(new Date(0));
-        setCoursePrice('');
-        setCourseType('');
+
+        try {
+            const isAuthenticated = await checkAndRefreshToken();
+            if (!isAuthenticated) {
+                navigation.navigate('Login');
+                return;
+            }
+
+            const token = await AsyncStorage.getItem('token');
+
+            const requestData = {
+                name: courseName,
+                schedule: `${courseDate.toISOString().split('T')[0]}T${courseTime.toTimeString().split(' ')[0]}`,
+                duration,
+                capacity: parseInt(courseCapacity, 10),
+                tickets: courseTickets,
+            };
+
+            console.log('Request Data:', requestData); // Ajoutez ceci pour vérifier les données envoyées
+
+            const response = await axios.post('https://isen3-back.onrender.com/api/courses/', requestData, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            console.log('Response:', response); // Ajoutez ceci pour vérifier la réponse
+
+            if (response.status !== 201) {
+                console.error('Error creating course:', response.data);
+                return;
+            }
+
+            const course = response.data;
+            console.log('Course created:', course);
+            setModalVisible(false);
+            setCourseName('');
+            setCourseDate(new Date());
+            setCourseTime(new Date());
+            setCourseDuration(new Date(0));
+            setCourseTickets(0);
+            setCourseCapacity('');
+        } catch (error) {
+            console.error('Error creating course:', error.response ? error.response.data : error.message);
+        }
     };
 
     const handleDateChange = (event, selectedDate) => {
@@ -108,17 +139,27 @@ function EditCourseScreen() {
                         />
                     </View>
                     <TextInput
-                        placeholder="Prix du cours"
-                        value={coursePrice}
-                        onChangeText={setCoursePrice}
+                        placeholder="Capacité"
+                        value={courseCapacity}
+                        onChangeText={setCourseCapacity}
+                        keyboardType="numeric"
                         style={styles.input}
                     />
-                    <TextInput
-                        placeholder="Type du cours"
-                        value={courseType}
-                        onChangeText={setCourseType}
-                        style={styles.input}
-                    />
+                    <View style={styles.ticketContainer}>
+                        <Text>Prix (tickets) :</Text>
+                        <Picker
+                            selectedValue={courseTickets}
+                            style={styles.picker}
+                            onValueChange={(itemValue) => setCourseTickets(itemValue)}
+                        >
+                            <Picker.Item label="Gratuit" value={0} />
+                            <Picker.Item label="1 ticket" value={1} />
+                            <Picker.Item label="2 tickets" value={2} />
+                            <Picker.Item label="3 tickets" value={3} />
+                            <Picker.Item label="4 tickets" value={4} />
+                            <Picker.Item label="5 tickets" value={5} />
+                        </Picker>
+                    </View>
                     <Button title="Créer" onPress={handleCreateCourse} />
                     <Button title="Annuler" onPress={() => setModalVisible(false)} />
                 </View>
