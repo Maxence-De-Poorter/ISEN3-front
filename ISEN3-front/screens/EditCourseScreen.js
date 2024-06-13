@@ -8,7 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {AuthContext} from "../context/AuthContext";
 
 function EditCourseScreen({ navigation}) {
-    const { checkAndRefreshToken } = useContext(AuthContext);
+    const { checkAndRefreshToken, fetchAssociationInfo} = useContext(AuthContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [courseName, setCourseName] = useState('');
     const [courseDate, setCourseDate] = useState(new Date());
@@ -39,13 +39,11 @@ function EditCourseScreen({ navigation}) {
                 tickets: courseTickets,
             };
 
-            console.log('Request Data:', requestData); // Ajoutez ceci pour vérifier les données envoyées
-
             const response = await axios.post('https://isen3-back.onrender.com/api/courses/', requestData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            console.log('Response:', response); // Ajoutez ceci pour vérifier la réponse
+            await fetchAssociationInfo();
 
             if (response.status !== 201) {
                 console.error('Error creating course:', response.data);
