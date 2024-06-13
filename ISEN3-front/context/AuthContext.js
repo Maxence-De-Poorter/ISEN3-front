@@ -11,6 +11,8 @@ export const AuthProvider = ({ children }) => {
     const [refreshToken, setRefreshToken] = useState(null);
     const [user, setUser] = useState(null);
     const [association, setAssociation] = useState(null);
+    const [courses, setCourses] = useState([]);
+    const [enrolledCourses, setEnrolledCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -52,18 +54,24 @@ export const AuthProvider = ({ children }) => {
     }, [refreshToken]);
 
     const fetchUserProfile = useCallback(async () => {
-
         const token = await AsyncStorage.getItem('token');
-
         const data = await fetchData('https://isen3-back.onrender.com/api/users/me', {
             headers: { Authorization: `Bearer ${token}` },
         });
         setUser(data);
+
+        const enrolledData = await fetchData('https://isen3-back.onrender.com/api/courses/enrolled', {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        setEnrolledCourses(enrolledData);
     }, [fetchData, token]);
 
     const fetchAssociationInfo = useCallback(async () => {
         const data = await fetchData('https://isen3-back.onrender.com/api/associations/0');
         setAssociation(data);
+
+        const coursesData = await fetchData('https://isen3-back.onrender.com/api/courses');
+        setCourses(coursesData);
     }, [fetchData]);
 
     const checkAndRefreshToken = useCallback(async () => {
@@ -153,6 +161,8 @@ export const AuthProvider = ({ children }) => {
             refreshToken,
             user,
             association,
+            courses,
+            enrolledCourses,
             loading,
             error,
             fetchData,
