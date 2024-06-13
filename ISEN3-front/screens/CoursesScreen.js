@@ -6,51 +6,18 @@ import { AuthContext } from '../context/AuthContext';
 import styles from '../styles/CoursesStyles';
 
 const CoursesScreen = ({ navigation }) => {
-    const { user, isLoggedIn, fetchUserProfile, checkAndRefreshToken } = useContext(AuthContext);
-    const [courses, setCourses] = useState([]);
-    const [enrolledCourses, setEnrolledCourses] = useState([]);
+    const { user, isLoggedIn, courses, enrolledCourses, fetchUserProfile, checkAndRefreshToken } = useContext(AuthContext);
     const [futureCourses, setFutureCourses] = useState([]);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        handleFetchCourses();
         if (isLoggedIn) {
-            handleFetchEnrolledCourses();
+            fetchUserProfile();
         }
     }, [isLoggedIn]);
 
     useEffect(() => {
         updateCourses();
     }, [enrolledCourses]);
-
-    const handleFetchCourses = async () => {
-        try {
-            const response = await axios.get('https://isen3-back.onrender.com/api/courses', {
-            });
-            setCourses(response.data);
-        } catch (error) {
-            console.error('Failed to fetch courses', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleFetchEnrolledCourses = async () => {
-        try {
-            const isAuthenticated = await checkAndRefreshToken();
-            if (!isAuthenticated) {
-                navigation.navigate('Login')
-            }
-
-            const token = await AsyncStorage.getItem('token');
-            const response = await axios.get('https://isen3-back.onrender.com/api/courses/enrolled', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setEnrolledCourses(response.data);
-        } catch (error) {
-            console.error('Failed to fetch enrolled courses', error);
-        }
-    };
 
     const handleEnroll = async (courseId) => {
         try {
@@ -64,8 +31,6 @@ const CoursesScreen = ({ navigation }) => {
                 await axios.post('https://isen3-back.onrender.com/api/courses/enroll', { courseId }, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                handleFetchCourses();
-                handleFetchEnrolledCourses();
                 fetchUserProfile();
             } else {
                 console.error('Not enough tickets to enroll');
@@ -86,8 +51,6 @@ const CoursesScreen = ({ navigation }) => {
             await axios.post('https://isen3-back.onrender.com/api/courses/unenroll', { courseId }, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            handleFetchCourses();
-            handleFetchEnrolledCourses();
             fetchUserProfile();
         } catch (error) {
             console.error('Failed to unenroll from course', error);
@@ -110,10 +73,6 @@ const CoursesScreen = ({ navigation }) => {
 
     const availableCourses = courses.filter(course => !isEnrolled(course.id));
 
-    if (loading) {
-        return <Text>Loading...</Text>;
-    }
-
     const renderCourseItem = ({ item }) => (
         <View style={styles.courseItem}>
             <Text>{item.name}</Text>
@@ -135,7 +94,7 @@ const CoursesScreen = ({ navigation }) => {
     );
 
     const sections = [
-        { title: 'Mes prochains cours', data: futureCourses },
+        ...(isLoggedIn ? [{ title: 'Mes prochains cours', data: futureCourses }] : []),
         { title: 'Cours disponibles', data: availableCourses }
     ];
 
@@ -149,10 +108,11 @@ const CoursesScreen = ({ navigation }) => {
                     <Text style={styles.header}>{title}</Text>
                 )}
                 ListFooterComponent={() => (
-                    <View>
-                        <Button title="Voir plus de prochains cours" onPress={() => navigation.navigate('AllCourses', { type: 'future' })} />
-                        <Button title="Voir mon historique" onPress={() => navigation.navigate('Home')} />
-                    </View>
+                    isLoggedIn && (
+                        <View>
+                            <Button title="Voir mon historique" onPress={() => navigation.navigate('Home')} />
+                        </View>
+                    )
                 )}
             />
         </View>
