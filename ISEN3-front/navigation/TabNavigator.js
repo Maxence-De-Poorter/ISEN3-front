@@ -5,6 +5,7 @@ import HomeStack from './HomeStack';
 import CourseStack from './CourseStack';
 import GestionStack from './GestionStack';
 import { AuthContext } from '../context/AuthContext';
+import TestScreen from "../screens/TestScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -38,6 +39,7 @@ function TabNavigator() {
             })}
         >
             <Tab.Screen name="Association" component={HomeStack} />
+            <Tab.Screen name="Test" component={TestScreen} />
             <Tab.Screen name="Cours" component={CourseStack} />
             {isLoggedIn && user?.role !== 'student' && (
                     <Tab.Screen name="Gestion" component={GestionStack} />
