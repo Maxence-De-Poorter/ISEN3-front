@@ -31,9 +31,18 @@ function ManageCoursesScreen({ navigation}) {
 
             const token = await AsyncStorage.getItem('token');
 
+            // Combine the date and time into a single Date object
+            const combinedDateTime = new Date(
+                courseDate.getFullYear(),
+                courseDate.getMonth(),
+                courseDate.getDate(),
+                courseTime.getHours(),
+                courseTime.getMinutes()
+            );
+
             const requestData = {
                 name: courseName,
-                schedule: `${courseDate.toISOString().split('T')[0]}T${courseTime.toTimeString().split(' ')[0]}`,
+                schedule: combinedDateTime.toISOString(),
                 duration,
                 capacity: parseInt(courseCapacity, 10),
                 tickets: courseTickets,
@@ -42,8 +51,6 @@ function ManageCoursesScreen({ navigation}) {
             const response = await axios.post('https://isen3-back.onrender.com/api/courses/', requestData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-
-            await fetchAssociationInfo();
 
             if (response.status !== 201) {
                 console.error('Error creating course:', response.data);
