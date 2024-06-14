@@ -3,10 +3,11 @@ import { View, Text, TouchableOpacity, Alert, SectionList, Modal, TextInput } fr
 import { AuthContext } from '../context/AuthContext';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
-import styles from '../styles/EditMemberScreenStyles'; // Import the styles
+import styles from '../styles/EditMemberScreenStyles';
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Import the styles
 
-const EditMemberScreen = () => {
-    const { token, user, verifyToken, refreshJwtToken } = useContext(AuthContext);
+const EditMemberScreen = ({navigation}) => {
+    const { token, user, checkAndRefreshToken} = useContext(AuthContext);
     const [users, setUsers] = useState([]);
     const [expandedRoles, setExpandedRoles] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
@@ -15,6 +16,7 @@ const EditMemberScreen = () => {
     const [surname, setSurname] = useState('');
     const [email, setEmail] = useState('');
     const [role, setRole] = useState('');
+    const [tickets, setTickets] = useState('0');
 
     useEffect(() => {
         fetchUsers();
@@ -22,19 +24,15 @@ const EditMemberScreen = () => {
 
     const fetchUsers = async () => {
         try {
-            const isTokenValid = await verifyToken(token);
-            let currentToken = token;
-
-            if (!isTokenValid) {
-                currentToken = await refreshJwtToken();
-                if (!currentToken) {
-                    Alert.alert("Erreur", "Impossible de récupérer les utilisateurs. Veuillez vous reconnecter.");
-                    return;
-                }
+            const isAuthenticated = await checkAndRefreshToken();
+            if (!isAuthenticated) {
+                navigation.navigate('Login')
             }
 
+            const token = await AsyncStorage.getItem('token');
+
             const response = await axios.get('https://isen3-back.onrender.com/api/users/all', {
-                headers: { Authorization: `Bearer ${currentToken}` }
+                headers: { Authorization: `Bearer ${token}` }
             });
 
             const filteredUsers = response.data.filter(u => u.id !== user.id);
@@ -85,32 +83,30 @@ const EditMemberScreen = () => {
         setSurname(user.surname);
         setEmail(user.email);
         setRole(user.role);
+        setTickets(user.ticket ? user.ticket.toString() : '0');
         setModalVisible(true);
     };
 
     const handleUpdateUser = async () => {
         try {
-            const isTokenValid = await verifyToken(token);
-            let currentToken = token;
-
-            if (!isTokenValid) {
-                currentToken = await refreshJwtToken();
-                if (!currentToken) {
-                    Alert.alert("Erreur", "Impossible de mettre à jour l'utilisateur. Veuillez vous reconnecter.");
-                    return;
-                }
+            const isAuthenticated = await checkAndRefreshToken();
+            if (!isAuthenticated) {
+                navigation.navigate('Login')
             }
+
+            const token = await AsyncStorage.getItem('token');
 
             await axios.put(`https://isen3-back.onrender.com/api/users/update/${selectedUser.id}`, {
                 name: firstName,
                 surname: surname,
                 email: email,
-                role: role
+                role: role,
+                tickets: parseInt(tickets, 10)
             }, {
-                headers: { Authorization: `Bearer ${currentToken}` }
+                headers: { Authorization: `Bearer ${token}` }
             });
 
-            fetchUsers();
+            await fetchUsers();
             setModalVisible(false);
         } catch (error) {
             console.error('Failed to update user', error);
@@ -118,7 +114,7 @@ const EditMemberScreen = () => {
         }
     };
 
-    const handleDeleteUser = async (user) => {
+    const handleDeleteUser = async () => {
         Alert.alert(
             "Confirmation",
             "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
@@ -131,22 +127,19 @@ const EditMemberScreen = () => {
                     text: "Supprimer",
                     onPress: async () => {
                         try {
-                            const isTokenValid = await verifyToken(token);
-                            let currentToken = token;
-
-                            if (!isTokenValid) {
-                                currentToken = await refreshJwtToken();
-                                if (!currentToken) {
-                                    Alert.alert("Erreur", "Impossible de supprimer l'utilisateur. Veuillez vous reconnecter.");
-                                    return;
-                                }
+                            const isAuthenticated = await checkAndRefreshToken();
+                            if (!isAuthenticated) {
+                                navigation.navigate('Login')
                             }
 
-                            await axios.delete(`https://isen3-back.onrender.com/api/users/delete/${user.id}`, {
-                                headers: { Authorization: `Bearer ${currentToken}` }
+                            const token = await AsyncStorage.getItem('token');
+
+                            await axios.delete(`https://isen3-back.onrender.com/api/users/delete/${selectedUser.id}`, {
+                                headers: { Authorization: `Bearer ${token}` }
                             });
 
                             fetchUsers();
+                            setModalVisible(false);
                         } catch (error) {
                             console.error('Failed to delete user', error);
                             Alert.alert("Erreur", "La suppression de l'utilisateur a échoué.");
@@ -182,14 +175,6 @@ const EditMemberScreen = () => {
                                     <Text style={styles.buttonText}>Modifier</Text>
                                 </TouchableOpacity>
                             )}
-                            {user.role === 'administrator' && (
-                                <TouchableOpacity
-                                    style={styles.deleteButton}
-                                    onPress={() => handleDeleteUser(item)}
-                                >
-                                    <Text style={styles.buttonText}>Supprimer</Text>
-                                </TouchableOpacity>
-                            )}
                         </View>
                     ) : null
                 )}
@@ -221,14 +206,21 @@ const EditMemberScreen = () => {
                             value={email}
                             onChangeText={setEmail}
                         />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Tickets"
+                            value={tickets}
+                            onChangeText={setTickets}
+                            keyboardType="numeric"
+                        />
                         {user.role === 'administrator' && (
                             <Picker
                                 selectedValue={role}
                                 onValueChange={(itemValue) => setRole(itemValue)}
                             >
-                                <Picker.Item label="Élève" value="student" />
-                                <Picker.Item label="Professeur" value="teacher" />
-                                <Picker.Item label="Administrateur" value="administrator" />
+                                <Picker.Item label="Élève" value="student" color="#E0E2E8"/>
+                                <Picker.Item label="Professeur" value="teacher" color="#E0E2E8"/>
+                                <Picker.Item label="Administrateur" value="administrator" color="#E0E2E8"/>
                             </Picker>
                         )}
                         <TouchableOpacity
@@ -236,6 +228,12 @@ const EditMemberScreen = () => {
                             onPress={handleUpdateUser}
                         >
                             <Text style={styles.buttonText}>Enregistrer</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.deleteButton}
+                            onPress={handleDeleteUser}
+                        >
+                            <Text style={styles.buttonText}>Supprimer</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.cancelButton}

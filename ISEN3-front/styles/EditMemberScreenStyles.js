@@ -4,22 +4,24 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: 'white',
+        backgroundColor: '#1C1C1F',
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
+        color: '#E0E2E8',
     },
     sectionHeader: {
-        backgroundColor: '#f0f0f0',
+        backgroundColor: '#1C1C1F',
         padding: 10,
         borderBottomWidth: 1,
-        borderBottomColor: 'gray',
+        borderBottomColor: '#5DA5B3',
     },
     sectionHeaderText: {
         fontSize: 18,
         fontWeight: 'bold',
+        color: '#E0E2E8',
     },
     userContainer: {
         flexDirection: 'row',
@@ -32,14 +34,16 @@ const styles = StyleSheet.create({
     },
     userText: {
         fontSize: 18,
+        color: '#E0E2E8',
     },
     editButton: {
-        backgroundColor: '#007BFF',
         padding: 10,
-        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#5DA5B3',
+        alignSelf: 'flex-end',
     },
     buttonText: {
-        color: 'white',
+        color: '#E0E2E8',
         fontSize: 16,
     },
     modalContainer: {
@@ -50,7 +54,7 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         width: "80%",
-        backgroundColor: "white",
+        backgroundColor: "#1C1C1F",
         padding: 20,
         borderRadius: 10,
     },
@@ -58,17 +62,26 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         marginBottom: 20,
+        color: '#E0E2E8',
     },
     input: {
         height: 40,
-        borderColor: "gray",
+        borderColor: "#5DA5B3",
         borderWidth: 1,
         marginBottom: 10,
         paddingLeft: 10,
         borderRadius: 5,
+        color: '#E0E2E8',
     },
     saveButton: {
         backgroundColor: "#007BFF",
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 10,
+        alignItems: "center",
+    },
+    deleteButton: {
+        backgroundColor: "red",
         padding: 10,
         borderRadius: 5,
         marginBottom: 10,
