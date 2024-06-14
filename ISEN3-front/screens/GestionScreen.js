@@ -32,7 +32,14 @@ function GestionScreen({ navigation }) {
                 >
                     <Text style={styles.buttonText}>Gérer les Cours</Text>
                 </TouchableOpacity>
-
+            )}
+            {user.role === 'administrator' && (
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.navigate('ManagePurchases')}
+                >
+                    <Text style={styles.buttonText}>Gérer les achats et abonnements</Text>
+                </TouchableOpacity>
             )}
         </View>
     );
