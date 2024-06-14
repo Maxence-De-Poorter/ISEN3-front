@@ -68,8 +68,9 @@ export const AuthProvider = ({ children, navigation}) => {
     }, [fetchData, token]);
 
     const fetchAssociationInfo = useCallback(async () => {
-        const data = await fetchData('https://isen3-back.onrender.com/api/associations/0');
+        const data = await fetchData('https://isen3-back.onrender.com/api/associations/1');
         setAssociation(data);
+        console.log('Association:', data);
     }, [fetchData]);
 
     const checkAndRefreshToken = useCallback(async () => {
@@ -144,6 +145,7 @@ export const AuthProvider = ({ children, navigation}) => {
         setIsLoggedIn(false);
         setUser(null);
     };
+
 
     return (
         <AuthContext.Provider value={{
