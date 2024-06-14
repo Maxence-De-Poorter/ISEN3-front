@@ -30,7 +30,7 @@ function TabNavigator() {
                     return <Icon name={iconName} size={size} color={color} />;
                 },
                 tabBarActiveTintColor: '#E0E2E8',
-                tabBarInactiveTintColor: '#394054',
+                tabBarInactiveTintColor: '#B0C0D4',
                 headerShown: false,
                 tabBarStyle: {
                     backgroundColor: '#1C1C1F',
