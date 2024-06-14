@@ -9,6 +9,7 @@ import ProfileStack from "./navigation/ProfileStack";
 import EditAssociationStack from "./navigation/EditAssociationStack";
 import EditMemberStack from "./navigation/EditMemberStack";
 import EditCourseStack from "./navigation/EditCourseStack";
+import ManagePurchasesStack from "./navigation/ManagePurchasesStack";
 
 const Stack = createStackNavigator();
 
@@ -24,6 +25,7 @@ function App() {
                         <Stack.Screen name="EditAssociation" component={EditAssociationStack} />
                         <Stack.Screen name="EditMember" component={EditMemberStack} />
                         <Stack.Screen name="EditCourse" component={EditCourseStack} />
+                        <Stack.Screen name="ManagePurchases" component={ManagePurchasesStack} />
                     </Stack.Navigator>
                 </NavigationContainer>
         </AuthProvider>
