@@ -63,6 +63,9 @@ export const AuthProvider = ({ children }) => {
         const enrolledData = await fetchData('https://isen3-back.onrender.com/api/courses/enrolled', {
             headers: { Authorization: `Bearer ${token}` },
         });
+
+        // Trier les cours inscrits par date du plus ancien au plus récent
+        enrolledData.sort((a, b) => new Date(b.schedule) - new Date(a.schedule));
         setEnrolledCourses(enrolledData);
     }, [fetchData, token]);
 
@@ -71,8 +74,12 @@ export const AuthProvider = ({ children }) => {
         setAssociation(data);
 
         const coursesData = await fetchData('https://isen3-back.onrender.com/api/courses');
+
+        // Trier les cours disponibles par date du plus ancien au plus récent
+        coursesData.sort((a, b) => new Date(a.schedule) - new Date(b.schedule));
         setCourses(coursesData);
     }, [fetchData]);
+
 
     const checkAndRefreshToken = useCallback(async () => {
         if (!token) return false;
