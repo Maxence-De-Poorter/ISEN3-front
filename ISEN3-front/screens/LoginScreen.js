@@ -16,8 +16,7 @@ function LoginScreen({ navigation }) {
                 navigation.navigate('Profile');
             }
         } catch (error) {
-            Alert.alert('Erreur', error.message || 'Une erreur est survenue. Veuillez réessayer.');
-            console.error(error);
+            Alert.alert('Erreur', "L'adresse e-mail ou le mot de passe est incorrect.");
         }
     };
 
