@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { View, Text, Button, SectionList, Alert } from 'react-native';
+import { View, Text, Button, SectionList, Alert, Image } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/AuthContext';
@@ -21,7 +21,7 @@ const CoursesScreen = ({ navigation }) => {
 
     const handleEnroll = async (courseId) => {
         try {
-            if (user && user.ticket > 0) {
+            if (user) {
                 const isAuthenticated = await checkAndRefreshToken();
                 if (!isAuthenticated) {
                     navigation.navigate('Login');
@@ -32,7 +32,7 @@ const CoursesScreen = ({ navigation }) => {
                 await axios.post('https://isen3-back.onrender.com/api/courses/enroll', { courseId }, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                fetchUserProfile();
+                await fetchUserProfile();
             } else {
                 console.error('Not enough tickets to enroll');
             }
@@ -70,10 +70,29 @@ const CoursesScreen = ({ navigation }) => {
             await axios.post('https://isen3-back.onrender.com/api/courses/unenroll', { courseId }, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            fetchUserProfile();
+
+            await fetchUserProfile();
+
         } catch (error) {
             console.error('Failed to unenroll from course', error);
         }
+    };
+
+    const confirmUnenroll = (courseId) => {
+        Alert.alert(
+            "Confirmer la désinscription",
+            "Êtes-vous sûr de vouloir vous désinscrire de ce cours ?",
+            [
+                {
+                    text: "Annuler",
+                    style: "cancel"
+                },
+                {
+                    text: "Confirmer",
+                    onPress: () => handleUnenroll(courseId)
+                }
+            ]
+        );
     };
 
     const updateCourses = () => {
@@ -90,26 +109,29 @@ const CoursesScreen = ({ navigation }) => {
         return enrolledCourses.some(course => course.id === courseId);
     };
 
-    const availableCourses = courses.filter(course => !isEnrolled(course.id));
+    const availableCourses = courses.filter(course => !isEnrolled(course.id) && new Date(course.schedule) > new Date());
 
     const renderCourseItem = ({ item }) => (
         <View style={styles.courseItem}>
-            <Text>{item.name}</Text>
-            <Text>{item.instructor ? `${item.instructor.name} ${item.instructor.surname}` : 'Instructor not assigned'}</Text>
-            <Text>{new Date(item.schedule).toLocaleString()}</Text>
-            <Text>Capacity: {item.enrolled}/{item.capacity}</Text>
-            <Text>Prix: {item.tickets} ticket(s)</Text>
-            {isLoggedIn && (
-                isEnrolled(item.id) ? (
-                    <Button title="Unenroll" onPress={() => handleUnenroll(item.id)} />
-                ) : (
-                    user && user.ticket >= item.tickets ? (
-                        <Button title="Enroll" onPress={() => confirmEnroll(item.id, item.tickets)} />
+            <Image source={{ uri: 'https://imgs.search.brave.com/NZNa8b8gryIx-GRJxW3dzTKWySXvvqFFTMwLCo50sJE/rs:fit:860:0:0/g:ce/aHR0cHM6Ly93d3cu/anVuaWEuY29tL3dw/LWNvbnRlbnQvdXBs/b2Fkcy8yMDIyLzEw/LzJFM0E0MTkzLTEu/anBn' }} style={styles.courseImage} />
+            <View style={styles.courseInfo}>
+                <Text style={styles.courseTitle}>{item.name}</Text>
+                <Text style={styles.courseInfos}>{item.instructor ? `${item.instructor.name} ${item.instructor.surname}` : 'Instructor not assigned'}</Text>
+                <Text style={styles.courseInfos}>{new Date(item.schedule).toLocaleString()}</Text>
+                <Text style={styles.courseInfos}>Capacity: {item.enrolled}/{item.capacity}</Text>
+                <Text style={styles.courseInfos}>Prix: {item.tickets} ticket(s)</Text>
+                {isLoggedIn && (
+                    isEnrolled(item.id) ? (
+                        <Button title="Se désinscrire" onPress={() => confirmUnenroll(item.id)} />
                     ) : (
-                        <Text style={styles.noTicketsText}>Not enough tickets to enroll</Text>
+                        user && user.ticket >= item.tickets ? (
+                            <Button title="S'inscrire" onPress={() => confirmEnroll(item.id, item.tickets)} />
+                        ) : (
+                            <Text style={styles.noTicketsText}>Pas assez de tickets pour s'inscrire</Text>
+                        )
                     )
-                )
-            )}
+                )}
+            </View>
         </View>
     );
 
@@ -120,20 +142,21 @@ const CoursesScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
+            {isLoggedIn && (
+                <View>
+                    <Button title="Voir mon historique" onPress={() => navigation.navigate('Home')} />
+                </View>
+            )}
             <SectionList
                 sections={sections}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={renderCourseItem}
                 renderSectionHeader={({ section: { title } }) => (
-                    <Text style={styles.header}>{title}</Text>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.header}>{title}</Text>
+                    </View>
                 )}
-                ListFooterComponent={() => (
-                    isLoggedIn && (
-                        <View>
-                            <Button title="Voir mon historique" onPress={() => navigation.navigate('Home')} />
-                        </View>
-                    )
-                )}
+                stickySectionHeadersEnabled={true}
             />
         </View>
     );
