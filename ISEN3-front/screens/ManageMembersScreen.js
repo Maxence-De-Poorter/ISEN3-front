@@ -3,10 +3,10 @@ import { View, Text, TouchableOpacity, Alert, SectionList, Modal, TextInput } fr
 import { AuthContext } from '../context/AuthContext';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
-import styles from '../styles/EditMemberScreenStyles';
+import styles from '../styles/ManageMembersStyles';
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import the styles
 
-const EditMemberScreen = ({navigation}) => {
+const ManageMembersScreen = ({navigation}) => {
     const { token, user, checkAndRefreshToken} = useContext(AuthContext);
     const [users, setUsers] = useState([]);
     const [expandedRoles, setExpandedRoles] = useState({});
@@ -248,4 +248,4 @@ const EditMemberScreen = ({navigation}) => {
     );
 };
 
-export default EditMemberScreen;
+export default ManageMembersScreen;

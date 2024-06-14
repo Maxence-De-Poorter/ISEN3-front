@@ -6,9 +6,9 @@ import TabNavigator from './navigation/TabNavigator';
 import LoginStack from "./navigation/LoginStack";
 import RegisterStack from "./navigation/RegisterStack";
 import ProfileStack from "./navigation/ProfileStack";
-import EditAssociationStack from "./navigation/EditAssociationStack";
-import EditMemberStack from "./navigation/EditMemberStack";
-import EditCourseStack from "./navigation/EditCourseStack";
+import ManageAssociationStack from "./navigation/ManageAssociationStack";
+import ManageMembersStack from "./navigation/ManageMembersStack";
+import ManageCoursesStack from "./navigation/ManageCoursesStack";
 import ManagePurchasesStack from "./navigation/ManagePurchasesStack";
 
 const Stack = createStackNavigator();
@@ -22,9 +22,9 @@ function App() {
                         <Stack.Screen name="Profile" component={ProfileStack} />
                         <Stack.Screen name="Login" component={LoginStack} />
                         <Stack.Screen name="Register" component={RegisterStack} />
-                        <Stack.Screen name="EditAssociation" component={EditAssociationStack} />
-                        <Stack.Screen name="EditMember" component={EditMemberStack} />
-                        <Stack.Screen name="EditCourse" component={EditCourseStack} />
+                        <Stack.Screen name="EditAssociation" component={ManageAssociationStack} />
+                        <Stack.Screen name="EditMember" component={ManageMembersStack} />
+                        <Stack.Screen name="EditCourse" component={ManageCoursesStack} />
                         <Stack.Screen name="ManagePurchases" component={ManagePurchasesStack} />
                     </Stack.Navigator>
                 </NavigationContainer>

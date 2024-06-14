@@ -2,11 +2,11 @@ import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Alert, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../context/AuthContext';
-import styles from '../styles/EditAssociationStyles';
+import styles from '../styles/ManageAssociationStyles';
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const EditAssociationScreen = ({navigation}) => {
+const ManageAssociationScreen = ({navigation}) => {
     const {association, checkAndRefreshToken, fetchAssociationInfo} = useContext(AuthContext);
     const [associationName, setAssociationName] = useState('');
     const [associationAddress, setAssociationAddress] = useState('');
@@ -87,4 +87,4 @@ const EditAssociationScreen = ({navigation}) => {
     );
 };
 
-export default EditAssociationScreen;
+export default ManageAssociationScreen;

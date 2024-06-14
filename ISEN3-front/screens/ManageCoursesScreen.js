@@ -2,12 +2,12 @@ import React, {useContext, useState} from 'react';
 import { View, TouchableOpacity, Text, Modal, TextInput, Button, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import styles from '../styles/EditGestionCourseStyles';
+import styles from '../styles/ManageCoursesStyles';
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {AuthContext} from "../context/AuthContext";
 
-function EditCourseScreen({ navigation}) {
+function ManageCoursesScreen({ navigation}) {
     const { checkAndRefreshToken, fetchAssociationInfo} = useContext(AuthContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [courseName, setCourseName] = useState('');
@@ -166,4 +166,4 @@ function EditCourseScreen({ navigation}) {
     );
 }
 
-export default EditCourseScreen;
+export default ManageCoursesScreen;

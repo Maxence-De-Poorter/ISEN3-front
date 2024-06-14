@@ -4,17 +4,17 @@ import {TouchableOpacity, View} from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 import styles from "../styles/LoginStyles";
 import Icon from "react-native-vector-icons/Ionicons";
-import EditMemberScreen from "../screens/EditMemberScreen";
+import ManageMembersScreen from "../screens/ManageMembersScreen";
 
 const Stack = createStackNavigator();
 
-function EditMemberStack({ navigation }) {
+function ManageMembersStack({ navigation }) {
 
     return (
         <Stack.Navigator>
             <Stack.Screen
                 name="EditMemberScreen"
-                component={EditMemberScreen}
+                component={ManageMembersScreen}
                 options={{
                     headerTitle: 'DENSHO',
                     headerStyle: {
@@ -37,4 +37,4 @@ function EditMemberStack({ navigation }) {
     );
 }
 
-export default EditMemberStack;
+export default ManageMembersStack;
