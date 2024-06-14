@@ -1,41 +1,69 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, Button, SectionList, Alert, Image } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../styles/CoursesStyles';
 
 const CoursesScreen = ({ navigation }) => {
-    const { user, isLoggedIn, courses, enrolledCourses, fetchUserProfile, checkAndRefreshToken } = useContext(AuthContext);
+    const { user, isLoggedIn, checkAndRefreshToken } = useContext(AuthContext);
+    const [courses, setCourses] = useState([]);
+    const [enrolledCourses, setEnrolledCourses] = useState([]);
     const [futureCourses, setFutureCourses] = useState([]);
 
-    useEffect(() => {
-        if (isLoggedIn) {
-            fetchUserProfile();
-        }
-    }, [isLoggedIn]);
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchCourses();
+            if (isLoggedIn) {
+                fetchEnrolledCourses();
+            }
+        }, [isLoggedIn])
+    );
 
     useEffect(() => {
-        updateCourses();
+        updateFutureCourses();
     }, [enrolledCourses]);
+
+    const fetchCourses = async () => {
+        try {
+            const response = await axios.get('https://isen3-back.onrender.com/api/courses/upcoming');
+            setCourses(response.data);
+        } catch (error) {
+            console.error('Failed to fetch courses', error);
+        }
+    };
+
+    const fetchEnrolledCourses = async () => {
+        try {
+            const isAuthenticated = await checkAndRefreshToken();
+            if (!isAuthenticated) {
+                navigation.navigate('Login');
+                return;
+            }
+
+            const token = await AsyncStorage.getItem('token');
+            const response = await axios.get('https://isen3-back.onrender.com/api/courses/enrolled/upcoming', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setEnrolledCourses(response.data);
+        } catch (error) {
+            console.error('Failed to fetch enrolled courses', error);
+        }
+    };
 
     const handleEnroll = async (courseId) => {
         try {
-            if (user) {
-                const isAuthenticated = await checkAndRefreshToken();
-                if (!isAuthenticated) {
-                    navigation.navigate('Login');
-                    return;
-                }
-
-                const token = await AsyncStorage.getItem('token');
-                await axios.post('https://isen3-back.onrender.com/api/courses/enroll', { courseId }, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                await fetchUserProfile();
-            } else {
-                console.error('Not enough tickets to enroll');
+            const isAuthenticated = await checkAndRefreshToken();
+            if (!isAuthenticated) {
+                navigation.navigate('Login');
+                return;
             }
+            const token = await AsyncStorage.getItem('token');
+            await axios.post('https://isen3-back.onrender.com/api/courses/enroll', { courseId }, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            await fetchEnrolledCourses();
         } catch (error) {
             console.error('Failed to enroll in course', error);
         }
@@ -71,7 +99,7 @@ const CoursesScreen = ({ navigation }) => {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            await fetchUserProfile();
+            await fetchEnrolledCourses();
 
         } catch (error) {
             console.error('Failed to unenroll from course', error);
@@ -95,7 +123,7 @@ const CoursesScreen = ({ navigation }) => {
         );
     };
 
-    const updateCourses = () => {
+    const updateFutureCourses = () => {
         if (enrolledCourses.length > 0) {
             const now = new Date();
             const upcoming = enrolledCourses.filter(course => new Date(course.schedule) >= now).slice(0, 3);
@@ -109,7 +137,7 @@ const CoursesScreen = ({ navigation }) => {
         return enrolledCourses.some(course => course.id === courseId);
     };
 
-    const availableCourses = courses.filter(course => !isEnrolled(course.id) && new Date(course.schedule) > new Date());
+    const availableCourses = courses.filter(course => !isEnrolled(course.id));
 
     const renderCourseItem = ({ item }) => (
         <View style={styles.courseItem}>

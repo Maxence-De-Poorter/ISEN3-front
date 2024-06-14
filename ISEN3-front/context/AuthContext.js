@@ -1,11 +1,11 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {Alert} from "react-native";
+import { Alert } from 'react-native';
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children, navigation}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [token, setToken] = useState(null);
     const [refreshToken, setRefreshToken] = useState(null);
@@ -54,41 +54,30 @@ export const AuthProvider = ({ children }) => {
     }, [refreshToken]);
 
     const fetchUserProfile = useCallback(async () => {
+        const isAuthenticated = await checkAndRefreshToken();
+        if (!isAuthenticated) {
+            navigation.navigate('Login');
+            return;
+        }
+
         const token = await AsyncStorage.getItem('token');
         const data = await fetchData('https://isen3-back.onrender.com/api/users/me', {
             headers: { Authorization: `Bearer ${token}` },
         });
         setUser(data);
-
-        const enrolledData = await fetchData('https://isen3-back.onrender.com/api/courses/enrolled', {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        // Trier les cours inscrits par date du plus ancien au plus récent
-        enrolledData.sort((a, b) => new Date(b.schedule) - new Date(a.schedule));
-        setEnrolledCourses(enrolledData);
     }, [fetchData, token]);
 
     const fetchAssociationInfo = useCallback(async () => {
         const data = await fetchData('https://isen3-back.onrender.com/api/associations/0');
         setAssociation(data);
-
-        const coursesData = await fetchData('https://isen3-back.onrender.com/api/courses');
-
-        // Trier les cours disponibles par date du plus ancien au plus récent
-        coursesData.sort((a, b) => new Date(a.schedule) - new Date(b.schedule));
-        setCourses(coursesData);
     }, [fetchData]);
-
 
     const checkAndRefreshToken = useCallback(async () => {
         if (!token) return false;
         const isTokenValid = await verifyToken();
-        console.log('Token is valid:', isTokenValid);
         if (isTokenValid) return true;
 
         const newToken = await refreshJwtToken();
-        console.log('New token:', newToken);
         if (newToken) return true;
 
         await logout(); // Logout if token refresh fails
@@ -122,7 +111,6 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         initialize();
-        console.log('Initialized AuthProvider');
     }, [initialize]);
 
     const login = useCallback(async (email, password) => {
@@ -156,10 +144,6 @@ export const AuthProvider = ({ children }) => {
         setIsLoggedIn(false);
         setUser(null);
     };
-
-    if (loading) {
-        return null;
-    }
 
     return (
         <AuthContext.Provider value={{
