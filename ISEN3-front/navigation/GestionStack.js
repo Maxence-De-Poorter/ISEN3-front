@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { View } from 'react-native';
 import ProfileButton from '../components/ProfileButton';
-import Tickets from '../components/Tickets';
 import { AuthContext } from '../context/AuthContext';
 import GestionScreen from "../screens/GestionScreen";
 
@@ -25,7 +24,6 @@ function GestionStack({ navigation }) {
                     headerTintColor: '#E0E2E8',
                     headerRight: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            {isLoggedIn && <Tickets count={ticket} />}
                             <ProfileButton navigation={navigation} />
                         </View>
                     ),

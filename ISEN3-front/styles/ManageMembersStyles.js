@@ -42,6 +42,13 @@ const styles = StyleSheet.create({
         borderColor: '#5DA5B3',
         alignSelf: 'flex-end',
     },
+    creditButton: {
+        padding: 10,
+        borderWidth: 1,
+        borderColor: '#5DA5B3',
+        alignSelf: 'flex-end',
+        marginLeft: 10,
+    },
     buttonText: {
         color: '#E0E2E8',
         fontSize: 16,
@@ -93,12 +100,8 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: "center",
     },
-    createButton: {
-        backgroundColor: "#28a745",
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
-        alignItems: "center",
+    actionButtonsContainer: {
+        flexDirection: 'row',
     },
 });
 

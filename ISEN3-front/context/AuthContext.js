@@ -54,12 +54,6 @@ export const AuthProvider = ({ children, navigation}) => {
     }, [refreshToken]);
 
     const fetchUserProfile = useCallback(async () => {
-        const isAuthenticated = await checkAndRefreshToken();
-        if (!isAuthenticated) {
-            navigation.navigate('Login');
-            return;
-        }
-
         const token = await AsyncStorage.getItem('token');
         const data = await fetchData('https://isen3-back.onrender.com/api/users/me', {
             headers: { Authorization: `Bearer ${token}` },
@@ -70,7 +64,6 @@ export const AuthProvider = ({ children, navigation}) => {
     const fetchAssociationInfo = useCallback(async () => {
         const data = await fetchData('https://isen3-back.onrender.com/api/associations/1');
         setAssociation(data);
-        console.log('Association:', data);
     }, [fetchData]);
 
     const checkAndRefreshToken = useCallback(async () => {
@@ -112,6 +105,7 @@ export const AuthProvider = ({ children, navigation}) => {
 
     useEffect(() => {
         initialize();
+        console.log('Auth context initialized');
     }, [initialize]);
 
     const login = useCallback(async (email, password) => {

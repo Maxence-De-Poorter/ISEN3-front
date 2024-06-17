@@ -36,7 +36,7 @@ function GestionScreen({ navigation }) {
             {user.role === 'administrator' && (
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => navigation.navigate('ManagePurchases')}
+                    onPress={() => navigation.navigate('ManageOffers')}
                 >
                     <Text style={styles.buttonText}>Gérer les achats et abonnements</Text>
                 </TouchableOpacity>

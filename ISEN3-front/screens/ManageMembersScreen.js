@@ -1,22 +1,25 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Alert, SectionList, Modal, TextInput } from 'react-native';
-import { AuthContext } from '../context/AuthContext';
 import { Picker } from '@react-native-picker/picker';
+import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import styles from '../styles/ManageMembersStyles';
-import AsyncStorage from "@react-native-async-storage/async-storage"; // Import the styles
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const ManageMembersScreen = ({navigation}) => {
-    const { token, user, checkAndRefreshToken} = useContext(AuthContext);
+const ManageMembersScreen = ({ navigation }) => {
+    const { token, user, checkAndRefreshToken } = useContext(AuthContext);
     const [users, setUsers] = useState([]);
     const [expandedRoles, setExpandedRoles] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
+    const [creditModalVisible, setCreditModalVisible] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [firstName, setFirstName] = useState('');
     const [surname, setSurname] = useState('');
     const [email, setEmail] = useState('');
     const [role, setRole] = useState('');
-    const [tickets, setTickets] = useState('0');
+    const [creditType, setCreditType] = useState('tickets');
+    const [creditAmount, setCreditAmount] = useState('');
+    const [expirationDate, setExpirationDate] = useState('');
 
     useEffect(() => {
         fetchUsers();
@@ -26,7 +29,7 @@ const ManageMembersScreen = ({navigation}) => {
         try {
             const isAuthenticated = await checkAndRefreshToken();
             if (!isAuthenticated) {
-                navigation.navigate('Login')
+                navigation.navigate('Login');
             }
 
             const token = await AsyncStorage.getItem('token');
@@ -83,15 +86,22 @@ const ManageMembersScreen = ({navigation}) => {
         setSurname(user.surname);
         setEmail(user.email);
         setRole(user.role);
-        setTickets(user.ticket ? user.ticket.toString() : '0');
         setModalVisible(true);
+    };
+
+    const openCreditModal = (user) => {
+        setSelectedUser(user);
+        setCreditType('tickets');
+        setCreditAmount('');
+        setExpirationDate('');
+        setCreditModalVisible(true);
     };
 
     const handleUpdateUser = async () => {
         try {
             const isAuthenticated = await checkAndRefreshToken();
             if (!isAuthenticated) {
-                navigation.navigate('Login')
+                navigation.navigate('Login');
             }
 
             const token = await AsyncStorage.getItem('token');
@@ -101,7 +111,6 @@ const ManageMembersScreen = ({navigation}) => {
                 surname: surname,
                 email: email,
                 role: role,
-                tickets: parseInt(tickets, 10)
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -111,6 +120,31 @@ const ManageMembersScreen = ({navigation}) => {
         } catch (error) {
             console.error('Failed to update user', error);
             Alert.alert("Erreur", "La mise à jour de l'utilisateur a échoué.");
+        }
+    };
+
+    const handleCreditUser = async () => {
+        try {
+            const isAuthenticated = await checkAndRefreshToken();
+            if (!isAuthenticated) {
+                navigation.navigate('Login');
+            }
+
+            const token = await AsyncStorage.getItem('token');
+
+            await axios.post(`https://isen3-back.onrender.com/api/users/credit/manual/${selectedUser.id}`, {
+                type: creditType,
+                amount: parseInt(creditAmount, 10),
+                expirationDate: creditType === 'subscription' ? expirationDate : null,
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            await fetchUsers();
+            setCreditModalVisible(false);
+        } catch (error) {
+            console.error('Failed to credit user', error);
+            Alert.alert("Erreur", "Le crédit de l'utilisateur a échoué.");
         }
     };
 
@@ -129,7 +163,7 @@ const ManageMembersScreen = ({navigation}) => {
                         try {
                             const isAuthenticated = await checkAndRefreshToken();
                             if (!isAuthenticated) {
-                                navigation.navigate('Login')
+                                navigation.navigate('Login');
                             }
 
                             const token = await AsyncStorage.getItem('token');
@@ -168,12 +202,20 @@ const ManageMembersScreen = ({navigation}) => {
                         <View style={styles.userContainer}>
                             <Text style={styles.userText}>{item.surname} {item.name}</Text>
                             {(user.role === 'administrator' || (user.role === 'teacher' && item.role === 'student')) && (
-                                <TouchableOpacity
-                                    style={styles.editButton}
-                                    onPress={() => openEditModal(item)}
-                                >
-                                    <Text style={styles.buttonText}>Modifier</Text>
-                                </TouchableOpacity>
+                                <View style={styles.actionButtonsContainer}>
+                                    <TouchableOpacity
+                                        style={styles.editButton}
+                                        onPress={() => openEditModal(item)}
+                                    >
+                                        <Text style={styles.buttonText}>Modifier</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.creditButton}
+                                        onPress={() => openCreditModal(item)}
+                                    >
+                                        <Text style={styles.buttonText}>Créditer</Text>
+                                    </TouchableOpacity>
+                                </View>
                             )}
                         </View>
                     ) : null
@@ -206,21 +248,14 @@ const ManageMembersScreen = ({navigation}) => {
                             value={email}
                             onChangeText={setEmail}
                         />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Tickets"
-                            value={tickets}
-                            onChangeText={setTickets}
-                            keyboardType="numeric"
-                        />
                         {user.role === 'administrator' && (
                             <Picker
                                 selectedValue={role}
                                 onValueChange={(itemValue) => setRole(itemValue)}
                             >
-                                <Picker.Item label="Élève" value="student" color="#E0E2E8"/>
-                                <Picker.Item label="Professeur" value="teacher" color="#E0E2E8"/>
-                                <Picker.Item label="Administrateur" value="administrator" color="#E0E2E8"/>
+                                <Picker.Item label="Élève" value="student" />
+                                <Picker.Item label="Professeur" value="teacher" />
+                                <Picker.Item label="Administrateur" value="administrator" />
                             </Picker>
                         )}
                         <TouchableOpacity
@@ -238,6 +273,53 @@ const ManageMembersScreen = ({navigation}) => {
                         <TouchableOpacity
                             style={styles.cancelButton}
                             onPress={() => setModalVisible(false)}
+                        >
+                            <Text style={styles.buttonText}>Annuler</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={creditModalVisible}
+                onRequestClose={() => setCreditModalVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Créditer un utilisateur</Text>
+                        <Picker
+                            selectedValue={creditType}
+                            onValueChange={(itemValue) => setCreditType(itemValue)}
+                        >
+                            <Picker.Item label="Tickets" value="tickets" />
+                            <Picker.Item label="Carte prépayée" value="prepaid" />
+                            <Picker.Item label="Abonnement" value="subscription" />
+                        </Picker>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Quantité"
+                            value={creditAmount}
+                            onChangeText={setCreditAmount}
+                            keyboardType="numeric"
+                        />
+                        {creditType === 'subscription' && (
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Date d'expiration"
+                                value={expirationDate}
+                                onChangeText={setExpirationDate}
+                            />
+                        )}
+                        <TouchableOpacity
+                            style={styles.saveButton}
+                            onPress={handleCreditUser}
+                        >
+                            <Text style={styles.buttonText}>Créditer</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.cancelButton}
+                            onPress={() => setCreditModalVisible(false)}
                         >
                             <Text style={styles.buttonText}>Annuler</Text>
                         </TouchableOpacity>

@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import {TouchableOpacity, View} from 'react-native';
 import ProfileButton from '../components/ProfileButton';
-import Tickets from '../components/Tickets';
 import { AuthContext } from '../context/AuthContext';
 import ManageCoursesScreen from "../screens/ManageCoursesScreen";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -35,7 +34,6 @@ function ManageCoursesStack({ navigation }) {
                     ),
                     headerRight: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            {isLoggedIn && <Tickets count={ticket} />}
                             <ProfileButton navigation={navigation} />
                         </View>
                     ),

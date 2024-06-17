@@ -3,7 +3,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { View } from 'react-native';
 import CoursesScreen from '../screens/CoursesScreen';
 import ProfileButton from '../components/ProfileButton';
-import Tickets from '../components/Tickets';
 import { AuthContext } from '../context/AuthContext';
 
 const Stack = createStackNavigator();
@@ -25,7 +24,6 @@ function CourseStack({ navigation }) {
                     headerTintColor: '#E0E2E8',
                     headerRight: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            {isLoggedIn && <Tickets count={ticket} />}
                             <ProfileButton navigation={navigation} />
                         </View>
                     ),
