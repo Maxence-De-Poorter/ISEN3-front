@@ -16,7 +16,9 @@ function HomeStack({ navigation }) {
                     headerTitle: 'DENSHO',
                     headerStyle: {
                         backgroundColor: "#1C1C1F",
-
+                    },
+                    headerTitleStyle: {
+                        fontSize: 20,
                     },
                     headerTintColor: '#E0E2E8',
                     headerRight: () => (

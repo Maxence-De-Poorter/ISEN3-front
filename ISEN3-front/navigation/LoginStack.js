@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from "../screens/LoginScreen";
-import {StyleSheet, TouchableOpacity, View} from "react-native";
+import {TouchableOpacity, View} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
 const Stack = createStackNavigator();
@@ -16,6 +16,9 @@ function LoginStack({ navigation}) {
                     headerTitle: 'DENSHO',
                     headerStyle: {
                         backgroundColor: "#1C1C1F",
+                    },
+                    headerTitleStyle: {
+                        fontSize: 20,
                     },
                     headerTintColor: '#E0E2E8',
                     headerLeft: () => (

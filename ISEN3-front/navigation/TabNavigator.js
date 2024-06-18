@@ -27,13 +27,15 @@ function TabNavigator() {
                     } else if (route.name === 'Gestion') {
                         iconName = focused ? 'settings' : 'settings-outline';
                     }
-                    return <Icon name={iconName} size={size} color={color} />;
+                    return <Icon name={iconName} size={30} color={color} />;
                 },
                 tabBarActiveTintColor: '#E0E2E8',
                 tabBarInactiveTintColor: '#B0C0D4',
+                tabBarShowLabel: false,
                 headerShown: false,
                 tabBarStyle: {
                     backgroundColor: '#1C1C1F',
+
                 },
             })}
         >

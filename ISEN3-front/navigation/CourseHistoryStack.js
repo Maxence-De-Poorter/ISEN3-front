@@ -1,7 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import {TouchableOpacity, View} from 'react-native';
-import ProfileButton from '../components/ProfileButton';
 import CoursesHistoryScreen from "../screens/CoursesHistoryScreen";
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -18,6 +17,9 @@ function CourseHistoryStack({ navigation }) {
                     headerStyle: {
                         backgroundColor: "#1C1C1F",
                     },
+                    headerTitleStyle: {
+                        fontSize: 20,
+                    },
                     headerTintColor: '#E0E2E8',
                     headerLeft: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 20}}>
@@ -26,11 +28,6 @@ function CourseHistoryStack({ navigation }) {
                             >
                                 <Icon name="arrow-back-outline" size={30} color="#E0E2E8" />
                             </TouchableOpacity>
-                        </View>
-                    ),
-                    headerRight: () => (
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <ProfileButton navigation={navigation} />
                         </View>
                     ),
                 }}

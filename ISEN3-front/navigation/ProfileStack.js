@@ -1,16 +1,12 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import {TouchableOpacity, View} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import ProfileScreen from "../screens/ProfileScreen";
-import {AuthContext} from "../context/AuthContext";
 
 const Stack = createStackNavigator();
 
 function ProfileStack({ navigation}) {
-    const { isLoggedIn, user } = useContext(AuthContext);
-    const ticket = user ? user.ticket : 0;
-
     return (
         <Stack.Navigator>
             <Stack.Screen
@@ -20,6 +16,9 @@ function ProfileStack({ navigation}) {
                     headerTitle: 'DENSHO',
                     headerStyle: {
                         backgroundColor: "#1C1C1F",
+                    },
+                    headerTitleStyle: {
+                        fontSize: 20,
                     },
                     headerTintColor: '#E0E2E8',
                     headerLeft: () => (

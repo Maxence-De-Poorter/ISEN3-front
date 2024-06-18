@@ -17,6 +17,9 @@ function RegisterStack({ navigation}) {
                     headerStyle: {
                         backgroundColor: "#1C1C1F",
                     },
+                    headerTitleStyle: {
+                        fontSize: 20,
+                    },
                     headerTintColor: '#E0E2E8',
                     headerLeft: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 20}}>
