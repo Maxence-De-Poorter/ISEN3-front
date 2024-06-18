@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, Button, SectionList, Alert, Image } from 'react-native';
+import { View, Text, Button, SectionList, Alert, Image, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -69,10 +69,10 @@ const CoursesScreen = ({ navigation }) => {
         }
     };
 
-    const confirmEnroll = (courseId, tickets) => {
+    const confirmEnroll = (courseId) => {
         Alert.alert(
             "Confirmer l'inscription",
-            `Cela vous coûtera ${tickets} ticket(s). Voulez-vous continuer ?`,
+            "Voulez-vous vous inscrire à ce cours ?",
             [
                 {
                     text: "Annuler",
@@ -147,41 +147,45 @@ const CoursesScreen = ({ navigation }) => {
                 <Text style={styles.courseInfos}>{item.instructor ? `${item.instructor.name} ${item.instructor.surname}` : 'Instructor not assigned'}</Text>
                 <Text style={styles.courseInfos}>{new Date(item.schedule).toLocaleString()}</Text>
                 <Text style={styles.courseInfos}>Capacity: {item.enrolled}/{item.capacity}</Text>
-                <Text style={styles.courseInfos}>Prix: {item.tickets} ticket(s)</Text>
                 {isLoggedIn && (
                     isEnrolled(item.id) ? (
                         <Button title="Se désinscrire" onPress={() => confirmUnenroll(item.id)} />
                     ) : (
-                        user && user.ticket >= item.tickets ? (
-                            <Button title="S'inscrire" onPress={() => confirmEnroll(item.id, item.tickets)} />
-                        ) : (
-                            <Text style={styles.noTicketsText}>Pas assez de tickets pour s'inscrire</Text>
-                        )
+                        <Button title="S'inscrire" onPress={() => confirmEnroll(item.id)} />
                     )
                 )}
             </View>
         </View>
     );
 
+    const renderEmptyMessage = (title) => (
+        <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>{`Aucun ${title.toLowerCase()} disponible`}</Text>
+        </View>
+    );
+
     const sections = [
-        ...(isLoggedIn ? [{ title: 'Mes prochains cours', data: futureCourses }] : []),
-        { title: 'Cours disponibles', data: availableCourses }
+        ...(isLoggedIn ? [{ title: 'Mes prochains cours', data: futureCourses.length ? futureCourses : [renderEmptyMessage('prochains cours')] }] : []),
+        { title: 'Cours disponibles', data: availableCourses.length ? availableCourses : [renderEmptyMessage('cours disponibles')] }
     ];
 
     return (
         <View style={styles.container}>
-            {isLoggedIn && (
-                <View>
-                    <Button title="Voir mon historique" onPress={() => navigation.navigate('Home')} />
-                </View>
-            )}
             <SectionList
                 sections={sections}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={renderCourseItem}
+                keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
+                renderItem={({ item }) => typeof item === 'object' && item.id ? renderCourseItem({ item }) : item}
                 renderSectionHeader={({ section: { title } }) => (
                     <View style={styles.sectionHeader}>
                         <Text style={styles.header}>{title}</Text>
+                        {isLoggedIn && title === 'Mes prochains cours' && (
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate('CoursesHistory')}
+                                style={styles.historyButton}
+                            >
+                                <Text style={styles.buttonText}>Voir mon historique</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 )}
                 stickySectionHeadersEnabled={true}

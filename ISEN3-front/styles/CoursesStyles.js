@@ -12,11 +12,14 @@ const styles = StyleSheet.create({
         color: '#E0E2E8',
     },
     sectionHeader: {
-        backgroundColor: '#1C1C1F', // Assurez-vous que le fond des en-têtes de section est en place
-        padding: 8, // Ajustez le padding selon vos préférences
+        backgroundColor: '#1C1C1F',
+        padding: 8,
+        flexDirection: 'row', // Mettre les éléments en ligne
+        justifyContent: 'space-between', // Espacer les éléments
+        alignItems: 'center', // Centrer verticalement
     },
     courseItem: {
-        flexDirection: 'row', // Disposer en ligne
+        flexDirection: 'row',
         alignItems: 'center',
         padding: 10,
         backgroundColor: '#1C1C1F',
@@ -32,13 +35,13 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     courseInfo: {
-        flex: 1, // Prendre tout l'espace restant
+        flex: 1,
     },
     courseInfos: {
         color: '#E0E2E8',
     },
     courseTitle: {
-        fontSize: 18, // Taille du titre agrandie
+        fontSize: 18,
         fontWeight: 'bold',
         textDecorationLine: 'underline',
         textDecorationColor: '#5DA5B3',
@@ -47,16 +50,34 @@ const styles = StyleSheet.create({
     },
     noCoursesText: {
         fontSize: 16,
-        color: 'gray',
-        textAlign: 'center',
-        marginVertical: 10,
-    },
-    noTicketsText: {
-        fontSize: 16,
-        color: 'red',
-        textAlign: 'center',
-        marginVertical: 10,
-    },
+        color: "gray",
+textAlign: "center",
+marginVertical: 10,
+},
+noTicketsText: {
+    fontSize: 16,
+        color: "red",
+    textAlign: "center",
+    marginVertical: 10,
+},
+buttonText: {
+    color: "#007AFF",
+    fontWeight: "bold",
+},
+historyButton: {
+    marginLeft: "auto",
+},
+emptyContainer: {
+    flex: 1,
+        justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+},
+emptyText: {
+    fontSize: 16,
+        color: "gray",
+    textAlign: "center",
+},
 });
 
 export default styles;

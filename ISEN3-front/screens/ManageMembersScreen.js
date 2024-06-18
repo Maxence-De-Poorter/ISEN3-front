@@ -17,12 +17,12 @@ const ManageMembersScreen = ({ navigation }) => {
     const [surname, setSurname] = useState('');
     const [email, setEmail] = useState('');
     const [role, setRole] = useState('');
-    const [creditType, setCreditType] = useState('tickets');
-    const [creditAmount, setCreditAmount] = useState('');
-    const [expirationDate, setExpirationDate] = useState('');
+    const [offers, setOffers] = useState([]);
+    const [selectedOffer, setSelectedOffer] = useState('');
 
     useEffect(() => {
         fetchUsers();
+        fetchOffers();
     }, []);
 
     const fetchUsers = async () => {
@@ -73,6 +73,18 @@ const ManageMembersScreen = ({ navigation }) => {
         }
     };
 
+    const fetchOffers = async () => {
+        try {
+            const response = await axios.get('https://isen3-back.onrender.com/api/offers', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setOffers(response.data)
+            console.log(response.data)
+        } catch (error) {
+            console.error('Failed to fetch offers', error);
+        }
+    };
+
     const toggleExpandRole = (role) => {
         setExpandedRoles(prevState => ({
             ...prevState,
@@ -91,9 +103,7 @@ const ManageMembersScreen = ({ navigation }) => {
 
     const openCreditModal = (user) => {
         setSelectedUser(user);
-        setCreditType('tickets');
-        setCreditAmount('');
-        setExpirationDate('');
+        setSelectedOffer('');
         setCreditModalVisible(true);
     };
 
@@ -131,11 +141,12 @@ const ManageMembersScreen = ({ navigation }) => {
             }
 
             const token = await AsyncStorage.getItem('token');
+            const offer = offers.find(o => o.id === selectedOffer);
 
-            await axios.post(`https://isen3-back.onrender.com/api/users/credit/manual/${selectedUser.id}`, {
-                type: creditType,
-                amount: parseInt(creditAmount, 10),
-                expirationDate: creditType === 'subscription' ? expirationDate : null,
+            await axios.post(`https://isen3-back.onrender.com/api/credit/manual/${selectedUser.id}`, {
+                type: offer.type,
+                amount: offer.places,
+                expirationDate: new Date(new Date().setMonth(new Date().getMonth() + offer.expirationPeriod)),
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -289,28 +300,13 @@ const ManageMembersScreen = ({ navigation }) => {
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Créditer un utilisateur</Text>
                         <Picker
-                            selectedValue={creditType}
-                            onValueChange={(itemValue) => setCreditType(itemValue)}
+                            selectedValue={selectedOffer}
+                            onValueChange={(itemValue) => setSelectedOffer(itemValue)}
                         >
-                            <Picker.Item label="Tickets" value="tickets" />
-                            <Picker.Item label="Carte prépayée" value="prepaid" />
-                            <Picker.Item label="Abonnement" value="subscription" />
+                            {offers.map((offer) => (
+                                <Picker.Item key={offer.id} label={`${offer.name} - ${offer.price}€`} value={offer.id} />
+                            ))}
                         </Picker>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Quantité"
-                            value={creditAmount}
-                            onChangeText={setCreditAmount}
-                            keyboardType="numeric"
-                        />
-                        {creditType === 'subscription' && (
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Date d'expiration"
-                                value={expirationDate}
-                                onChangeText={setExpirationDate}
-                            />
-                        )}
                         <TouchableOpacity
                             style={styles.saveButton}
                             onPress={handleCreditUser}
