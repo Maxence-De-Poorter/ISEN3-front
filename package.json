@@ -1,5 +1,10 @@
 {
   "dependencies": {
-    "create-expo-app": "^2.3.5"
+    "create-expo-app": "^2.3.5",
+    "react-native-dotenv": "^3.4.11",
+    "react-native-webview": "^13.10.3"
+  },
+  "devDependencies": {
+    "metro-react-native-babel-preset": "^0.77.0"
   }
 }

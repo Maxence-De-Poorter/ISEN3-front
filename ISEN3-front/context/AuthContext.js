@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
     }, [fetchData, token]);
 
     const fetchAssociationInfo = useCallback(async () => {
-        const data = await fetchData('https://isen3-back.onrender.com/api/associations/0');
+        const data = await fetchData('https://isen3-back.onrender.com/api/associations/1');
         setAssociation(data);
 
         const coursesData = await fetchData('https://isen3-back.onrender.com/api/courses');
