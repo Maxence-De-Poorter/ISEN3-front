@@ -3,11 +3,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { View } from 'react-native';
 import ProfileButton from '../components/ProfileButton';
 import { AuthContext } from '../context/AuthContext';
-import GestionScreen from "../screens/GestionScreen";
+import ManageScreen from "../screens/ManageScreen";
 
 const Stack = createStackNavigator();
 
-function GestionStack({ navigation }) {
+function ManageStack({ navigation }) {
     const { isLoggedIn, user } = useContext(AuthContext);
     const ticket = user ? user.ticket : 0;
 
@@ -15,7 +15,7 @@ function GestionStack({ navigation }) {
         <Stack.Navigator>
             <Stack.Screen
                 name="AdminScreen"
-                component={GestionScreen}
+                component={ManageScreen}
                 options={{
                     headerTitle: 'DENSHO',
                     headerStyle: {
@@ -33,4 +33,4 @@ function GestionStack({ navigation }) {
     );
 }
 
-export default GestionStack;
+export default ManageStack;

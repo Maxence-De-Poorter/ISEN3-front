@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
-import styles from '../styles/GestionStyles';
+import styles from '../styles/ManageStyles';
 
-function GestionScreen({ navigation }) {
+function ManageScreen({ navigation }) {
     const { user } = useContext(AuthContext);
 
     return (
@@ -45,4 +45,4 @@ function GestionScreen({ navigation }) {
     );
 }
 
-export default GestionScreen;
+export default ManageScreen;

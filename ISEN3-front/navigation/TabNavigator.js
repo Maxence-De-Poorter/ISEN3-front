@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import HomeStack from './HomeStack';
 import CourseStack from './CourseStack';
-import GestionStack from './GestionStack';
+import ManageStack from './ManageStack';
 import { AuthContext } from '../context/AuthContext';
 
 const Tab = createBottomTabNavigator();
@@ -40,7 +40,7 @@ function TabNavigator() {
             <Tab.Screen name="Association" component={HomeStack} />
             <Tab.Screen name="Cours" component={CourseStack} />
             {isLoggedIn && user?.role !== 'student' && (
-                    <Tab.Screen name="Gestion" component={GestionStack} />
+                    <Tab.Screen name="Gestion" component={ManageStack} />
             )}
         </Tab.Navigator>
     );
