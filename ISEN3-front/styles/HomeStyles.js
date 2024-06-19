@@ -64,7 +64,6 @@ const homeStyles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#5DA5B3',
         borderRadius: 10,
-        backgroundColor: '#2C2C2E',
     },
 });
 
