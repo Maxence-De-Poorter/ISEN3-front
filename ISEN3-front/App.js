@@ -10,6 +10,8 @@ import ManageAssociationStack from "./navigation/ManageAssociationStack";
 import ManageMembersStack from "./navigation/ManageMembersStack";
 import ManageCoursesStack from "./navigation/ManageCoursesStack";
 import CourseHistoryStack from "./navigation/CourseHistoryStack";
+import ManageOffersStack from "./navigation/ManageOffersStack";
+import UserOffersStack from "./navigation/UserOffersStack";
 
 const Stack = createStackNavigator();
 
@@ -26,6 +28,8 @@ function App() {
                         <Stack.Screen name="EditMember" component={ManageMembersStack} />
                         <Stack.Screen name="EditCourse" component={ManageCoursesStack} />
                         <Stack.Screen name="CoursesHistory" component={CourseHistoryStack} />
+                        <Stack.Screen name="ManageOffers" component={ManageOffersStack} />
+                        <Stack.Screen name="UserOffers" component={UserOffersStack} />
                     </Stack.Navigator>
                 </NavigationContainer>
         </AuthProvider>

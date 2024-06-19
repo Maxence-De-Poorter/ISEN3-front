@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, TouchableOpacity, Text, Modal, TextInput, Button, ScrollView, Switch, Alert, Linking } from 'react-native';
+import { View, TouchableOpacity, Text, Modal, TextInput, Button, ScrollView, Alert, Linking } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,7 +22,6 @@ function ManageCoursesScreen({ navigation }) {
         duration: new Date(0),
         capacity: '',
         imageUrl: '',
-        isFree: false,
         tags: '',
         links: []
     });
@@ -71,7 +70,6 @@ function ManageCoursesScreen({ navigation }) {
                 schedule: combinedDateTime.toISOString(),
                 duration,
                 capacity: parseInt(currentCourse.capacity, 10),
-                tickets: currentCourse.isFree ? 0 : 1,
                 imageUrl: currentCourse.imageUrl || association?.imageUrl || '',
                 tags: currentCourse.tags,
                 links: currentCourse.links
@@ -104,7 +102,6 @@ function ManageCoursesScreen({ navigation }) {
                 duration: new Date(0),
                 capacity: '',
                 imageUrl: '',
-                isFree: false,
                 tags: '',
                 links: []
             });
@@ -176,7 +173,6 @@ function ManageCoursesScreen({ navigation }) {
                 duration: courseDuration,
                 capacity: course.capacity.toString(),
                 imageUrl: course.imageUrl,
-                isFree: course.tickets === 0,
                 tags: course.tags || '',
                 links: course.links || []
             });
@@ -189,7 +185,6 @@ function ManageCoursesScreen({ navigation }) {
                 duration: new Date(0),
                 capacity: '',
                 imageUrl: '',
-                isFree: false,
                 tags: '',
                 links: []
             });
@@ -415,14 +410,6 @@ function ManageCoursesScreen({ navigation }) {
                         <TouchableOpacity onPress={handleAddLink} style={styles.addLinkButton}>
                             <Text style={styles.buttonText}>Ajouter un lien</Text>
                         </TouchableOpacity>
-                        <View style={styles.ticketContainer}>
-                            <Text>Gratuit :</Text>
-                            <Switch
-                                value={currentCourse.isFree}
-                                onValueChange={isFree => setCurrentCourse({ ...currentCourse, isFree })}
-                            />
-                            <Text>{currentCourse.isFree ? "on" : "off"}</Text>
-                        </View>
                         <Button title={currentCourse.id ? "Modifier" : "Créer"} onPress={handleCreateOrUpdateCourse} />
                         <Button title="Annuler" onPress={() => setModalVisible(false)} />
                     </View>

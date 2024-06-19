@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Alert, SectionList, Modal, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, SectionList, Modal, TextInput, Button } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
@@ -75,11 +75,21 @@ const ManageMembersScreen = ({ navigation }) => {
 
     const fetchOffers = async () => {
         try {
+            const isAuthenticated = await checkAndRefreshToken();
+            if (!isAuthenticated) {
+                navigation.navigate('Login');
+            }
+
+            const token2 = await AsyncStorage.getItem('token');
+
             const response = await axios.get('https://isen3-back.onrender.com/api/offers', {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { Authorization: `Bearer ${token2}` }
             });
-            setOffers(response.data)
-            console.log(response.data)
+            setOffers(response.data);
+            if (response.data.length > 0) {
+                setSelectedOffer(response.data[0].id); // Set default selected offer
+            }
+            console.log(response.data);
         } catch (error) {
             console.error('Failed to fetch offers', error);
         }
@@ -103,7 +113,7 @@ const ManageMembersScreen = ({ navigation }) => {
 
     const openCreditModal = (user) => {
         setSelectedUser(user);
-        setSelectedOffer('');
+        setSelectedOffer(offers.length > 0 ? offers[0].id : ''); // Set default selected offer
         setCreditModalVisible(true);
     };
 
@@ -143,10 +153,8 @@ const ManageMembersScreen = ({ navigation }) => {
             const token = await AsyncStorage.getItem('token');
             const offer = offers.find(o => o.id === selectedOffer);
 
-            await axios.post(`https://isen3-back.onrender.com/api/credit/manual/${selectedUser.id}`, {
-                type: offer.type,
-                amount: offer.places,
-                expirationDate: new Date(new Date().setMonth(new Date().getMonth() + offer.expirationPeriod)),
+            await axios.post(`https://isen3-back.onrender.com/api/offers/credit/${selectedUser.id}`, {
+                offerId: selectedOffer
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -263,8 +271,7 @@ const ManageMembersScreen = ({ navigation }) => {
                             <Picker
                                 selectedValue={role}
                                 onValueChange={(itemValue) => setRole(itemValue)}
-                            >
-                                <Picker.Item label="Élève" value="student" />
+                            >                                <Picker.Item label="Élève" value="student" />
                                 <Picker.Item label="Professeur" value="teacher" />
                                 <Picker.Item label="Administrateur" value="administrator" />
                             </Picker>
@@ -304,7 +311,7 @@ const ManageMembersScreen = ({ navigation }) => {
                             onValueChange={(itemValue) => setSelectedOffer(itemValue)}
                         >
                             {offers.map((offer) => (
-                                <Picker.Item key={offer.id} label={`${offer.name} - ${offer.price}€`} value={offer.id} />
+                                <Picker.Item key={offer.id} label={`${offer.title} - ${offer.price}€`} value={offer.id} />
                             ))}
                         </Picker>
                         <TouchableOpacity

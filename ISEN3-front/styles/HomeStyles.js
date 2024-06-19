@@ -1,17 +1,21 @@
-import {StyleSheet} from "react-native";
+import { StyleSheet } from 'react-native';
 
-const styles = StyleSheet.create({
+const homeStyles = StyleSheet.create({
     container: {
-        backgroundColor: "#1C1C1F",
-        height: "100%",
+        flex: 1,
+        backgroundColor: '#1C1C1F',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        paddingVertical: 20,
     },
     homeContainer: {
-        paddingLeft: 20,
-        paddingRight: 20,
+        width: '90%',
+        alignItems: 'flex-start',
     },
     image: {
-        width: "100%",
+        width: '100%',
         height: 250,
+        borderRadius: 10,
         marginBottom: 20,
     },
     title: {
@@ -46,22 +50,22 @@ const styles = StyleSheet.create({
         color: '#B0C0D4',
     },
     danceList: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "flex-start",
-        marginBottom: 10,
-        backgroundColor: '#1C1C1F',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'flex-start',
+        marginBottom: 20,
     },
     danceType: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#B0C0D4',
         margin: 5,
-        backgroundColor: '#1C1C1F',
-        padding: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: '#5DA5B3',
         borderRadius: 10,
+        backgroundColor: '#2C2C2E',
     },
 });
 
-export default styles;
+export default homeStyles;
