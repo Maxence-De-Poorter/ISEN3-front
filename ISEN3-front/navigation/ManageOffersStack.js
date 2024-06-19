@@ -1,17 +1,17 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import {TouchableOpacity, View} from 'react-native';
-import ManageCoursesScreen from "../screens/ManageCoursesScreen";
 import Icon from "react-native-vector-icons/Ionicons";
+import ManageOffersScreen from "../screens/ManageOffersScreen";
 
 const Stack = createStackNavigator();
 
-function ManageCoursesStack({ navigation }) {
+function ManageOffersStack({ navigation }) {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name="AdminScreen"
-                component={ManageCoursesScreen}
+                name="ManageOffersScreen"
+                component={ManageOffersScreen}
                 options={{
                     headerTitle: 'DENSHO',
                     headerStyle: {
@@ -40,4 +40,4 @@ function ManageCoursesStack({ navigation }) {
     );
 }
 
-export default ManageCoursesStack;
+export default ManageOffersStack;

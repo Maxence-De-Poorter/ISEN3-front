@@ -1,17 +1,18 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import {TouchableOpacity, View} from 'react-native';
-import ManageCoursesScreen from "../screens/ManageCoursesScreen";
+import {TouchableOpacity, View} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import ProfileScreen from "../screens/ProfileScreen";
+import UserOffersScreen from "../screens/UserOffersScreen";
 
 const Stack = createStackNavigator();
 
-function ManageCoursesStack({ navigation }) {
+function UserOffersStack({ navigation}) {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name="AdminScreen"
-                component={ManageCoursesScreen}
+                name="UserOffersScreen"
+                component={UserOffersScreen}
                 options={{
                     headerTitle: 'DENSHO',
                     headerStyle: {
@@ -28,16 +29,17 @@ function ManageCoursesStack({ navigation }) {
                     headerLeft: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 20}}>
                             <TouchableOpacity
-                                onPress={() => navigation.navigate("Gestion")}
+                                onPress={() => navigation.navigate("Profile")}
                             >
                                 <Icon name="arrow-back-outline" size={30} color="#E0E2E8" />
                             </TouchableOpacity>
                         </View>
                     ),
-                }}
+                }
+                }
             />
         </Stack.Navigator>
     );
 }
 
-export default ManageCoursesStack;
+export default UserOffersStack;

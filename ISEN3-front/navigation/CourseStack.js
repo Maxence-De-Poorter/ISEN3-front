@@ -16,9 +16,13 @@ function CourseStack({ navigation }) {
                     headerTitle: 'DENSHO',
                     headerStyle: {
                         backgroundColor: "#1C1C1F",
+                        borderBottomWidth: 1,
+                        borderBottomColor: '#5DA5B3',
                     },
                     headerTitleStyle: {
                         fontSize: 20,
+                        color: '#E0E2E8',
+                        fontWeight: 'bold',
                     },
                     headerTintColor: '#E0E2E8',
                     headerRight: () => (
