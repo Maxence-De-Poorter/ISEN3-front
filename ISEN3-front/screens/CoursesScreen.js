@@ -223,7 +223,7 @@ const CoursesScreen = ({ navigation }) => {
                                 </Picker>
                             )}
                             <Button title={modalType === 'enroll' ? "S'inscrire" : 'Se désinscrire'} onPress={modalType === 'enroll' ? handleEnroll : handleUnenroll} />
-                            <Button title="Annuler" onPress={() => setModalVisible(false)} />
+                            <Button title="                            Annuler" onPress={() => setModalVisible(false)} />
                         </View>
                     </View>
                 </Modal>

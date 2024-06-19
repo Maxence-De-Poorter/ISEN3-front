@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 10,
-        backgroundColor: '#1C1C1F',
+        backgroundColor: '#E0E2E8',
         borderRadius: 10,
         marginVertical: 10,
         borderWidth: 1,
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     courseInfos: {
-        color: '#E0E2E8',
+        color: '#1C1C1F',
     },
     courseTitle: {
         fontSize: 18,
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         textDecorationLine: 'underline',
         textDecorationColor: '#5DA5B3',
         marginBottom: 5,
-        color: '#E0E2E8',
+        color: '#1C1C1F',
     },
     noCoursesText: {
         fontSize: 16,
