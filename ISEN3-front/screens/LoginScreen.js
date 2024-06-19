@@ -31,7 +31,7 @@ function LoginScreen({ navigation }) {
                     value={email}
                     autoCapitalize="none"
                     keyboardType="email-address"
-                    placeholderTextColor={"#E0E2E8"}
+                    placeholderTextColor="#1C1C1F"
                 />
                 <TextInput
                     style={styles.logInInput}
@@ -40,39 +40,24 @@ function LoginScreen({ navigation }) {
                     onChangeText={setPassword}
                     value={password}
                     autoCapitalize="none"
-                    placeholderTextColor={"#E0E2E8"}
+                    placeholderTextColor="#1C1C1F"
                 />
-                <TouchableOpacity
-                    style={styles.logInButton}
-                    onPress={handleLogin}
-                >
-                    <Text style={{color:"#E0E2E8"}}>Se connecter</Text>
+                <TouchableOpacity style={styles.logInButton} onPress={handleLogin}>
+                    <Text style={styles.logInButtonText}>Se connecter</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.signUpButton}
-                    onPress={() => navigation.navigate('Register')}
-                >
-                    <Text style={{ color:"#E0E2E8"}}>Vous n’avez pas de compte ? Inscription</Text>
+                <TouchableOpacity style={styles.signUpButton} onPress={() => navigation.navigate('Register')}>
+                    <Text style={styles.signUpButtonText}>Vous n’avez pas de compte ? Inscription</Text>
                 </TouchableOpacity>
-                <Text style={{ margin: 20, color:"#E0E2E8"}}>ou</Text>
-                <TouchableOpacity
-                    style={styles.firmSignUp}
-                    onPress={() => navigation.navigate('Register')}
-                >
+                <View style={styles.divider} />
+                <TouchableOpacity style={styles.firmSignUp} onPress={() => navigation.navigate('Register')}>
                     <Icon name="logo-google" size={20} style={styles.firmIcon} />
                     <Text style={styles.firmText}>Continuer avec Google</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.firmSignUp}
-                    onPress={() => navigation.navigate('Register')}
-                >
+                <TouchableOpacity style={styles.firmSignUp} onPress={() => navigation.navigate('Register')}>
                     <Icon name="logo-apple" size={20} style={styles.firmIcon} />
                     <Text style={styles.firmText}>Continuer avec Apple</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.firmSignUp}
-                    onPress={() => navigation.navigate('Register')}
-                >
+                <TouchableOpacity style={styles.firmSignUp} onPress={() => navigation.navigate('Register')}>
                     <Icon name="logo-microsoft" size={20} style={styles.firmIcon} />
                     <Text style={styles.firmText}>Continuer avec Microsoft</Text>
                 </TouchableOpacity>
