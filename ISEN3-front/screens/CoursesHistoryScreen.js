@@ -22,7 +22,7 @@ const CourseHistoryScreen = ({ navigation }) => {
             }
 
             const token = await AsyncStorage.getItem('token');
-            const response = await axios.get('https://isen3-back.onrender.com/api/courses/enrolled/history', {
+            const response = await axios.get('https://isen3-back.onrender.com/api/courses/enrolled', {
                 headers: { Authorization: `Bearer ${token}` },
             });
             console.log(response.data);
