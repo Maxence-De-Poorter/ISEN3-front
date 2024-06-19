@@ -12,18 +12,18 @@ const manageStyles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#5DA5B3',
-        padding: 10,
+        padding: 15,
         borderRadius: 5,
         marginTop: 10,
         width: '100%',
     },
     buttonText: {
-        color: '#1C1C1F',
+        color: '#FFFFFF',
         fontSize: 16,
-        marginLeft: 10,
     },
     icon: {
-        color: '#1C1C1F',
+        color: '#FFFFFF',
+        marginRight: 10,
     },
 });
 
