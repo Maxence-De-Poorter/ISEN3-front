@@ -24,7 +24,7 @@ function UserOffersScreen({ navigation }) {
             }
 
             const token = await AsyncStorage.getItem('token');
-            const response = await axios.get(`https://isen3-back.onrender.com/api/offers/user-offers/${user.id}`, {
+            const response = await axios.get(`https://isen3-back.onrender.com/api/offers/me`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const offers = response.data;
