@@ -1,52 +1,51 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     scrollContainer: {
         flexGrow: 1,
         backgroundColor: '#1C1C1F',
-        alignItems: 'center',
         padding: 16,
     },
     innerContainer: {
-        width: '100%',
+        flex: 1,
         alignItems: 'center',
     },
     title: {
-        fontSize: 25,
+        fontSize: 24,
         fontWeight: 'bold',
-        marginBottom: 20,
         color: '#E0E2E8',
+        textDecorationLine: 'underline',
+        textDecorationColor: '#5DA5B3',
+        marginBottom: 16,
     },
     inputContainer: {
         width: '100%',
-        alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: 16,
     },
     label: {
-        width: '80%',
+        fontSize: 18,
         color: '#E0E2E8',
-        marginBottom: 5,
+        marginBottom: 8,
     },
     input: {
-        width: '80%',
+        backgroundColor: '#E0E2E8',
+        borderRadius: 8,
         padding: 10,
-        borderColor: '#5DA5B3',
-        borderWidth: 1,
-        color: '#E0E2E8',
+        fontSize: 16,
+        color: '#1C1C1F',
     },
     button: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: '#5DA5B3',
+        backgroundColor: '#5DA5B3',
         padding: 10,
         borderRadius: 5,
+        marginTop: 10,
     },
     buttonText: {
-        color: 'white',
+        color: '#FFFFFF',
         fontSize: 16,
-        marginLeft: 10,
+        marginLeft: 8,
     },
 });
 

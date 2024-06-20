@@ -6,7 +6,7 @@ import styles from '../styles/ManageAssociationStyles';
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const ManageAssociationScreen = ({navigation}) => {
+const ManageAssociationScreen = ({ navigation }) => {
     const { association, checkAndRefreshToken, fetchAssociationInfo } = useContext(AuthContext);
     const [associationName, setAssociationName] = useState('');
     const [associationAddress, setAssociationAddress] = useState('');
@@ -65,6 +65,7 @@ const ManageAssociationScreen = ({navigation}) => {
                     <TextInput
                         style={styles.input}
                         placeholder="Nom de l'association"
+                        placeholderTextColor="#1C1C1F"
                         value={associationName}
                         onChangeText={setAssociationName}
                     />
@@ -74,6 +75,7 @@ const ManageAssociationScreen = ({navigation}) => {
                     <TextInput
                         style={styles.input}
                         placeholder="Adresse"
+                        placeholderTextColor="#1C1C1F"
                         value={associationAddress}
                         onChangeText={setAssociationAddress}
                     />
@@ -83,6 +85,7 @@ const ManageAssociationScreen = ({navigation}) => {
                     <TextInput
                         style={styles.input}
                         placeholder="Téléphone"
+                        placeholderTextColor="#1C1C1F"
                         value={associationPhone}
                         onChangeText={setAssociationPhone}
                     />
@@ -92,6 +95,7 @@ const ManageAssociationScreen = ({navigation}) => {
                     <TextInput
                         style={styles.input}
                         placeholder="Description"
+                        placeholderTextColor="#1C1C1F"
                         value={associationDescription}
                         onChangeText={setAssociationDescription}
                         multiline={true}
@@ -103,6 +107,7 @@ const ManageAssociationScreen = ({navigation}) => {
                     <TextInput
                         style={styles.input}
                         placeholder="Types de danse (séparés par des virgules)"
+                        placeholderTextColor="#1C1C1F"
                         value={associationDanceTypes}
                         onChangeText={setAssociationDanceTypes}
                         multiline={true}
@@ -113,6 +118,7 @@ const ManageAssociationScreen = ({navigation}) => {
                     <TextInput
                         style={styles.input}
                         placeholder="URL de l'image"
+                        placeholderTextColor="#1C1C1F"
                         value={associationImageUrl}
                         onChangeText={setAssociationImageUrl}
                         multiline={true}
