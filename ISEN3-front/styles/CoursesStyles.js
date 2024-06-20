@@ -7,9 +7,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#1C1C1F',
     },
     header: {
-        fontSize: 20,
+        fontSize: 24, // Augmenter la taille de la police
+        fontWeight: 'bold',
         marginVertical: 8,
-        color: '#E0E2E8',
+        color: '#E0E2E8', // Couleur du texte
+        textDecorationLine: 'underline', // Souligné
+        textDecorationColor: '#5DA5B3', // Couleur de la ligne soulignée
     },
     sectionHeader: {
         backgroundColor: '#1C1C1F',
@@ -22,7 +25,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 10,
-        backgroundColor: '#E0E2E8',
+        backgroundColor: '#1C1C1F',
         borderRadius: 10,
         marginVertical: 10,
         borderWidth: 1,
@@ -38,7 +41,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     courseInfos: {
-        color: '#1C1C1F',
+        color: '#E0E2E8',
     },
     courseTitle: {
         fontSize: 18,
@@ -46,7 +49,7 @@ const styles = StyleSheet.create({
         textDecorationLine: 'underline',
         textDecorationColor: '#5DA5B3',
         marginBottom: 5,
-        color: '#1C1C1F',
+        color: '#E0E2E8',
     },
     noCoursesText: {
         fontSize: 16,
@@ -60,12 +63,27 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginVertical: 10,
     },
+    button: {
+        backgroundColor: '#5DA5B3',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: 10,
+    },
     buttonText: {
-        color: "#007AFF",
-        fontWeight: "bold",
+        color: '#FFFFFF',
+        fontSize: 16,
     },
     historyButton: {
-        marginLeft: "auto",
+        backgroundColor: '#5DA5B3',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    historyButtonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
     },
     emptyContainer: {
         flex: 1,
@@ -114,10 +132,19 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         color: '#E0E2E8',
     },
+    paymentTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        color: '#E0E2E8',
+    },
     picker: {
         width: '100%',
         color: '#E0E2E8',
         marginBottom: 10,
+    },
+    pickerItem: {
+        color: '#E0E2E8',
     },
 });
 

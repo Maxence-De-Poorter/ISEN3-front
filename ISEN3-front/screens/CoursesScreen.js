@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, Button, SectionList, Alert, Image, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, SectionList, Alert, Image, TouchableOpacity, Modal, Button } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -68,7 +68,7 @@ const CoursesScreen = ({ navigation }) => {
             }
 
             const token = await AsyncStorage.getItem('token');
-            const response = await axios.get(`https://isen3-back.onrender.com/api/offers/user-offers/${user.id}`, {
+            const response = await axios.get('https://isen3-back.onrender.com/api/offers/valid', {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setUserOffers(response.data);
@@ -150,11 +150,13 @@ const CoursesScreen = ({ navigation }) => {
             <Image source={{ uri: item.imageUrl }} style={styles.courseImage} />
             <View style={styles.courseInfo}>
                 <Text style={styles.courseTitle}>{item.name}</Text>
-                <Text style={styles.courseInfos}>{item.instructor ? `${item.instructor.name} ${item.instructor.surname}` : 'Instructor not assigned'}</Text>
+                <Text style={styles.courseInfos}>{item.instructor ? `${item.instructor.name} ${item.instructor.surname}` : 'Instructeur non assigné'}</Text>
                 <Text style={styles.courseInfos}>{new Date(item.schedule).toLocaleString()}</Text>
-                <Text style={styles.courseInfos}>Capacity: {item.enrolled}/{item.capacity}</Text>
+                <Text style={styles.courseInfos}>Capacité: {item.enrolled}/{item.capacity}</Text>
                 {isLoggedIn && (
-                    <Button title="Voir le cours" onPress={() => openModal(item, isEnrolled(item.id) ? 'unenroll' : 'enroll')} />
+                    <TouchableOpacity style={styles.button} onPress={() => openModal(item, isEnrolled(item.id) ? 'unenroll' : 'enroll')}>
+                        <Text style={styles.buttonText}>Voir le cours</Text>
+                    </TouchableOpacity>
                 )}
             </View>
         </View>
@@ -168,6 +170,7 @@ const CoursesScreen = ({ navigation }) => {
 
     const sections = [
         ...(isLoggedIn ? [{ title: 'Mes prochains cours', data: futureCourses.length ? futureCourses : [renderEmptyMessage('prochains cours')] }] : []),
+        { title: '', data: [{ key: 'button' }] },
         { title: 'Cours disponibles', data: availableCourses.length ? availableCourses : [renderEmptyMessage('cours disponibles')] }
     ];
 
@@ -176,18 +179,22 @@ const CoursesScreen = ({ navigation }) => {
             <SectionList
                 sections={sections}
                 keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
-                renderItem={({ item }) => typeof item === 'object' && item.id ? renderCourseItem({ item }) : item}
-                renderSectionHeader={({ section: { title } }) => (
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.header}>{title}</Text>
-                        {isLoggedIn && title === 'Mes prochains cours' && (
+                renderItem={({ item, section }) => {
+                    if (item.key === 'button' && section.title === '') {
+                        return (
                             <TouchableOpacity
                                 onPress={() => navigation.navigate('CoursesHistory')}
                                 style={styles.historyButton}
                             >
-                                <Text style={styles.buttonText}>Voir mon historique</Text>
+                                <Text style={styles.historyButtonText}>Voir mon historique</Text>
                             </TouchableOpacity>
-                        )}
+                        );
+                    }
+                    return typeof item === 'object' && item.id ? renderCourseItem({ item }) : item;
+                }}
+                renderSectionHeader={({ section: { title } }) => (
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.header}>{title}</Text>
                     </View>
                 )}
                 stickySectionHeadersEnabled={true}
@@ -204,26 +211,42 @@ const CoursesScreen = ({ navigation }) => {
                             <Text style={styles.modalTitle}>{modalType === 'enroll' ? 'Choisissez une carte' : 'Se désinscrire du cours'}</Text>
                             <Image source={{ uri: courseToEnroll.imageUrl }} style={styles.modalImage} />
                             <Text style={styles.modalCourseTitle}>{courseToEnroll.name}</Text>
-                            <Text style={styles.modalCourseInfo}>Instructor: {courseToEnroll.instructor ? `${courseToEnroll.instructor.name} ${courseToEnroll.instructor.surname}` : 'Not assigned'}</Text>
-                            <Text style={styles.modalCourseInfo}>Schedule: {new Date(courseToEnroll.schedule).toLocaleString()}</Text>
-                            <Text style={styles.modalCourseInfo}>Capacity: {courseToEnroll.enrolled}/{courseToEnroll.capacity}</Text>
-                            {modalType === 'enroll' && (
-                                <Picker
-                                    selectedValue={selectedOffer}
-                                    onValueChange={(itemValue) => setSelectedOffer(itemValue)}
-                                    style={styles.picker}
-                                >
-                                    {userOffers.map((offer) => (
-                                        <Picker.Item
-                                            key={offer.id}
-                                            label={`${offer.Offer.title} - ${offer.remainingPlaces} places restantes`}
-                                            value={offer.id}
-                                        />
-                                    ))}
-                                </Picker>
+                            <Text style={styles.modalCourseInfo}>Instructeur: {courseToEnroll.instructor ? `${courseToEnroll.instructor.name} ${courseToEnroll.instructor.surname}` : 'Non assigné'}</Text>
+                            <Text style={styles.modalCourseInfo}>Horaire: {new Date(courseToEnroll.schedule).toLocaleString()}</Text>
+                            <Text style={styles.modalCourseInfo}>Capacité: {courseToEnroll.enrolled}/{courseToEnroll.capacity}</Text>
+                            {modalType === 'enroll' && userOffers.length === 0 && (
+                                <Text style={styles.noTicketsText}>Aucune carte disponible pour l'inscription.</Text>
                             )}
-                            <Button title={modalType === 'enroll' ? "S'inscrire" : 'Se désinscrire'} onPress={modalType === 'enroll' ? handleEnroll : handleUnenroll} />
-                            <Button title="                            Annuler" onPress={() => setModalVisible(false)} />
+                            {modalType === 'enroll' && userOffers.length > 0 && (
+                                <>
+                                    <Text style={styles.paymentTitle}>Choix du mode de paiement</Text>
+                                    <Picker
+                                        selectedValue={selectedOffer}
+                                        onValueChange={(itemValue) => setSelectedOffer(itemValue)}
+                                        style={styles.picker}
+                                        itemStyle={styles.pickerItem}
+                                    >
+                                        {userOffers.map((offer) => (
+                                            <Picker.Item
+                                                key={offer.id}
+                                                label={`${offer.Offer.title} - ${offer.remainingPlaces} places restantes`}
+                                                value={offer.id}
+                                                style={styles.pickerItem}
+                                            />
+                                        ))}
+                                    </Picker>
+                                </>
+                            )}
+                            <Button
+                                title={modalType === 'enroll' ? "S'inscrire" : 'Se désinscrire'}
+                                onPress={modalType === 'enroll' ? handleEnroll : handleUnenroll}
+                                color="#5DA5B3"
+                            />
+                            <Button
+                                title="Annuler"
+                                onPress={() => setModalVisible(false)}
+                                color="#FF6347"
+                            />
                         </View>
                     </View>
                 </Modal>
