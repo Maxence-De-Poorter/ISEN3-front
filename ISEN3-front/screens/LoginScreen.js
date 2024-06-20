@@ -13,7 +13,7 @@ function LoginScreen({ navigation }) {
         try {
             const response = await login(email, password);
             if (response) {
-                navigation.navigate('Profile');
+                navigation.navigate('Home');
             }
         } catch (error) {
             Alert.alert('Erreur', "L'adresse e-mail ou le mot de passe est incorrect.");

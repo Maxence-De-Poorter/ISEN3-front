@@ -28,7 +28,7 @@ function ProfileStack({ navigation}) {
                     headerLeft: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 20}}>
                             <TouchableOpacity
-                                onPress={() => navigation.navigate("Association")}
+                                onPress={() => navigation.goBack()}
                             >
                                 <Icon name="arrow-back-outline" size={30} color="#E0E2E8" />
                             </TouchableOpacity>
