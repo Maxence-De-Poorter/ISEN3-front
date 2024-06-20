@@ -14,6 +14,7 @@ const ManageAssociationScreen = ({ navigation }) => {
     const [associationDescription, setAssociationDescription] = useState('');
     const [associationDanceTypes, setAssociationDanceTypes] = useState('');
     const [associationImageUrl, setAssociationImageUrl] = useState('');
+    const [associationImageVideoUrl, setAssociationImageVideoUrl] = useState('');
 
     useEffect(() => {
         if (association) {
@@ -23,6 +24,7 @@ const ManageAssociationScreen = ({ navigation }) => {
             setAssociationDescription(association.description || '');
             setAssociationDanceTypes(association.danceTypes ? association.danceTypes.join(', ') : '');
             setAssociationImageUrl(association.imageUrl || '');
+            setAssociationImageVideoUrl(association.imageVideoUrl || '');
         }
     }, [association]);
 
@@ -42,7 +44,8 @@ const ManageAssociationScreen = ({ navigation }) => {
                 phone: associationPhone,
                 description: associationDescription,
                 danceTypes: associationDanceTypes.split(',').map(tag => tag.trim()),
-                imageUrl: associationImageUrl
+                imageUrl: associationImageUrl,
+                imageVideoUrl: associationImageVideoUrl
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -121,6 +124,18 @@ const ManageAssociationScreen = ({ navigation }) => {
                         placeholderTextColor="#1C1C1F"
                         value={associationImageUrl}
                         onChangeText={setAssociationImageUrl}
+                        multiline={true}
+                        numberOfLines={4}
+                    />
+                </View>
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>URL des photos et vidéos</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="URL de l'image"
+                        placeholderTextColor="#1C1C1F"
+                        value={associationImageVideoUrl}
+                        onChangeText={setAssociationImageVideoUrl}
                         multiline={true}
                         numberOfLines={4}
                     />

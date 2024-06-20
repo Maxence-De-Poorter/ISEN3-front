@@ -7,12 +7,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#1C1C1F',
     },
     header: {
-        fontSize: 24, // Augmenter la taille de la police
-        fontWeight: 'bold',
+        fontSize: 20,
         marginVertical: 8,
-        color: '#E0E2E8', // Couleur du texte
-        textDecorationLine: 'underline', // Souligné
-        textDecorationColor: '#5DA5B3', // Couleur de la ligne soulignée
+        color: '#E0E2E8',
     },
     sectionHeader: {
         backgroundColor: '#1C1C1F',
@@ -62,6 +59,27 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 16,
     },
+    searchInput: {
+        height: 40,
+        borderColor: '#5DA5B3',
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        marginBottom: 20,
+        color: '#E0E2E8',
+    },
+    datePickerButton: {
+        height: 40,
+        justifyContent: 'center',
+        borderColor: '#5DA5B3',
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        marginBottom: 20,
+    },
+    datePickerButtonText: {
+        color: '#E0E2E8',
+    },
     modalContainer: {
         flex: 1,
         justifyContent: "center",
@@ -73,24 +91,24 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#1C1C1F',
         borderRadius: 10,
-        alignItems: 'center',
+        alignitems: 'center',
     },
     modalTitle: {
         fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#E0E2E8',
+            fontWeight: 'bold',
+            marginBottom: 10,
+            color: '#E0E2E8',
     },
     modalImage: {
         width: 100,
-        height: 100,
-        borderRadius: 10,
-        marginBottom: 10,
+            height: 100,
+            borderRadius: 10,
+            marginBottom: 10,
     },
     modalCourseInfo: {
         fontSize: 16,
-        marginBottom: 5,
-        color: '#E0E2E8',
+            marginBottom: 5,
+            color: '#E0E2E8',
     },
 });
 

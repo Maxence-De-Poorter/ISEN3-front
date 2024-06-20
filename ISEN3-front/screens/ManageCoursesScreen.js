@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, TouchableOpacity, Text, Modal, TextInput, Button, ScrollView, Alert, Linking } from 'react-native';
+import {View, TouchableOpacity, Text, Modal, TextInput, ScrollView, Alert, Linking, Button} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,6 +12,7 @@ function ManageCoursesScreen({ navigation }) {
     const [courses, setCourses] = useState([]);
     const [searchVisible, setSearchVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [searchTag, setSearchTag] = useState('');
     const [searchDate, setSearchDate] = useState(null);
     const [searchDuration, setSearchDuration] = useState(new Date(0));
     const [currentCourse, setCurrentCourse] = useState({
@@ -220,9 +221,10 @@ function ManageCoursesScreen({ navigation }) {
     const filterCourses = () => {
         return courses.filter(course => {
             const matchesName = course.name.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesTag = course.tags.toLowerCase().includes(searchTag.toLowerCase());
             const matchesDate = searchDate ? new Date(course.schedule).toDateString() === searchDate.toDateString() : true;
             const matchesDuration = searchDuration.getHours() || searchDuration.getMinutes() ? course.duration === `${searchDuration.getHours()}h ${searchDuration.getMinutes()}m` : true;
-            return matchesName && matchesDate && matchesDuration;
+            return matchesName && matchesTag && matchesDate && matchesDuration;
         });
     };
 
@@ -258,28 +260,40 @@ function ManageCoursesScreen({ navigation }) {
                         value={searchTerm}
                         onChangeText={setSearchTerm}
                         style={styles.input}
+                        placeholderTextColor="#E0E2E8" // Couleur du placeholder
+                    />
+                    <TextInput
+                        placeholder="Rechercher par tags"
+                        value={searchTag}
+                        onChangeText={setSearchTag}
+                        style={styles.input}
+                        placeholderTextColor="#E0E2E8" // Couleur du placeholder
                     />
                     <View style={styles.dateTimeContainer}>
-                        <Text>Date :</Text>
+                        <Text style={styles.label}>Date :</Text>
                         <DateTimePicker
                             value={searchDate || new Date()}
                             mode="date"
                             display="default"
                             onChange={handleSearchDateChange}
                             style={styles.picker}
+                            textColor="#E0E2E8"
                         />
                     </View>
                     <View style={styles.dateTimeContainer}>
-                        <Text>Durée :</Text>
+                        <Text style={styles.label}>Durée :</Text>
                         <DateTimePicker
                             value={searchDuration}
                             mode="time"
                             display="default"
                             onChange={handleSearchDurationChange}
                             style={styles.picker}
+                            textColor="#E0E2E8"
                         />
                     </View>
-                    <Button title="Rechercher" onPress={filterCourses} />
+                    <TouchableOpacity style={styles.searchButton} onPress={filterCourses}>
+                        <Text style={styles.buttonText}>Rechercher</Text>
+                    </TouchableOpacity>
                 </View>
             )}
             <ScrollView contentContainerStyle={styles.scrollViewContainer}>
@@ -338,35 +352,39 @@ function ManageCoursesScreen({ navigation }) {
                             value={currentCourse.name}
                             onChangeText={name => setCurrentCourse({ ...currentCourse, name })}
                             style={styles.input}
+                            placeholderTextColor="#E0E2E8"
                         />
                         <View style={styles.dateTimeContainer}>
-                            <Text>Date :</Text>
+                            <Text style={styles.label}>Date :</Text>
                             <DateTimePicker
                                 value={currentCourse.date}
                                 mode="date"
                                 display="default"
                                 onChange={handleDateChange}
                                 style={styles.picker}
+                                textColor="#E0E2E8"
                             />
                         </View>
                         <View style={styles.dateTimeContainer}>
-                            <Text>Heure de début :</Text>
+                            <Text style={styles.label}>Heure de début :</Text>
                             <DateTimePicker
                                 value={currentCourse.time}
                                 mode="time"
                                 display="default"
                                 onChange={handleTimeChange}
                                 style={styles.picker}
+                                textColor="#E0E2E8"
                             />
                         </View>
                         <View style={styles.dateTimeContainer}>
-                            <Text>Durée :</Text>
+                            <Text style={styles.label}>Durée :</Text>
                             <DateTimePicker
                                 value={currentCourse.duration}
                                 mode="time"
                                 display="default"
                                 onChange={handleDurationChange}
                                 style={styles.picker}
+                                textColor="#E0E2E8"
                             />
                         </View>
                         <TextInput
@@ -375,18 +393,21 @@ function ManageCoursesScreen({ navigation }) {
                             onChangeText={capacity => setCurrentCourse({ ...currentCourse, capacity })}
                             keyboardType="numeric"
                             style={styles.input}
+                            placeholderTextColor="#E0E2E8"
                         />
                         <TextInput
                             placeholder="URL de l'image"
                             value={currentCourse.imageUrl}
                             onChangeText={imageUrl => setCurrentCourse({ ...currentCourse, imageUrl })}
                             style={styles.input}
+                            placeholderTextColor="#E0E2E8"
                         />
                         <TextInput
                             placeholder="Tags (séparés par des virgules)"
                             value={currentCourse.tags}
                             onChangeText={tags => setCurrentCourse({ ...currentCourse, tags })}
                             style={styles.input}
+                            placeholderTextColor="#E0E2E8"
                         />
                         {currentCourse.links.map((link, index) => (
                             <View key={index} style={styles.linkContainer}>
@@ -395,12 +416,14 @@ function ManageCoursesScreen({ navigation }) {
                                     value={link.title}
                                     onChangeText={title => handleLinkChange(index, 'title', title)}
                                     style={styles.inputLink}
+                                    placeholderTextColor="#E0E2E8"
                                 />
                                 <TextInput
                                     placeholder="URL du lien"
                                     value={link.url}
                                     onChangeText={url => handleLinkChange(index, 'url', url)}
                                     style={styles.inputLink}
+                                    placeholderTextColor="#E0E2E8"
                                 />
                                 <TouchableOpacity onPress={() => handleRemoveLink(index)}>
                                     <Text style={styles.removeLinkButton}>Supprimer le lien</Text>

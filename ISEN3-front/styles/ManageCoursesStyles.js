@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     searchContainer: {
         paddingHorizontal: 20,
         paddingVertical: 10,
-        backgroundColor: '#333',
+        backgroundColor: '#2C2C2E',
         borderRadius: 10,
         marginBottom: 20,
     },
@@ -48,7 +48,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         padding: 10,
         width: '100%',
-        backgroundColor: '#fff',
+        backgroundColor: '#333',
+        color: '#E0E2E8', // Couleur du texte
     },
     courseContainer: {
         backgroundColor: '#2C2C2E',
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: 'white',
+        backgroundColor: '#1C1C1F',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         padding: 35,
@@ -128,6 +129,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         textAlign: 'center',
         fontSize: 18,
+        color: '#E0E2E8',
     },
     ticketContainer: {
         flexDirection: 'row',
@@ -135,7 +137,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     linkContainer: {
-        width: '100%', // Ajouter cette ligne pour s'assurer que le container prenne toute la largeur
+        width: '100%',
         marginBottom: 10,
     },
     inputLink: {
@@ -144,8 +146,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 10,
         padding: 10,
-        width: '100%', // S'assurer que l'input prenne toute la largeur du container
-        backgroundColor: '#fff',
+        width: '100%',
+        backgroundColor: '#333',
+        color: '#E0E2E8',
     },
     removeLinkButton: {
         color: 'red',
@@ -158,6 +161,9 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         borderRadius: 5,
         alignItems: 'center',
+    },
+    label: {
+        color: '#E0E2E8', // Couleur du label
     },
 });
 

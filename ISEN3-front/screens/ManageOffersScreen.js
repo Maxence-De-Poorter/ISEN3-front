@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, TouchableOpacity, Text, Modal, TextInput, Button, ScrollView, Alert, Linking } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../styles/ManageOffersStyles';
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 function ManageOffersScreen({ navigation }) {
     const { checkAndRefreshToken } = useContext(AuthContext);
