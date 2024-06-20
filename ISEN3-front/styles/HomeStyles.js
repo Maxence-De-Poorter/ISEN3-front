@@ -65,6 +65,11 @@ const homeStyles = StyleSheet.create({
         borderColor: '#5DA5B3',
         borderRadius: 10,
     },
+    offerLink: {
+        fontSize: 16,
+        marginBottom: 20,
+        color: '#B0C0D4',
+    }
 });
 
 export default homeStyles;

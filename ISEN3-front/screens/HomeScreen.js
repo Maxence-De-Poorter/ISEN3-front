@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, Text, Image, ScrollView } from 'react-native';
+import {View, Text, Image, ScrollView, Linking, TouchableOpacity} from 'react-native';
 import { AuthContext } from "../context/AuthContext";
 import styles from '../styles/HomeStyles';
 
@@ -24,7 +24,9 @@ function HomeScreen() {
                         </Text>
                     ))}
                 </View>
-                <Text style={styles.subtitle}>A Propos</Text>
+                <Text style={styles.subtitle}>A Propos <TouchableOpacity onPress={() => Linking.openURL(association.imageVideoUrl)}>
+                    <Text style={styles.offerLink}>Photos et Vidéos</Text>
+                </TouchableOpacity></Text>
                 <Text style={styles.description}>{association.description}</Text>
             </View>
         </ScrollView>
