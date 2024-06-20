@@ -1,4 +1,3 @@
-// styles/ManageMembersStyles.js
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -13,6 +12,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginVertical: 20,
         color: '#E0E2E8',
+        textDecorationLine: 'underline',
+        textDecorationColor: '#5DA5B3',
     },
     sectionHeader: {
         backgroundColor: '#2C2C2F',
@@ -40,25 +41,25 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     editButton: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#5DA5B3',
         padding: 8,
         borderRadius: 5,
         marginHorizontal: 5,
     },
     creditButton: {
-        backgroundColor: '#28a745',
+        backgroundColor: '#5DA5B3',
         padding: 8,
         borderRadius: 5,
         marginHorizontal: 5,
     },
     saveButton: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#5DA5B3',
         padding: 10,
         borderRadius: 5,
         marginVertical: 10,
     },
     deleteButton: {
-        backgroundColor: '#dc3545',
+        backgroundColor: '#FF6347',
         padding: 10,
         borderRadius: 5,
         marginVertical: 10,
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
     buttonText: {
-        color: '#fff',
+        color: '#FFFFFF',
         fontWeight: 'bold',
         textAlign: 'center',
     },
@@ -81,16 +82,18 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
-        backgroundColor: '#fff',
+        backgroundColor: '#1C1C1F',
         padding: 20,
         borderRadius: 10,
         width: '80%',
+        alignItems: 'center',
     },
     modalTitle: {
         fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 20,
+        color: '#E0E2E8',
     },
     input: {
         height: 40,
@@ -100,6 +103,16 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
         width: '100%',
+        color: '#E0E2E8',
+        backgroundColor: '#2C2C2F',
+    },
+    picker: {
+        width: '100%',
+        color: '#E0E2E8',
+        marginBottom: 10,
+    },
+    pickerItem: {
+        color: '#E0E2E8',
     },
 });
 

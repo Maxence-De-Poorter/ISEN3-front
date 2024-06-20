@@ -7,7 +7,7 @@ import styles from '../styles/ManageMembersStyles';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ManageMembersScreen = ({ navigation }) => {
-    const { token, user, checkAndRefreshToken } = useContext(AuthContext);
+    const {user, checkAndRefreshToken } = useContext(AuthContext);
     const [users, setUsers] = useState([]);
     const [expandedRoles, setExpandedRoles] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
@@ -80,16 +80,15 @@ const ManageMembersScreen = ({ navigation }) => {
                 navigation.navigate('Login');
             }
 
-            const token2 = await AsyncStorage.getItem('token');
+            const token = await AsyncStorage.getItem('token');
 
             const response = await axios.get('https://isen3-back.onrender.com/api/offers', {
-                headers: { Authorization: `Bearer ${token2}` }
+                headers: { Authorization: `Bearer ${token}` }
             });
             setOffers(response.data);
             if (response.data.length > 0) {
                 setSelectedOffer(response.data[0].id); // Set default selected offer
             }
-            console.log(response.data);
         } catch (error) {
             console.error('Failed to fetch offers', error);
         }
@@ -271,7 +270,10 @@ const ManageMembersScreen = ({ navigation }) => {
                             <Picker
                                 selectedValue={role}
                                 onValueChange={(itemValue) => setRole(itemValue)}
-                            >                                <Picker.Item label="Élève" value="student" />
+                                style={styles.picker}
+                                itemStyle={styles.pickerItem}
+                            >
+                                <Picker.Item label="Élève" value="student" />
                                 <Picker.Item label="Professeur" value="teacher" />
                                 <Picker.Item label="Administrateur" value="administrator" />
                             </Picker>
@@ -309,6 +311,8 @@ const ManageMembersScreen = ({ navigation }) => {
                         <Picker
                             selectedValue={selectedOffer}
                             onValueChange={(itemValue) => setSelectedOffer(itemValue)}
+                            style={styles.picker}
+                            itemStyle={styles.pickerItem}
                         >
                             {offers.map((offer) => (
                                 <Picker.Item key={offer.id} label={`${offer.title} - ${offer.price}€`} value={offer.id} />
