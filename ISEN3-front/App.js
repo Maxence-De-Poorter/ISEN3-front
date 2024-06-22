@@ -12,6 +12,11 @@ import ManageCoursesStack from "./navigation/ManageCoursesStack";
 import CourseHistoryStack from "./navigation/CourseHistoryStack";
 import ManageOffersStack from "./navigation/ManageOffersStack";
 import UserOffersStack from "./navigation/UserOffersStack";
+import PurchaseOffersStack from "./navigation/PurchaseOffersStack";
+import CreateStudentScreen from "./screens/CreateStudentScreen";
+import UpdatePasswordScreen from "./screens/UpdatePasswordScreen";
+import RequestResetPasswordScreen from "./screens/RequestResetPasswordScreen";
+import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 
 const Stack = createStackNavigator();
 
@@ -30,6 +35,10 @@ function App() {
                         <Stack.Screen name="CoursesHistory" component={CourseHistoryStack} />
                         <Stack.Screen name="ManageOffers" component={ManageOffersStack} />
                         <Stack.Screen name="UserOffers" component={UserOffersStack} />
+                        <Stack.Screen name="PurchaseOffers" component={PurchaseOffersStack} />
+                        <Stack.Screen name="CreateStudent" component={CreateStudentScreen} />
+                        <Stack.Screen name="RequestResetPassword" component={RequestResetPasswordScreen} />
+                        <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
                     </Stack.Navigator>
                 </NavigationContainer>
         </AuthProvider>

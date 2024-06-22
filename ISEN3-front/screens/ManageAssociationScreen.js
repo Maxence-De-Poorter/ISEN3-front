@@ -60,6 +60,7 @@ const ManageAssociationScreen = ({ navigation }) => {
     };
 
     return (
+        <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.innerContainer}>
                 <Text style={styles.title}>Informations de l'association</Text>
@@ -146,6 +147,7 @@ const ManageAssociationScreen = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
         </ScrollView>
+            </View>
     );
 };
 

@@ -7,7 +7,8 @@ function HomeScreen() {
     const { association } = useContext(AuthContext);
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.Scrollcontainer}>
             <Image
                 source={{ uri: association.imageUrl }}
                 style={styles.image}
@@ -24,12 +25,14 @@ function HomeScreen() {
                         </Text>
                     ))}
                 </View>
-                <Text style={styles.subtitle}>A Propos <TouchableOpacity onPress={() => Linking.openURL(association.imageVideoUrl)}>
-                    <Text style={styles.offerLink}>Photos et Vidéos</Text>
-                </TouchableOpacity></Text>
+                <Text style={styles.subtitle}>A Propos </Text>
                 <Text style={styles.description}>{association.description}</Text>
+                <TouchableOpacity onPress={() => Linking.openURL(association.imageVideoUrl)}>
+                    <Text style={styles.offerLink}>Photos et Vidéos</Text>
+                </TouchableOpacity>
             </View>
         </ScrollView>
+            </View>
     );
 }
 

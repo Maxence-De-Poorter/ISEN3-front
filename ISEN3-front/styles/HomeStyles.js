@@ -4,6 +4,10 @@ const homeStyles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#1C1C1F',
+    },
+    Scrollcontainer: {
+        flexGrow: 1,
+        backgroundColor: '#1C1C1F',
         alignItems: 'center',
         justifyContent: 'flex-start',
         paddingVertical: 20,

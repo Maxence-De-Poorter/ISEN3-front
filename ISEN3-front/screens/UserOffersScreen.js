@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, ScrollView, Alert } from 'react-native';
+import { View, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/AuthContext';
@@ -76,6 +76,12 @@ function UserOffersScreen({ navigation }) {
                     </View>
                 )}
             </ScrollView>
+            <TouchableOpacity
+                style={styles.purchaseButton}
+                onPress={() => navigation.navigate('PurchaseOffers')}
+            >
+                <Text style={styles.purchaseButtonText}>Acheter des offres</Text>
+            </TouchableOpacity>
         </View>
     );
 }

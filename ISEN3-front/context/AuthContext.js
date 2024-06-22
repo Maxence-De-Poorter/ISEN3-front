@@ -29,6 +29,7 @@ export const AuthProvider = ({ children, navigation}) => {
 
     const verifyToken = useCallback(async () => {
         try {
+            const token = await AsyncStorage.getItem('token');
             const response = await axios.post('https://isen3-back.onrender.com/api/auth/verify-token', { token });
             return response.data.valid;
         } catch (error) {
@@ -39,6 +40,7 @@ export const AuthProvider = ({ children, navigation}) => {
 
     const refreshJwtToken = useCallback(async () => {
         try {
+            const refreshToken = await AsyncStorage.getItem('refreshToken');
             const response = await axios.post('https://isen3-back.onrender.com/api/auth/refresh-token', { refreshToken });
             const { token: newToken } = response.data;
             if (newToken) {
@@ -67,35 +69,29 @@ export const AuthProvider = ({ children, navigation}) => {
     }, [fetchData]);
 
     const checkAndRefreshToken = useCallback(async () => {
-        if (!token) return false;
         const isTokenValid = await verifyToken();
         if (isTokenValid) return true;
 
         const newToken = await refreshJwtToken();
         if (newToken) return true;
 
-        await logout(); // Logout if token refresh fails
-        Alert.alert('Session expirée', 'Votre session a expiré. Veuillez vous reconnecter.');
+        await logout();
 
         return false;
     }, [token, verifyToken, refreshJwtToken]);
 
     const initialize = useCallback(async () => {
         try {
-            const storedToken = await AsyncStorage.getItem('token');
-            const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
-            setToken(storedToken);
-            setRefreshToken(storedRefreshToken);
-
-            await fetchAssociationInfo();
-
             const isAuthenticated = await checkAndRefreshToken();
+
             if (isAuthenticated) {
                 await fetchUserProfile();
                 setIsLoggedIn(true);
-            } else {
+            }else {
                 setIsLoggedIn(false);
             }
+
+            await fetchAssociationInfo();
         } catch (error) {
             console.error('Failed to initialize app', error);
         } finally {
@@ -139,7 +135,6 @@ export const AuthProvider = ({ children, navigation}) => {
         setIsLoggedIn(false);
         setUser(null);
     };
-
 
     return (
         <AuthContext.Provider value={{

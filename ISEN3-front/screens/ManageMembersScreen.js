@@ -7,11 +7,12 @@ import styles from '../styles/ManageMembersStyles';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ManageMembersScreen = ({ navigation }) => {
-    const {user, checkAndRefreshToken } = useContext(AuthContext);
+    const { user, checkAndRefreshToken } = useContext(AuthContext);
     const [users, setUsers] = useState([]);
     const [expandedRoles, setExpandedRoles] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
     const [creditModalVisible, setCreditModalVisible] = useState(false);
+    const [createModalVisible, setCreateModalVisible] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [firstName, setFirstName] = useState('');
     const [surname, setSurname] = useState('');
@@ -116,6 +117,38 @@ const ManageMembersScreen = ({ navigation }) => {
         setCreditModalVisible(true);
     };
 
+    const openCreateModal = () => {
+        setFirstName('');
+        setSurname('');
+        setEmail('');
+        setCreateModalVisible(true);
+    };
+
+    const handleCreateUser = async () => {
+        try {
+            const isAuthenticated = await checkAndRefreshToken();
+            if (!isAuthenticated) {
+                navigation.navigate('Login');
+            }
+
+            const token = await AsyncStorage.getItem('token');
+
+            await axios.post('https://isen3-back.onrender.com/api/auth/create-student', {
+                name: firstName,
+                surname: surname,
+                email: email,
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            await fetchUsers();
+            setCreateModalVisible(false);
+        } catch (error) {
+            console.error('Failed to create user', error);
+            Alert.alert("Erreur", "La création de l'utilisateur a échoué.");
+        }
+    };
+
     const handleUpdateUser = async () => {
         try {
             const isAuthenticated = await checkAndRefreshToken();
@@ -205,6 +238,9 @@ const ManageMembersScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Gestion des membres</Text>
+            <TouchableOpacity style={styles.createButton} onPress={openCreateModal}>
+                <Text style={styles.buttonText}>Créer un membre</Text>
+            </TouchableOpacity>
             <SectionList
                 sections={users}
                 keyExtractor={(item) => item.id.toString()}
@@ -327,6 +363,48 @@ const ManageMembersScreen = ({ navigation }) => {
                         <TouchableOpacity
                             style={styles.cancelButton}
                             onPress={() => setCreditModalVisible(false)}
+                        >
+                            <Text style={styles.buttonText}>Annuler</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={createModalVisible}
+                onRequestClose={() => setCreateModalVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Créer un membre</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Prénom"
+                            value={firstName}
+                            onChangeText={setFirstName}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Nom"
+                            value={surname}
+                            onChangeText={setSurname}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="E-mail"
+                            value={email}
+                            onChangeText={setEmail}
+                        />
+                        <TouchableOpacity
+                            style={styles.saveButton}
+                            onPress={handleCreateUser}
+                        >
+                            <Text style={styles.buttonText}>Créer</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.cancelButton}
+                            onPress={() => setCreateModalVisible(false)}
                         >
                             <Text style={styles.buttonText}>Annuler</Text>
                         </TouchableOpacity>
