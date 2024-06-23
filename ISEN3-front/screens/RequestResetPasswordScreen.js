@@ -10,7 +10,7 @@ const RequestResetPasswordScreen = ({ navigation }) => {
         try {
             await axios.post('https://isen3-back.onrender.com/api/auth/request-reset-password', { email });
             Alert.alert('Succès', 'Un code de réinitialisation a été envoyé à votre adresse e-mail.');
-            navigation.navigate('ResetPassword', { email });
+            navigation.navigate('ResetPasswordMain', { email });
         } catch (error) {
             Alert.alert('Erreur', "La demande de réinitialisation de mot de passe a échoué.");
             console.log(error);
