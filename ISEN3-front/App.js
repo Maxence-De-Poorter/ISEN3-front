@@ -6,9 +6,17 @@ import TabNavigator from './navigation/TabNavigator';
 import LoginStack from "./navigation/LoginStack";
 import RegisterStack from "./navigation/RegisterStack";
 import ProfileStack from "./navigation/ProfileStack";
-import EditAssociationStack from "./navigation/EditAssociationStack";
-import EditMemberStack from "./navigation/EditMemberStack";
-import EditCourseStack from "./navigation/EditCourseStack";
+import ManageAssociationStack from "./navigation/ManageAssociationStack";
+import ManageMembersStack from "./navigation/ManageMembersStack";
+import ManageCoursesStack from "./navigation/ManageCoursesStack";
+import CourseHistoryStack from "./navigation/CourseHistoryStack";
+import ManageOffersStack from "./navigation/ManageOffersStack";
+import UserOffersStack from "./navigation/UserOffersStack";
+import PurchaseOffersStack from "./navigation/PurchaseOffersStack";
+import CreateStudentScreen from "./screens/CreateStudentScreen";
+import RequestResetPasswordScreen from "./screens/RequestResetPasswordScreen";
+import ResetPasswordScreen from "./screens/ResetPasswordScreen";
+import RequestResetPasswordStack from "./navigation/RequestResetPasswordStack";
 
 const Stack = createStackNavigator();
 
@@ -21,9 +29,15 @@ function App() {
                         <Stack.Screen name="Profile" component={ProfileStack} />
                         <Stack.Screen name="Login" component={LoginStack} />
                         <Stack.Screen name="Register" component={RegisterStack} />
-                        <Stack.Screen name="EditAssociation" component={EditAssociationStack} />
-                        <Stack.Screen name="EditMember" component={EditMemberStack} />
-                        <Stack.Screen name="EditCourse" component={EditCourseStack} />
+                        <Stack.Screen name="EditAssociation" component={ManageAssociationStack} />
+                        <Stack.Screen name="EditMember" component={ManageMembersStack} />
+                        <Stack.Screen name="EditCourse" component={ManageCoursesStack} />
+                        <Stack.Screen name="CoursesHistory" component={CourseHistoryStack} />
+                        <Stack.Screen name="ManageOffers" component={ManageOffersStack} />
+                        <Stack.Screen name="UserOffers" component={UserOffersStack} />
+                        <Stack.Screen name="PurchaseOffers" component={PurchaseOffersStack} />
+                        <Stack.Screen name="CreateStudent" component={CreateStudentScreen} />
+                        <Stack.Screen name="RequestResetPassword" component={RequestResetPasswordStack} />
                     </Stack.Navigator>
                 </NavigationContainer>
         </AuthProvider>

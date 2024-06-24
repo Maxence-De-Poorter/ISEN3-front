@@ -1,27 +1,28 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import {TouchableOpacity, View} from 'react-native';
-import ProfileButton from '../components/ProfileButton';
-import Tickets from '../components/Tickets';
-import { AuthContext } from '../context/AuthContext';
-import EditCourseScreen from "../screens/EditCourseScreen";
+import ManageCoursesScreen from "../screens/ManageCoursesScreen";
 import Icon from "react-native-vector-icons/Ionicons";
 
 const Stack = createStackNavigator();
 
-function EditCourseStack({ navigation }) {
-    const { isLoggedIn, user } = useContext(AuthContext);
-    const ticket = user ? user.ticket : 0;
-
+function ManageCoursesStack({ navigation }) {
     return (
         <Stack.Navigator>
             <Stack.Screen
                 name="AdminScreen"
-                component={EditCourseScreen}
+                component={ManageCoursesScreen}
                 options={{
                     headerTitle: 'DENSHO',
                     headerStyle: {
                         backgroundColor: "#1C1C1F",
+                        borderBottomWidth: 1,
+                        borderBottomColor: '#5DA5B3',
+                    },
+                    headerTitleStyle: {
+                        fontSize: 20,
+                        color: '#E0E2E8',
+                        fontWeight: 'bold',
                     },
                     headerTintColor: '#E0E2E8',
                     headerLeft: () => (
@@ -33,16 +34,10 @@ function EditCourseStack({ navigation }) {
                             </TouchableOpacity>
                         </View>
                     ),
-                    headerRight: () => (
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            {isLoggedIn && <Tickets count={ticket} />}
-                            <ProfileButton navigation={navigation} />
-                        </View>
-                    ),
                 }}
             />
         </Stack.Navigator>
     );
 }
 
-export default EditCourseStack;
+export default ManageCoursesStack;

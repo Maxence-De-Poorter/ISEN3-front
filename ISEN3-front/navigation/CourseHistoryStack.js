@@ -1,17 +1,17 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import RegistrationScreen from "../screens/RegistrationScreen";
-import {TouchableOpacity, View} from "react-native";
+import {TouchableOpacity, View} from 'react-native';
+import CoursesHistoryScreen from "../screens/CoursesHistoryScreen";
 import Icon from "react-native-vector-icons/Ionicons";
 
 const Stack = createStackNavigator();
 
-function RegisterStack({ navigation}) {
+function CourseHistoryStack({ navigation }) {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name="RegisterScreen"
-                component={RegistrationScreen}
+                name="CoursesHistoryScreen"
+                component={CoursesHistoryScreen}
                 options={{
                     headerTitle: 'DENSHO',
                     headerStyle: {
@@ -28,17 +28,16 @@ function RegisterStack({ navigation}) {
                     headerLeft: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 20}}>
                             <TouchableOpacity
-                                onPress={() => navigation.navigate('LoginScreen')}
+                                onPress={() => navigation.navigate("CoursesScreen")}
                             >
                                 <Icon name="arrow-back-outline" size={30} color="#E0E2E8" />
                             </TouchableOpacity>
                         </View>
                     ),
-                }
-                }
+                }}
             />
         </Stack.Navigator>
     );
 }
 
-export default RegisterStack;
+export default CourseHistoryStack;

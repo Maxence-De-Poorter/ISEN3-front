@@ -11,6 +11,16 @@ const RegistrationScreen = ({ navigation }) => {
     const [surname, setSurname] = useState('');
     const [birthDate, setBirthDate] = useState('');
 
+    const validateEmail = (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(String(email).toLowerCase());
+    };
+
+    const validatePassword = (password) => {
+        const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return re.test(String(password));
+    };
+
     const handleBirthDateChange = (text) => {
         let formattedText = text.replace(/[^0-9]/g, '');
         if (formattedText.length > 4) {
@@ -23,6 +33,16 @@ const RegistrationScreen = ({ navigation }) => {
     };
 
     const handleRegister = async () => {
+        if (!validateEmail(email)) {
+            Alert.alert('Erreur', "L'adresse e-mail n'est pas valide.");
+            return;
+        }
+
+        if (!validatePassword(password)) {
+            Alert.alert('Erreur', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole.');
+            return;
+        }
+
         try {
             const response = await axios.post('https://isen3-back.onrender.com/api/auth/register', {
                 name,
@@ -45,64 +65,52 @@ const RegistrationScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.SignUpContainer}>
-                <Text style={styles.SignUpText}>Inscription</Text>
+            <View style={styles.signUpContainer}>
+                <Text style={styles.signUpText}>Inscription</Text>
                 <TextInput
-                    style={styles.SignUpInput}
+                    style={styles.signUpInput}
                     placeholder="Nom"
-                    placeholderTextColor={"#E0E2E8"}
+                    placeholderTextColor="#1C1C1F"
                     value={surname}
                     onChangeText={(text) => setSurname(text.toUpperCase())}
                 />
                 <TextInput
-                    style={styles.SignUpInput}
+                    style={styles.signUpInput}
                     placeholder="Prénom"
-                    placeholderTextColor={"#E0E2E8"}
+                    placeholderTextColor="#1C1C1F"
                     value={name}
                     onChangeText={setName}
                 />
                 <TextInput
-                    style={styles.SignUpInput}
+                    style={styles.signUpInput}
                     placeholder="Email"
-                    placeholderTextColor={"#E0E2E8"}
+                    placeholderTextColor="#1C1C1F"
                     value={email}
                     onChangeText={setEmail}
                     keyboardType="email-address"
                     autoCapitalize="none"
                 />
                 <TextInput
-                    style={styles.SignUpInput}
+                    style={styles.signUpInput}
                     placeholder="Mot de passe"
-                    placeholderTextColor={"#E0E2E8"}
+                    placeholderTextColor="#1C1C1F"
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry
                 />
-                <TouchableOpacity
-                    style={styles.SignUpButton}
-                    onPress={handleRegister}
-                >
-                    <Text style={{color:"#E0E2E8"}}>S'inscrire</Text>
+                <TouchableOpacity style={styles.signUpButton} onPress={handleRegister}>
+                    <Text style={styles.signUpButtonText}>S'inscrire</Text>
                 </TouchableOpacity>
-                <Text style={{ margin: 20, color:"#E0E2E8"}}>ou</Text>
-                <TouchableOpacity
-                    style={styles.firmSignUp}
-                    onPress={() => navigation.navigate('Register')}
-                >
+                <View style={styles.divider} />
+                <TouchableOpacity style={styles.firmSignUp} onPress={() => navigation.navigate('Register')}>
                     <Icon name="logo-google" size={20} style={styles.firmIcon} />
                     <Text style={styles.firmText}>Continuer avec Google</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.firmSignUp}
-                    onPress={() => navigation.navigate('Register')}
-                >
+                <TouchableOpacity style={styles.firmSignUp} onPress={() => navigation.navigate('Register')}>
                     <Icon name="logo-apple" size={20} style={styles.firmIcon} />
                     <Text style={styles.firmText}>Continuer avec Apple</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.firmSignUp}
-                    onPress={() => navigation.navigate('Register')}
-                >
+                <TouchableOpacity style={styles.firmSignUp} onPress={() => navigation.navigate('Register')}>
                     <Icon name="logo-microsoft" size={20} style={styles.firmIcon} />
                     <Text style={styles.firmText}>Continuer avec Microsoft</Text>
                 </TouchableOpacity>

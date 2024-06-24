@@ -1,26 +1,16 @@
-import React, {useContext} from 'react';
-import { View, Text, Image, ScrollView } from 'react-native';
-import {AuthContext} from "../context/AuthContext";
+import React, { useContext } from 'react';
+import {View, Text, Image, ScrollView, Linking, TouchableOpacity} from 'react-native';
+import { AuthContext } from "../context/AuthContext";
 import styles from '../styles/HomeStyles';
-
-const danceTypes = [
-    'Ballet',
-    'Hip Hop',
-    'Salsa',
-    'Contemporary',
-    'Jazz',
-    'Tap Dance',
-    'Ballroom',
-    'Folk Dance',
-];
 
 function HomeScreen() {
     const { association } = useContext(AuthContext);
 
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.Scrollcontainer}>
             <Image
-                source={{ uri: 'https://imgs.search.brave.com/NZNa8b8gryIx-GRJxW3dzTKWySXvvqFFTMwLCo50sJE/rs:fit:860:0:0/g:ce/aHR0cHM6Ly93d3cu/anVuaWEuY29tL3dw/LWNvbnRlbnQvdXBs/b2Fkcy8yMDIyLzEw/LzJFM0E0MTkzLTEu/anBn' }} // Replace with the URL of the association's image
+                source={{ uri: association.imageUrl }}
                 style={styles.image}
             />
             <View style={styles.homeContainer}>
@@ -29,16 +19,21 @@ function HomeScreen() {
                 <Text style={styles.phone}>{association.phone}</Text>
                 <Text style={styles.subtitle}>Types de Danse</Text>
                 <View style={styles.danceList}>
-                    {danceTypes.map((dance, index) => (
+                    {association.danceTypes && association.danceTypes.map((dance, index) => (
                         <Text key={index} style={styles.danceType}>
                             {dance}
                         </Text>
                     ))}
                 </View>
-                <Text style={styles.subtitle}>A Propos</Text>
+                <Text style={styles.subtitle}>A Propos </Text>
                 <Text style={styles.description}>{association.description}</Text>
+                <Text style={styles.subtitle}>Photos et Vidéos</Text>
+                <TouchableOpacity onPress={() => Linking.openURL(association.imageVideoUrl)}>
+                    <Text style={styles.offerLink}>Lien ici.</Text>
+                </TouchableOpacity>
             </View>
         </ScrollView>
+            </View>
     );
 }
 

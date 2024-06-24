@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import HomeStack from './HomeStack';
 import CourseStack from './CourseStack';
-import GestionStack from './GestionStack';
+import ManageStack from './ManageStack';
 import { AuthContext } from '../context/AuthContext';
 
 const Tab = createBottomTabNavigator();
@@ -27,20 +27,22 @@ function TabNavigator() {
                     } else if (route.name === 'Gestion') {
                         iconName = focused ? 'settings' : 'settings-outline';
                     }
-                    return <Icon name={iconName} size={size} color={color} />;
+                    return <Icon name={iconName} size={30} color={color} />;
                 },
                 tabBarActiveTintColor: '#E0E2E8',
-                tabBarInactiveTintColor: '#394054',
+                tabBarInactiveTintColor: '#B0C0D4',
+                tabBarShowLabel: false,
                 headerShown: false,
                 tabBarStyle: {
                     backgroundColor: '#1C1C1F',
+
                 },
             })}
         >
             <Tab.Screen name="Association" component={HomeStack} />
             <Tab.Screen name="Cours" component={CourseStack} />
             {isLoggedIn && user?.role !== 'student' && (
-                    <Tab.Screen name="Gestion" component={GestionStack} />
+                    <Tab.Screen name="Gestion" component={ManageStack} />
             )}
         </Tab.Navigator>
     );

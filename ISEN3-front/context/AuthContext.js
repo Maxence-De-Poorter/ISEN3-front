@@ -1,18 +1,14 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {Alert} from "react-native";
+import { Alert } from 'react-native';
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children, navigation }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [token, setToken] = useState(null);
-    const [refreshToken, setRefreshToken] = useState(null);
     const [user, setUser] = useState(null);
     const [association, setAssociation] = useState(null);
-    const [courses, setCourses] = useState([]);
-    const [enrolledCourses, setEnrolledCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -29,21 +25,22 @@ export const AuthProvider = ({ children }) => {
 
     const verifyToken = useCallback(async () => {
         try {
+            const token = await AsyncStorage.getItem('token');
             const response = await axios.post('https://isen3-back.onrender.com/api/auth/verify-token', { token });
-            return response.data.valid;
+            return response.status === 200;
         } catch (error) {
             console.error('Failed to verify token', error);
             return false;
         }
-    }, [token]);
+    }, []);
 
     const refreshJwtToken = useCallback(async () => {
         try {
+            const refreshToken = await AsyncStorage.getItem('refreshToken');
             const response = await axios.post('https://isen3-back.onrender.com/api/auth/refresh-token', { refreshToken });
             const { token: newToken } = response.data;
             if (newToken) {
                 await AsyncStorage.setItem('token', newToken);
-                setToken(newToken);
                 return newToken;
             }
             return null;
@@ -51,7 +48,7 @@ export const AuthProvider = ({ children }) => {
             console.error('Failed to refresh token', error);
             return null;
         }
-    }, [refreshToken]);
+    }, []);
 
     const fetchUserProfile = useCallback(async () => {
         const token = await AsyncStorage.getItem('token');
@@ -59,53 +56,37 @@ export const AuthProvider = ({ children }) => {
             headers: { Authorization: `Bearer ${token}` },
         });
         setUser(data);
-
-        const enrolledData = await fetchData('https://isen3-back.onrender.com/api/courses/enrolled', {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        setEnrolledCourses(enrolledData);
-    }, [fetchData, token]);
+    }, [fetchData]);
 
     const fetchAssociationInfo = useCallback(async () => {
-        const data = await fetchData('https://isen3-back.onrender.com/api/associations/0');
+        const data = await fetchData('https://isen3-back.onrender.com/api/associations/1');
         setAssociation(data);
-
-        const coursesData = await fetchData('https://isen3-back.onrender.com/api/courses');
-        setCourses(coursesData);
     }, [fetchData]);
 
     const checkAndRefreshToken = useCallback(async () => {
-        if (!token) return false;
         const isTokenValid = await verifyToken();
-        console.log('Token is valid:', isTokenValid);
         if (isTokenValid) return true;
 
         const newToken = await refreshJwtToken();
-        console.log('New token:', newToken);
         if (newToken) return true;
 
-        await logout(); // Logout if token refresh fails
-        Alert.alert('Session expirée', 'Votre session a expiré. Veuillez vous reconnecter.');
+        await logout();
 
         return false;
-    }, [token, verifyToken, refreshJwtToken]);
+    }, [verifyToken, refreshJwtToken]);
 
     const initialize = useCallback(async () => {
         try {
-            const storedToken = await AsyncStorage.getItem('token');
-            const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
-            setToken(storedToken);
-            setRefreshToken(storedRefreshToken);
-
-            await fetchAssociationInfo();
-
             const isAuthenticated = await checkAndRefreshToken();
+
             if (isAuthenticated) {
                 await fetchUserProfile();
                 setIsLoggedIn(true);
             } else {
                 setIsLoggedIn(false);
             }
+
+            await fetchAssociationInfo();
         } catch (error) {
             console.error('Failed to initialize app', error);
         } finally {
@@ -115,7 +96,7 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         initialize();
-        console.log('Initialized AuthProvider');
+        console.log('Auth context initialized');
     }, [initialize]);
 
     const login = useCallback(async (email, password) => {
@@ -127,8 +108,6 @@ export const AuthProvider = ({ children }) => {
             if (response.data.token && response.data.refreshToken) {
                 await AsyncStorage.setItem('token', response.data.token);
                 await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
-                setToken(response.data.token);
-                setRefreshToken(response.data.refreshToken);
                 setIsLoggedIn(true);
                 await fetchUserProfile();
                 return true;
@@ -141,28 +120,18 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    const logout = async () => {
+    const logout = useCallback(async () => {
         await AsyncStorage.removeItem('token');
         await AsyncStorage.removeItem('refreshToken');
-        setToken(null);
-        setRefreshToken(null);
         setIsLoggedIn(false);
         setUser(null);
-    };
-
-    if (loading) {
-        return null;
-    }
+    }, []);
 
     return (
         <AuthContext.Provider value={{
             isLoggedIn,
-            token,
-            refreshToken,
             user,
             association,
-            courses,
-            enrolledCourses,
             loading,
             error,
             fetchData,
