@@ -11,6 +11,16 @@ const RegistrationScreen = ({ navigation }) => {
     const [surname, setSurname] = useState('');
     const [birthDate, setBirthDate] = useState('');
 
+    const validateEmail = (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(String(email).toLowerCase());
+    };
+
+    const validatePassword = (password) => {
+        const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return re.test(String(password));
+    };
+
     const handleBirthDateChange = (text) => {
         let formattedText = text.replace(/[^0-9]/g, '');
         if (formattedText.length > 4) {
@@ -23,6 +33,16 @@ const RegistrationScreen = ({ navigation }) => {
     };
 
     const handleRegister = async () => {
+        if (!validateEmail(email)) {
+            Alert.alert('Erreur', "L'adresse e-mail n'est pas valide.");
+            return;
+        }
+
+        if (!validatePassword(password)) {
+            Alert.alert('Erreur', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole.');
+            return;
+        }
+
         try {
             const response = await axios.post('https://isen3-back.onrender.com/api/auth/register', {
                 name,

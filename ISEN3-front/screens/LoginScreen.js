@@ -9,7 +9,27 @@ function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const validateEmail = (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(String(email).toLowerCase());
+    };
+
+    const validatePassword = (password) => {
+        const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return re.test(String(password));
+    };
+
     const handleLogin = async () => {
+        if (!validateEmail(email)) {
+            Alert.alert('Erreur', "L'adresse e-mail n'est pas valide.");
+            return;
+        }
+
+        if (!validatePassword(password)) {
+            Alert.alert('Erreur', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole.');
+            return;
+        }
+
         try {
             const response = await login(email, password);
             if (response) {

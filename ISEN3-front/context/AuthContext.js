@@ -5,14 +5,10 @@ import { Alert } from 'react-native';
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children, navigation}) => {
+export const AuthProvider = ({ children, navigation }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [token, setToken] = useState(null);
-    const [refreshToken, setRefreshToken] = useState(null);
     const [user, setUser] = useState(null);
     const [association, setAssociation] = useState(null);
-    const [courses, setCourses] = useState([]);
-    const [enrolledCourses, setEnrolledCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -31,12 +27,12 @@ export const AuthProvider = ({ children, navigation}) => {
         try {
             const token = await AsyncStorage.getItem('token');
             const response = await axios.post('https://isen3-back.onrender.com/api/auth/verify-token', { token });
-            return response.data.valid;
+            return response.status === 200;
         } catch (error) {
             console.error('Failed to verify token', error);
             return false;
         }
-    }, [token]);
+    }, []);
 
     const refreshJwtToken = useCallback(async () => {
         try {
@@ -45,7 +41,6 @@ export const AuthProvider = ({ children, navigation}) => {
             const { token: newToken } = response.data;
             if (newToken) {
                 await AsyncStorage.setItem('token', newToken);
-                setToken(newToken);
                 return newToken;
             }
             return null;
@@ -53,7 +48,7 @@ export const AuthProvider = ({ children, navigation}) => {
             console.error('Failed to refresh token', error);
             return null;
         }
-    }, [refreshToken]);
+    }, []);
 
     const fetchUserProfile = useCallback(async () => {
         const token = await AsyncStorage.getItem('token');
@@ -61,7 +56,7 @@ export const AuthProvider = ({ children, navigation}) => {
             headers: { Authorization: `Bearer ${token}` },
         });
         setUser(data);
-    }, [fetchData, token]);
+    }, [fetchData]);
 
     const fetchAssociationInfo = useCallback(async () => {
         const data = await fetchData('https://isen3-back.onrender.com/api/associations/1');
@@ -78,7 +73,7 @@ export const AuthProvider = ({ children, navigation}) => {
         await logout();
 
         return false;
-    }, [token, verifyToken, refreshJwtToken]);
+    }, [verifyToken, refreshJwtToken]);
 
     const initialize = useCallback(async () => {
         try {
@@ -87,7 +82,7 @@ export const AuthProvider = ({ children, navigation}) => {
             if (isAuthenticated) {
                 await fetchUserProfile();
                 setIsLoggedIn(true);
-            }else {
+            } else {
                 setIsLoggedIn(false);
             }
 
@@ -113,8 +108,6 @@ export const AuthProvider = ({ children, navigation}) => {
             if (response.data.token && response.data.refreshToken) {
                 await AsyncStorage.setItem('token', response.data.token);
                 await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
-                setToken(response.data.token);
-                setRefreshToken(response.data.refreshToken);
                 setIsLoggedIn(true);
                 await fetchUserProfile();
                 return true;
@@ -127,24 +120,18 @@ export const AuthProvider = ({ children, navigation}) => {
         }
     }, []);
 
-    const logout = async () => {
+    const logout = useCallback(async () => {
         await AsyncStorage.removeItem('token');
         await AsyncStorage.removeItem('refreshToken');
-        setToken(null);
-        setRefreshToken(null);
         setIsLoggedIn(false);
         setUser(null);
-    };
+    }, []);
 
     return (
         <AuthContext.Provider value={{
             isLoggedIn,
-            token,
-            refreshToken,
             user,
             association,
-            courses,
-            enrolledCourses,
             loading,
             error,
             fetchData,

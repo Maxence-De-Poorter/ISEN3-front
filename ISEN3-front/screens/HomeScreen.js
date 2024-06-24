@@ -27,8 +27,9 @@ function HomeScreen() {
                 </View>
                 <Text style={styles.subtitle}>A Propos </Text>
                 <Text style={styles.description}>{association.description}</Text>
+                <Text style={styles.subtitle}>Photos et Vidéos</Text>
                 <TouchableOpacity onPress={() => Linking.openURL(association.imageVideoUrl)}>
-                    <Text style={styles.offerLink}>Photos et Vidéos</Text>
+                    <Text style={styles.offerLink}>Lien ici.</Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>
