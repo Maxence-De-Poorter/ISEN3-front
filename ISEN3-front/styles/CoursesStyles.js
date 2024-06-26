@@ -75,11 +75,14 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     historyButton: {
-        backgroundColor: '#5DA5B3',
-        padding: 10,
-        borderRadius: 5,
+        flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 10,
+        justifyContent: 'center',
+        backgroundColor: '#5DA5B3',
+        padding: 15,
+        borderRadius: 5,
+        marginTop: 10,
+        width: '100%',
     },
     historyButtonText: {
         color: '#FFFFFF',

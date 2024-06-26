@@ -60,20 +60,23 @@ const styles = StyleSheet.create({
     },
     deleteButton: {
         backgroundColor: '#FF6347',
-        padding: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 15,
         borderRadius: 5,
-        marginVertical: 10,
+        marginTop: 10,
+        width: '90%',
     },
     cancelButton: {
         backgroundColor: '#6c757d',
-        padding: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 15,
         borderRadius: 5,
-        marginVertical: 10,
-    },
-    buttonText: {
-        color: '#FFFFFF',
-        fontWeight: 'bold',
-        textAlign: 'center',
+        marginTop: 10,
+        width: '90%',
     },
     modalContainer: {
         flex: 1,
@@ -107,13 +110,40 @@ const styles = StyleSheet.create({
         backgroundColor: '#2C2C2F',
     },
     picker: {
-        width: '100%',
+        width: '90%',
         color: '#E0E2E8',
         marginBottom: 10,
     },
     pickerItem: {
         color: '#E0E2E8',
     },
+    bottomContainer: {
+        position: 'absolute',
+        bottom: 20,
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+    },
+    button: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#5DA5B3',
+        padding: 15,
+        borderRadius: 5,
+        marginTop: 10,
+        width: '90%',
+    },
+    buttonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+    },
+    noOffersText: {
+        fontSize: 16,
+        color: '#E0E2E8',
+        textAlign: 'center',
+        marginVertical: 10,
+    }
 });
 
 export default styles;

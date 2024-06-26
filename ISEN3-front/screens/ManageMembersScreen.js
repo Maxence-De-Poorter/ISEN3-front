@@ -169,6 +169,7 @@ const ManageMembersScreen = ({ navigation }) => {
 
             await fetchUsers();
             setModalVisible(false);
+            Alert.alert("Succès", "La mise à jour de l'utilisateur a été réalisée avec succès.");
         } catch (error) {
             console.error('Failed to update user', error);
             Alert.alert("Erreur", "La mise à jour de l'utilisateur a échoué.");
@@ -193,6 +194,7 @@ const ManageMembersScreen = ({ navigation }) => {
 
             await fetchUsers();
             setCreditModalVisible(false);
+            Alert.alert("Succès", "Le crédit de l'utilisateur a été réalisé avec succès.");
         } catch (error) {
             console.error('Failed to credit user', error);
             Alert.alert("Erreur", "Le crédit de l'utilisateur a échoué.");
@@ -225,6 +227,7 @@ const ManageMembersScreen = ({ navigation }) => {
 
                             fetchUsers();
                             setModalVisible(false);
+                            Alert.alert("Succès", "L'utilisateur a été supprimé avec succès.");
                         } catch (error) {
                             console.error('Failed to delete user', error);
                             Alert.alert("Erreur", "La suppression de l'utilisateur a échoué.");
@@ -238,9 +241,6 @@ const ManageMembersScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Gestion des membres</Text>
-            <TouchableOpacity style={styles.createButton} onPress={openCreateModal}>
-                <Text style={styles.buttonText}>Créer un membre</Text>
-            </TouchableOpacity>
             <SectionList
                 sections={users}
                 keyExtractor={(item) => item.id.toString()}
@@ -315,7 +315,7 @@ const ManageMembersScreen = ({ navigation }) => {
                             </Picker>
                         )}
                         <TouchableOpacity
-                            style={styles.saveButton}
+                            style={styles.button}
                             onPress={handleUpdateUser}
                         >
                             <Text style={styles.buttonText}>Enregistrer</Text>
@@ -344,22 +344,28 @@ const ManageMembersScreen = ({ navigation }) => {
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Créditer un utilisateur</Text>
-                        <Picker
-                            selectedValue={selectedOffer}
-                            onValueChange={(itemValue) => setSelectedOffer(itemValue)}
-                            style={styles.picker}
-                            itemStyle={styles.pickerItem}
-                        >
-                            {offers.map((offer) => (
-                                <Picker.Item key={offer.id} label={`${offer.title} - ${offer.price}€`} value={offer.id} />
-                            ))}
-                        </Picker>
-                        <TouchableOpacity
-                            style={styles.saveButton}
-                            onPress={handleCreditUser}
-                        >
-                            <Text style={styles.buttonText}>Créditer</Text>
-                        </TouchableOpacity>
+                        {offers.length > 0 ? (
+                            <>
+                                <Picker
+                                    selectedValue={selectedOffer}
+                                    onValueChange={(itemValue) => setSelectedOffer(itemValue)}
+                                    style={styles.picker}
+                                    itemStyle={styles.pickerItem}
+                                >
+                                    {offers.map((offer) => (
+                                        <Picker.Item key={offer.id} label={`${offer.title} - ${offer.price}€`} value={offer.id} />
+                                    ))}
+                                </Picker>
+                                <TouchableOpacity
+                                    style={styles.button}
+                                    onPress={handleCreditUser}
+                                >
+                                    <Text style={styles.buttonText}>Créditer</Text>
+                                </TouchableOpacity>
+                            </>
+                        ) : (
+                            <Text style={styles.noOffersText}>Aucune offre disponible pour créditer.</Text>
+                        )}
                         <TouchableOpacity
                             style={styles.cancelButton}
                             onPress={() => setCreditModalVisible(false)}
@@ -397,7 +403,7 @@ const ManageMembersScreen = ({ navigation }) => {
                             onChangeText={setEmail}
                         />
                         <TouchableOpacity
-                            style={styles.saveButton}
+                            style={styles.button}
                             onPress={handleCreateUser}
                         >
                             <Text style={styles.buttonText}>Créer</Text>
@@ -411,6 +417,14 @@ const ManageMembersScreen = ({ navigation }) => {
                     </View>
                 </View>
             </Modal>
+            <View style={styles.bottomContainer}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={openCreateModal}
+                >
+                    <Text style={styles.buttonText}>Créer un membre</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };

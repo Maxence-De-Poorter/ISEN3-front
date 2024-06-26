@@ -65,7 +65,6 @@ const ManageAssociationScreen = ({ navigation }) => {
             <View style={styles.innerContainer}>
                 <Text style={styles.title}>Informations de l'association</Text>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Nom de l'association</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Nom de l'association"
@@ -75,7 +74,6 @@ const ManageAssociationScreen = ({ navigation }) => {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Adresse</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Adresse"
@@ -85,7 +83,6 @@ const ManageAssociationScreen = ({ navigation }) => {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Téléphone</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Téléphone"
@@ -95,7 +92,6 @@ const ManageAssociationScreen = ({ navigation }) => {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Description</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Description"
@@ -107,7 +103,6 @@ const ManageAssociationScreen = ({ navigation }) => {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Types de danse (séparés par des virgules)</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Types de danse (séparés par des virgules)"
@@ -118,7 +113,6 @@ const ManageAssociationScreen = ({ navigation }) => {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.label}>URL de l'image</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="URL de l'image"
@@ -130,7 +124,6 @@ const ManageAssociationScreen = ({ navigation }) => {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.label}>URL des photos et vidéos</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="URL de l'image"
