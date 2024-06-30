@@ -4,14 +4,16 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#1C1C1F',
-        paddingBottom: 60, // Ajouté pour laisser de la place au bouton en bas
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        textAlign: 'center',
-        marginVertical: 20,
         color: '#E0E2E8',
+        textDecorationLine: 'underline',
+        textDecorationColor: '#5DA5B3',
+        alignSelf: 'center',
+        marginTop: 20,
+        marginBottom: 20,
     },
     scrollViewContainer: {
         flexGrow: 1,
@@ -26,30 +28,23 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     searchContainer: {
-        paddingHorizontal: 20,
-        paddingVertical: 10,
         backgroundColor: '#2C2C2E',
         borderRadius: 10,
-        marginBottom: 20,
+        width: '90%',
+        alignSelf: 'center',
+        padding: 20,
+    },
+    rowContainer: {
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     dateTimeContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 10,
     },
-    picker: {
-        marginLeft: 10,
-        flex: 1,
-    },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 10,
-        padding: 10,
-        width: '100%',
-        backgroundColor: '#333',
-        color: '#E0E2E8', // Couleur du texte
+    halfInput: {
+        width: '48%',
     },
     courseContainer: {
         backgroundColor: '#2C2C2E',
@@ -78,6 +73,15 @@ const styles = StyleSheet.create({
         color: '#007bff',
         textDecorationLine: 'underline',
     },
+    courseLinkTitle: {
+        color: '#E0E2E8',
+        marginRight: 10,
+    },
+    linkContainerRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 5,
+    },
     modifyButton: {
         backgroundColor: '#007bff',
         padding: 10,
@@ -86,15 +90,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     deleteButton: {
-        backgroundColor: '#d9534f',
-        padding: 10,
-        marginTop: 10,
-        borderRadius: 5,
+        backgroundColor: '#FF6347',
+        flexDirection: 'row',
         alignItems: 'center',
-    },
-    buttonText: {
-        color: '#fff',
-        fontWeight: 'bold',
+        justifyContent: 'center',
+        padding: 15,
+        borderRadius: 5,
+        marginTop: 10,
+        width: '100%',
+        alignSelf: 'center',
     },
     createButton: {
         backgroundColor: '#007bff',
@@ -106,64 +110,105 @@ const styles = StyleSheet.create({
         right: 0,
         alignItems: 'center',
     },
-    modalView: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: '#1C1C1F',
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        padding: 35,
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: -2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
-    modalText: {
-        marginBottom: 15,
+    modalContent: {
+        backgroundColor: '#1C1C1F',
+        padding: 20,
+        borderRadius: 10,
+        width: '80%',
+        alignItems: 'center',
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
         textAlign: 'center',
-        fontSize: 18,
+        marginBottom: 20,
         color: '#E0E2E8',
     },
-    ticketContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 10,
-    },
-    linkContainer: {
-        width: '100%',
-        marginBottom: 10,
-    },
-    inputLink: {
+    input: {
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
         marginBottom: 10,
         padding: 10,
+        borderRadius: 5,
         width: '100%',
-        backgroundColor: '#333',
         color: '#E0E2E8',
+        backgroundColor: '#2C2C2F',
     },
-    removeLinkButton: {
-        color: 'red',
-        marginLeft: 10,
+    picker: {
+        width: '90%',
+        color: '#E0E2E8',
         marginBottom: 10,
     },
-    addLinkButton: {
-        backgroundColor: '#007bff',
-        padding: 10,
-        marginVertical: 10,
-        borderRadius: 5,
-        alignItems: 'center',
+    pickerItem: {
+        color: '#E0E2E8',
     },
-    label: {
-        color: '#E0E2E8', // Couleur du label
+    bottomContainer: {
+        position: 'absolute',
+        bottom: 20,
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+        padding: 20,
+    },
+    button: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#5DA5B3',
+        padding: 15,
+        borderRadius: 5,
+        marginTop: 10,
+        width: '100%',
+        alignSelf: 'center',
+    },
+    buttonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+    },
+    noOffersText: {
+        fontSize: 16,
+        color: '#E0E2E8',
+        textAlign: 'center',
+        marginVertical: 10,
+    },
+    cancelButton: {
+        backgroundColor: '#6c757d',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 15,
+        borderRadius: 5,
+        marginTop: 10,
+        width: '100%',
+    },
+    linkContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    inputLink: {
+        flex: 1,
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 10,
+        padding: 10,
+        borderRadius: 5,
+        color: '#E0E2E8',
+        backgroundColor: '#2C2C2F',
+    },
+    removeLinkButton: {
+        color: '#FF6347',
+        marginLeft: 10,
     },
 });
 

@@ -61,10 +61,8 @@ const ManageAssociationScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <View style={styles.innerContainer}>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <Text style={styles.title}>Informations de l'association</Text>
-                <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
                         placeholder="Nom de l'association"
@@ -72,8 +70,6 @@ const ManageAssociationScreen = ({ navigation }) => {
                         value={associationName}
                         onChangeText={setAssociationName}
                     />
-                </View>
-                <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
                         placeholder="Adresse"
@@ -81,8 +77,6 @@ const ManageAssociationScreen = ({ navigation }) => {
                         value={associationAddress}
                         onChangeText={setAssociationAddress}
                     />
-                </View>
-                <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
                         placeholder="Téléphone"
@@ -90,8 +84,6 @@ const ManageAssociationScreen = ({ navigation }) => {
                         value={associationPhone}
                         onChangeText={setAssociationPhone}
                     />
-                </View>
-                <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
                         placeholder="Description"
@@ -101,8 +93,6 @@ const ManageAssociationScreen = ({ navigation }) => {
                         multiline={true}
                         numberOfLines={4}
                     />
-                </View>
-                <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
                         placeholder="Types de danse (séparés par des virgules)"
@@ -111,8 +101,6 @@ const ManageAssociationScreen = ({ navigation }) => {
                         onChangeText={setAssociationDanceTypes}
                         multiline={true}
                     />
-                </View>
-                <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
                         placeholder="URL de l'image"
@@ -122,8 +110,6 @@ const ManageAssociationScreen = ({ navigation }) => {
                         multiline={true}
                         numberOfLines={4}
                     />
-                </View>
-                <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
                         placeholder="URL de l'image"
@@ -133,14 +119,12 @@ const ManageAssociationScreen = ({ navigation }) => {
                         multiline={true}
                         numberOfLines={4}
                     />
-                </View>
                 <TouchableOpacity style={styles.button} onPress={handleSave}>
                     <Icon name="save" size={20} color="#FFFFFF" />
                     <Text style={styles.buttonText}>Enregistrer</Text>
                 </TouchableOpacity>
-            </View>
-        </ScrollView>
-            </View>
+            </ScrollView>
+        </View>
     );
 };
 

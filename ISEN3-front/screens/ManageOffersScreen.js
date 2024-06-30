@@ -1,21 +1,22 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, TouchableOpacity, Text, Modal, TextInput, Button, ScrollView, Alert, Linking } from 'react-native';
+import { View, TouchableOpacity, Text, Modal, TextInput, ScrollView, Alert, Linking } from 'react-native';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../styles/ManageOffersStyles';
-import DateTimePicker from "@react-native-community/datetimepicker";
 
 function ManageOffersScreen({ navigation }) {
     const { checkAndRefreshToken } = useContext(AuthContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [offers, setOffers] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTag, setSearchTag] = useState('');
     const [currentOffer, setCurrentOffer] = useState({
         id: null,
         title: '',
         places: '',
-        startDate: new Date(),
-        endDate: new Date(),
+        startDate: '',
+        endDate: '',
         price: '',
         formUrl: '',
     });
@@ -37,6 +38,11 @@ function ManageOffersScreen({ navigation }) {
     };
 
     const handleCreateOrUpdateOffer = async () => {
+        if (!currentOffer.title || !currentOffer.places || !currentOffer.startDate || !currentOffer.endDate || !currentOffer.price || !currentOffer.formUrl) {
+            Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires.');
+            return;
+        }
+
         try {
             const isAuthenticated = await checkAndRefreshToken();
             if (!isAuthenticated) {
@@ -45,11 +51,25 @@ function ManageOffersScreen({ navigation }) {
             }
 
             const token = await AsyncStorage.getItem('token');
+
+            const startDateParts = currentOffer.startDate.split('/');
+            const endDateParts = currentOffer.endDate.split('/');
+            const startDate = new Date(
+                parseInt(startDateParts[2], 10),
+                parseInt(startDateParts[1], 10) - 1,
+                parseInt(startDateParts[0], 10)
+            ).toISOString();
+            const endDate = new Date(
+                parseInt(endDateParts[2], 10),
+                parseInt(endDateParts[1], 10) - 1,
+                parseInt(endDateParts[0], 10)
+            ).toISOString();
+
             const requestData = {
                 title: currentOffer.title,
                 places: parseInt(currentOffer.places, 10),
-                startDate: currentOffer.startDate.toISOString(),
-                endDate: currentOffer.endDate.toISOString(),
+                startDate,
+                endDate,
                 price: parseFloat(currentOffer.price),
                 formUrl: currentOffer.formUrl,
             };
@@ -76,8 +96,8 @@ function ManageOffersScreen({ navigation }) {
                 id: null,
                 title: '',
                 places: '',
-                startDate: new Date(),
-                endDate: new Date(),
+                startDate: '',
+                endDate: '',
                 price: '',
                 formUrl: '',
             });
@@ -129,8 +149,8 @@ function ManageOffersScreen({ navigation }) {
                 id: offer.id,
                 title: offer.title,
                 places: offer.places.toString(),
-                startDate: new Date(offer.startDate),
-                endDate: new Date(offer.endDate),
+                startDate: new Date(offer.startDate).toLocaleDateString('fr-FR'),
+                endDate: new Date(offer.endDate).toLocaleDateString('fr-FR'),
                 price: offer.price.toString(),
                 formUrl: offer.formUrl,
             });
@@ -139,8 +159,8 @@ function ManageOffersScreen({ navigation }) {
                 id: null,
                 title: '',
                 places: '',
-                startDate: new Date(),
-                endDate: new Date(),
+                startDate: '',
+                endDate: '',
                 price: '',
                 formUrl: '',
             });
@@ -148,9 +168,21 @@ function ManageOffersScreen({ navigation }) {
         setModalVisible(true);
     };
 
-    const handleDateChange = (event, selectedDate, field) => {
-        const currentDate = selectedDate || currentOffer[field];
-        setCurrentOffer({ ...currentOffer, [field]: currentDate });
+    const handleDateChange = (field, value) => {
+        const formattedDate = formatAsDate(value);
+        setCurrentOffer({ ...currentOffer, [field]: formattedDate });
+    };
+
+    const formatAsDate = (value) => {
+        const numericValue = value.replace(/\D/g, '');
+        const parts = numericValue.match(/(\d{1,2})(\d{1,2})?(\d{1,4})?/);
+        let date = '';
+        if (parts) {
+            if (parts[1]) date += parts[1];
+            if (parts[2]) date += '/' + parts[2];
+            if (parts[3]) date += '/' + parts[3];
+        }
+        return date;
     };
 
     return (
@@ -161,13 +193,13 @@ function ManageOffersScreen({ navigation }) {
                     <View key={offer.id} style={styles.offerContainer}>
                         <Text style={styles.offerTitle}>{offer.title}</Text>
                         <Text style={styles.offerDetails}>Places: {offer.places}</Text>
-                        <Text style={styles.offerDetails}>Période: {new Date(offer.startDate).toLocaleDateString()} - {new Date(offer.endDate).toLocaleDateString()}</Text>
+                        <Text style={styles.offerDetails}>Période: {new Date(offer.startDate).toLocaleDateString('fr-FR')} - {new Date(offer.endDate).toLocaleDateString('fr-FR')}</Text>
                         <Text style={styles.offerDetails}>Prix: {offer.price} €</Text>
                         <TouchableOpacity onPress={() => Linking.openURL(offer.formUrl)}>
-                            <Text style={styles.offerLink}>Lien du formulaire</Text>
+                            <Text style={styles.offerDetails}>Lien du formulaire</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={styles.modifyButton}
+                            style={styles.button}
                             onPress={() => openOfferModal(offer)}
                         >
                             <Text style={styles.buttonText}>Modifier</Text>
@@ -182,13 +214,6 @@ function ManageOffersScreen({ navigation }) {
                 ))}
             </ScrollView>
 
-            <TouchableOpacity
-                style={styles.createButton}
-                onPress={() => openOfferModal(null)}
-            >
-                <Text style={styles.buttonText}>Créer une nouvelle offre</Text>
-            </TouchableOpacity>
-
             {currentOffer && (
                 <Modal
                     animationType="slide"
@@ -198,59 +223,79 @@ function ManageOffersScreen({ navigation }) {
                         setModalVisible(!modalVisible);
                     }}
                 >
-                    <View style={styles.modalView}>
-                        <Text style={styles.modalText}>{currentOffer.id ? "Modifier l'offre" : "Créer une nouvelle offre"}</Text>
-                        <TextInput
-                            placeholder="Titre"
-                            value={currentOffer.title}
-                            onChangeText={title => setCurrentOffer({ ...currentOffer, title })}
-                            style={styles.input}
-                        />
-                        <TextInput
-                            placeholder="Nombre de places"
-                            value={currentOffer.places}
-                            onChangeText={places => setCurrentOffer({ ...currentOffer, places })}
-                            keyboardType="numeric"
-                            style={styles.input}
-                        />
-                        <View style={styles.dateTimeContainer}>
-                            <Text>Début :</Text>
-                            <DateTimePicker
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            <Text style={styles.modalTitle}>{currentOffer.id ? "Modifier l'offre" : "Créer une nouvelle offre"}</Text>
+                            <TextInput
+                                placeholder="Titre"
+                                value={currentOffer.title}
+                                onChangeText={title => setCurrentOffer({ ...currentOffer, title })}
+                                style={styles.input}
+                                placeholderTextColor="#E0E2E8"
+                            />
+                            <TextInput
+                                placeholder="Nombre de places"
+                                value={currentOffer.places}
+                                onChangeText={places => setCurrentOffer({ ...currentOffer, places })}
+                                keyboardType="numeric"
+                                style={styles.input}
+                                placeholderTextColor="#E0E2E8"
+                            />
+                            <TextInput
+                                placeholder="Date de début (jj/mm/aaaa)"
                                 value={currentOffer.startDate}
-                                mode="date"
-                                display="default"
-                                onChange={(event, selectedDate) => handleDateChange(event, selectedDate, 'startDate')}
-                                style={styles.picker}
+                                onChangeText={value => handleDateChange('startDate', value)}
+                                style={styles.input}
+                                placeholderTextColor="#E0E2E8"
+                                keyboardType="numeric"
                             />
-                        </View>
-                        <View style={styles.dateTimeContainer}>
-                            <Text>Fin :</Text>
-                            <DateTimePicker
+                            <TextInput
+                                placeholder="Date de fin (jj/mm/aaaa)"
                                 value={currentOffer.endDate}
-                                mode="date"
-                                display="default"
-                                onChange={(event, selectedDate) => handleDateChange(event, selectedDate, 'endDate')}
-                                style={styles.picker}
+                                onChangeText={value => handleDateChange('endDate', value)}
+                                style={styles.input}
+                                placeholderTextColor="#E0E2E8"
+                                keyboardType="numeric"
                             />
+                            <TextInput
+                                placeholder="Prix"
+                                value={currentOffer.price}
+                                onChangeText={price => setCurrentOffer({ ...currentOffer, price })}
+                                keyboardType="numeric"
+                                style={styles.input}
+                                placeholderTextColor="#E0E2E8"
+                            />
+                            <TextInput
+                                placeholder="URL du formulaire"
+                                value={currentOffer.formUrl}
+                                onChangeText={formUrl => setCurrentOffer({ ...currentOffer, formUrl })}
+                                style={styles.input}
+                                placeholderTextColor="#E0E2E8"
+                            />
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={handleCreateOrUpdateOffer}
+                            >
+                                <Text style={styles.buttonText}>{currentOffer.id ? "Modifier" : "Créer"}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.cancelButton}
+                                onPress={() => setModalVisible(false)}
+                            >
+                                <Text style={styles.buttonText}>Annuler</Text>
+                            </TouchableOpacity>
                         </View>
-                        <TextInput
-                            placeholder="Prix"
-                            value={currentOffer.price}
-                            onChangeText={price => setCurrentOffer({ ...currentOffer, price })}
-                            keyboardType="numeric"
-                            style={styles.input}
-                        />
-                        <TextInput
-                            placeholder="URL du formulaire"
-                            value={currentOffer.formUrl}
-                            onChangeText={formUrl => setCurrentOffer({ ...currentOffer, formUrl })}
-                            style={styles.input}
-                        />
-                        <Button title={currentOffer.id ? "Modifier" : "Créer"} onPress={handleCreateOrUpdateOffer} />
-                        <Button title="Annuler" onPress={() => setModalVisible(false)} />
                     </View>
                 </Modal>
             )}
+            <View style={styles.bottomContainer}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => openOfferModal(null)}
+                >
+                    <Text style={styles.buttonText}>Créer une nouvelle offre</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }

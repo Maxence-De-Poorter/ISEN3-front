@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import {View, TouchableOpacity, Text, Modal, TextInput, ScrollView, Alert, Linking, Button} from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { View, TouchableOpacity, Text, Modal, TextInput, ScrollView, Alert, Linking } from 'react-native';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/AuthContext';
@@ -10,17 +9,14 @@ function ManageCoursesScreen({ navigation }) {
     const { checkAndRefreshToken, association } = useContext(AuthContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [courses, setCourses] = useState([]);
-    const [searchVisible, setSearchVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchTag, setSearchTag] = useState('');
-    const [searchDate, setSearchDate] = useState(null);
-    const [searchDuration, setSearchDuration] = useState(new Date(0));
     const [currentCourse, setCurrentCourse] = useState({
         id: null,
         name: '',
-        date: new Date(),
-        time: new Date(),
-        duration: new Date(0),
+        date: '',
+        time: '',
+        duration: '',
         capacity: '',
         imageUrl: '',
         tags: '',
@@ -44,9 +40,10 @@ function ManageCoursesScreen({ navigation }) {
     };
 
     const handleCreateOrUpdateCourse = async () => {
-        const durationHours = currentCourse.duration.getHours();
-        const durationMinutes = currentCourse.duration.getMinutes();
-        const duration = `${durationHours}h ${durationMinutes}m`;
+        if (!currentCourse.name || !currentCourse.date || !currentCourse.time || !currentCourse.duration || !currentCourse.capacity) {
+            Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires.');
+            return;
+        }
 
         try {
             const isAuthenticated = await checkAndRefreshToken();
@@ -57,19 +54,20 @@ function ManageCoursesScreen({ navigation }) {
 
             const token = await AsyncStorage.getItem('token');
 
-            // Combine the date and time into a single Date object
+            const dateParts = currentCourse.date.split('/');
+            const timeParts = currentCourse.time.split('h');
             const combinedDateTime = new Date(
-                currentCourse.date.getFullYear(),
-                currentCourse.date.getMonth(),
-                currentCourse.date.getDate(),
-                currentCourse.time.getHours(),
-                currentCourse.time.getMinutes()
-            );
+                parseInt(dateParts[2], 10),
+                parseInt(dateParts[1], 10) - 1,
+                parseInt(dateParts[0], 10),
+                parseInt(timeParts[0], 10),
+                parseInt(timeParts[1], 10)
+            ).toISOString();
 
             const requestData = {
                 name: currentCourse.name,
-                schedule: combinedDateTime.toISOString(),
-                duration,
+                schedule: combinedDateTime,
+                duration: currentCourse.duration,
                 capacity: parseInt(currentCourse.capacity, 10),
                 imageUrl: currentCourse.imageUrl || association?.imageUrl || '',
                 tags: currentCourse.tags,
@@ -98,9 +96,9 @@ function ManageCoursesScreen({ navigation }) {
             setCurrentCourse({
                 id: null,
                 name: '',
-                date: new Date(),
-                time: new Date(),
-                duration: new Date(0),
+                date: '',
+                time: '',
+                duration: '',
                 capacity: '',
                 imageUrl: '',
                 tags: '',
@@ -157,21 +155,14 @@ function ManageCoursesScreen({ navigation }) {
     const openCourseModal = (course) => {
         if (course) {
             const courseDate = new Date(course.schedule);
-            const courseTime = new Date(course.schedule);
-            const courseDurationParts = course.duration.split(' ');
-            const durationHours = parseInt(courseDurationParts[0]);
-            const durationMinutes = parseInt(courseDurationParts[1]);
-
-            const courseDuration = new Date();
-            courseDuration.setHours(durationHours);
-            courseDuration.setMinutes(durationMinutes);
+            const courseDuration = course.duration.split('h');
 
             setCurrentCourse({
                 id: course.id,
                 name: course.name,
-                date: courseDate,
-                time: courseTime,
-                duration: courseDuration,
+                date: courseDate.toLocaleDateString('fr-FR'),
+                time: `${courseDate.getHours()}h${courseDate.getMinutes().toString().padStart(2, '0')}`,
+                duration: `${courseDuration[0]}h${courseDuration[1]}`,
                 capacity: course.capacity.toString(),
                 imageUrl: course.imageUrl,
                 tags: course.tags || '',
@@ -181,9 +172,9 @@ function ManageCoursesScreen({ navigation }) {
             setCurrentCourse({
                 id: null,
                 name: '',
-                date: new Date(),
-                time: new Date(),
-                duration: new Date(0),
+                date: '',
+                time: '',
+                duration: '',
                 capacity: '',
                 imageUrl: '',
                 tags: '',
@@ -193,38 +184,60 @@ function ManageCoursesScreen({ navigation }) {
         setModalVisible(true);
     };
 
-    const handleDateChange = (event, selectedDate) => {
-        const currentDate = selectedDate || currentCourse.date;
-        setCurrentCourse({ ...currentCourse, date: currentDate });
+    const handleDateChange = (date) => {
+        const formattedDate = formatAsDate(date);
+        setCurrentCourse({ ...currentCourse, date: formattedDate });
     };
 
-    const handleTimeChange = (event, selectedTime) => {
-        const currentTime = selectedTime || currentCourse.time;
-        setCurrentCourse({ ...currentCourse, time: currentTime });
+    const handleTimeChange = (time) => {
+        const formattedTime = formatAsTime(time);
+        setCurrentCourse({ ...currentCourse, time: formattedTime });
     };
 
-    const handleDurationChange = (event, selectedDuration) => {
-        const currentDuration = selectedDuration || currentCourse.duration;
-        setCurrentCourse({ ...currentCourse, duration: currentDuration });
+    const handleDurationChange = (duration) => {
+        const formattedDuration = formatAsDuration(duration);
+        setCurrentCourse({ ...currentCourse, duration: formattedDuration });
     };
 
-    const handleSearchDateChange = (event, selectedDate) => {
-        const currentDate = selectedDate || searchDate;
-        setSearchDate(currentDate);
+    const formatAsDate = (value) => {
+        const numericValue = value.replace(/\D/g, '');
+        const parts = numericValue.match(/(\d{1,2})(\d{1,2})?(\d{1,4})?/);
+        let date = '';
+        if (parts) {
+            if (parts[1]) date += parts[1];
+            if (parts[2]) date += '/' + parts[2];
+            if (parts[3]) date += '/' + parts[3];
+        }
+        return date;
     };
 
-    const handleSearchDurationChange = (event, selectedDuration) => {
-        const currentDuration = selectedDuration || searchDuration;
-        setSearchDuration(currentDuration);
+    const formatAsTime = (value) => {
+        const numericValue = value.replace(/\D/g, '');
+        const parts = numericValue.match(/(\d{1,2})(\d{1,2})?/);
+        let time = '';
+        if (parts) {
+            if (parts[1]) time += parts[1];
+            if (parts[2]) time += 'h' + parts[2];
+        }
+        return time;
+    };
+
+    const formatAsDuration = (value) => {
+        const numericValue = value.replace(/\D/g, '');
+        const parts = numericValue.match(/(\d{1,2})(\d{1,2})?/);
+        let duration = '';
+        if (parts) {
+            if (parts[1]) duration += parts[1];
+            if (parts[2]) duration += 'h' + parts[2];
+        }
+        return duration;
     };
 
     const filterCourses = () => {
         return courses.filter(course => {
             const matchesName = course.name.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesTag = course.tags.toLowerCase().includes(searchTag.toLowerCase());
-            const matchesDate = searchDate ? new Date(course.schedule).toDateString() === searchDate.toDateString() : true;
-            const matchesDuration = searchDuration.getHours() || searchDuration.getMinutes() ? course.duration === `${searchDuration.getHours()}h ${searchDuration.getMinutes()}m` : true;
-            return matchesName && matchesTag && matchesDate && matchesDuration;
+            return matchesName && matchesTag;
         });
     };
 
@@ -250,71 +263,45 @@ function ManageCoursesScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Les cours disponibles</Text>
-            <TouchableOpacity onPress={() => setSearchVisible(!searchVisible)} style={styles.searchButton}>
-                <Text style={styles.buttonText}>{searchVisible ? 'Cacher la recherche' : 'Afficher la recherche'}</Text>
-            </TouchableOpacity>
-            {searchVisible && (
-                <View style={styles.searchContainer}>
-                    <TextInput
-                        placeholder="Rechercher par nom"
-                        value={searchTerm}
-                        onChangeText={setSearchTerm}
-                        style={styles.input}
-                        placeholderTextColor="#E0E2E8" // Couleur du placeholder
-                    />
-                    <TextInput
-                        placeholder="Rechercher par tags"
-                        value={searchTag}
-                        onChangeText={setSearchTag}
-                        style={styles.input}
-                        placeholderTextColor="#E0E2E8" // Couleur du placeholder
-                    />
-                    <View style={styles.dateTimeContainer}>
-                        <Text style={styles.label}>Date :</Text>
-                        <DateTimePicker
-                            value={searchDate || new Date()}
-                            mode="date"
-                            display="default"
-                            onChange={handleSearchDateChange}
-                            style={styles.picker}
-                            textColor="#E0E2E8"
-                        />
-                    </View>
-                    <View style={styles.dateTimeContainer}>
-                        <Text style={styles.label}>Durée :</Text>
-                        <DateTimePicker
-                            value={searchDuration}
-                            mode="time"
-                            display="default"
-                            onChange={handleSearchDurationChange}
-                            style={styles.picker}
-                            textColor="#E0E2E8"
-                        />
-                    </View>
-                    <TouchableOpacity style={styles.searchButton} onPress={filterCourses}>
-                        <Text style={styles.buttonText}>Rechercher</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
+            <View style={styles.searchContainer}>
+                <TextInput
+                    placeholder="Rechercher par nom"
+                    value={searchTerm}
+                    onChangeText={setSearchTerm}
+                    style={styles.input}
+                    placeholderTextColor="#E0E2E8"
+                />
+                <TextInput
+                    placeholder="Rechercher par tags"
+                    value={searchTag}
+                    onChangeText={setSearchTag}
+                    style={styles.input}
+                    placeholderTextColor="#E0E2E8"
+                />
+            </View>
             <ScrollView contentContainerStyle={styles.scrollViewContainer}>
                 {filterCourses().map(course => (
                     <View key={course.id} style={styles.courseContainer}>
                         <Text style={styles.courseName}>{course.name}</Text>
-                        <Text style={styles.courseSchedule}>{new Date(course.schedule).toLocaleString()}</Text>
+                        <Text style={styles.courseName}>{course.instructor.name} {course.instructor.surname}</Text>
+                        <Text style={styles.courseSchedule}>{new Date(course.schedule).toLocaleString('fr-FR')}</Text>
                         {course.tags && (
                             <Text style={styles.courseTags}>Tags: {course.tags}</Text>
                         )}
                         {course.links && course.links.length > 0 && (
                             <View>
                                 {course.links.map((link, index) => (
-                                    <TouchableOpacity key={index} onPress={() => Linking.openURL(link.url)}>
-                                        <Text style={styles.courseLink}>{link.title}</Text>
-                                    </TouchableOpacity>
+                                    <View key={index} style={styles.linkContainerRow}>
+                                        <Text style={styles.courseLinkTitle}>{link.title}:</Text>
+                                        <TouchableOpacity onPress={() => Linking.openURL(link.url)}>
+                                            <Text style={styles.courseLink}>{link.url}</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 ))}
                             </View>
                         )}
                         <TouchableOpacity
-                            style={styles.modifyButton}
+                            style={styles.button}
                             onPress={() => openCourseModal(course)}
                         >
                             <Text style={styles.buttonText}>Modifier</Text>
@@ -329,13 +316,6 @@ function ManageCoursesScreen({ navigation }) {
                 ))}
             </ScrollView>
 
-            <TouchableOpacity
-                style={styles.createButton}
-                onPress={() => openCourseModal(null)}
-            >
-                <Text style={styles.buttonText}>Créer un nouveau cours</Text>
-            </TouchableOpacity>
-
             {currentCourse && (
                 <Modal
                     animationType="slide"
@@ -345,99 +325,110 @@ function ManageCoursesScreen({ navigation }) {
                         setModalVisible(!modalVisible);
                     }}
                 >
-                    <View style={styles.modalView}>
-                        <Text style={styles.modalText}>{currentCourse.id ? "Modifier le cours" : "Créer un nouveau cours"}</Text>
-                        <TextInput
-                            placeholder="Nom du cours"
-                            value={currentCourse.name}
-                            onChangeText={name => setCurrentCourse({ ...currentCourse, name })}
-                            style={styles.input}
-                            placeholderTextColor="#E0E2E8"
-                        />
-                        <View style={styles.dateTimeContainer}>
-                            <Text style={styles.label}>Date :</Text>
-                            <DateTimePicker
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            <Text style={styles.modalTitle}>{currentCourse.id ? "Modifier le cours" : "Créer un nouveau cours"}</Text>
+                            <TextInput
+                                placeholder="Nom du cours (requis)"
+                                value={currentCourse.name}
+                                onChangeText={name => setCurrentCourse({ ...currentCourse, name })}
+                                style={styles.input}
+                                placeholderTextColor="#E0E2E8"
+                            />
+                            <TextInput
+                                placeholder="Sélectionner une date (jj/mm/aaaa) (requis)"
                                 value={currentCourse.date}
-                                mode="date"
-                                display="default"
-                                onChange={handleDateChange}
-                                style={styles.picker}
-                                textColor="#E0E2E8"
+                                onChangeText={handleDateChange}
+                                style={styles.input}
+                                placeholderTextColor="#E0E2E8"
+                                keyboardType="numeric"
                             />
-                        </View>
-                        <View style={styles.dateTimeContainer}>
-                            <Text style={styles.label}>Heure de début :</Text>
-                            <DateTimePicker
+                            <TextInput
+                                placeholder="Heure de début (hh:mm) (requis)"
                                 value={currentCourse.time}
-                                mode="time"
-                                display="default"
-                                onChange={handleTimeChange}
-                                style={styles.picker}
-                                textColor="#E0E2E8"
+                                onChangeText={handleTimeChange}
+                                style={styles.input}
+                                placeholderTextColor="#E0E2E8"
+                                keyboardType="numeric"
                             />
-                        </View>
-                        <View style={styles.dateTimeContainer}>
-                            <Text style={styles.label}>Durée :</Text>
-                            <DateTimePicker
+                            <TextInput
+                                placeholder="Durée (hh:mm) (requis)"
                                 value={currentCourse.duration}
-                                mode="time"
-                                display="default"
-                                onChange={handleDurationChange}
-                                style={styles.picker}
-                                textColor="#E0E2E8"
+                                onChangeText={handleDurationChange}
+                                style={styles.input}
+                                placeholderTextColor="#E0E2E8"
+                                keyboardType="numeric"
                             />
+                            <TextInput
+                                placeholder="Capacité (requis)"
+                                value={currentCourse.capacity}
+                                onChangeText={capacity => setCurrentCourse({ ...currentCourse, capacity })}
+                                keyboardType="numeric"
+                                style={styles.input}
+                                placeholderTextColor="#E0E2E8"
+                            />
+                            <TextInput
+                                placeholder="URL de l'image"
+                                value={currentCourse.imageUrl}
+                                onChangeText={imageUrl => setCurrentCourse({ ...currentCourse, imageUrl })}
+                                style={styles.input}
+                                placeholderTextColor="#E0E2E8"
+                            />
+                            <TextInput
+                                placeholder="Tags (séparés par des virgules)"
+                                value={currentCourse.tags}
+                                onChangeText={tags => setCurrentCourse({ ...currentCourse, tags })}
+                                style={styles.input}
+                                placeholderTextColor="#E0E2E8"
+                            />
+                            {currentCourse.links.map((link, index) => (
+                                <View key={index} style={styles.linkContainer}>
+                                    <TextInput
+                                        placeholder="Titre du lien"
+                                        value={link.title}
+                                        onChangeText={title => handleLinkChange(index, 'title', title)}
+                                        style={styles.inputLink}
+                                        placeholderTextColor="#E0E2E8"
+                                    />
+                                    <TextInput
+                                        placeholder="URL du lien"
+                                        value={link.url}
+                                        onChangeText={url => handleLinkChange(index, 'url', url)}
+                                        style={styles.inputLink}
+                                        placeholderTextColor="#E0E2E8"
+                                    />
+                                    <TouchableOpacity onPress={() => handleRemoveLink(index)}>
+                                        <Text style={styles.removeLinkButton}>Supprimer le lien</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
+                            <TouchableOpacity onPress={handleAddLink} style={styles.addLinkButton}>
+                                <Text style={styles.buttonText}>Ajouter un lien</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={handleCreateOrUpdateCourse}
+                            >
+                                <Text style={styles.buttonText}>{currentCourse.id ? "Modifier" : "Créer"}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.cancelButton}
+                                onPress={() => setModalVisible(false)}
+                            >
+                                <Text style={styles.buttonText}>Annuler</Text>
+                            </TouchableOpacity>
                         </View>
-                        <TextInput
-                            placeholder="Capacité"
-                            value={currentCourse.capacity}
-                            onChangeText={capacity => setCurrentCourse({ ...currentCourse, capacity })}
-                            keyboardType="numeric"
-                            style={styles.input}
-                            placeholderTextColor="#E0E2E8"
-                        />
-                        <TextInput
-                            placeholder="URL de l'image"
-                            value={currentCourse.imageUrl}
-                            onChangeText={imageUrl => setCurrentCourse({ ...currentCourse, imageUrl })}
-                            style={styles.input}
-                            placeholderTextColor="#E0E2E8"
-                        />
-                        <TextInput
-                            placeholder="Tags (séparés par des virgules)"
-                            value={currentCourse.tags}
-                            onChangeText={tags => setCurrentCourse({ ...currentCourse, tags })}
-                            style={styles.input}
-                            placeholderTextColor="#E0E2E8"
-                        />
-                        {currentCourse.links.map((link, index) => (
-                            <View key={index} style={styles.linkContainer}>
-                                <TextInput
-                                    placeholder="Titre du lien"
-                                    value={link.title}
-                                    onChangeText={title => handleLinkChange(index, 'title', title)}
-                                    style={styles.inputLink}
-                                    placeholderTextColor="#E0E2E8"
-                                />
-                                <TextInput
-                                    placeholder="URL du lien"
-                                    value={link.url}
-                                    onChangeText={url => handleLinkChange(index, 'url', url)}
-                                    style={styles.inputLink}
-                                    placeholderTextColor="#E0E2E8"
-                                />
-                                <TouchableOpacity onPress={() => handleRemoveLink(index)}>
-                                    <Text style={styles.removeLinkButton}>Supprimer le lien</Text>
-                                </TouchableOpacity>
-                            </View>
-                        ))}
-                        <TouchableOpacity onPress={handleAddLink} style={styles.addLinkButton}>
-                            <Text style={styles.buttonText}>Ajouter un lien</Text>
-                        </TouchableOpacity>
-                        <Button title={currentCourse.id ? "Modifier" : "Créer"} onPress={handleCreateOrUpdateCourse} />
-                        <Button title="Annuler" onPress={() => setModalVisible(false)} />
                     </View>
                 </Modal>
             )}
+            <View style={styles.bottomContainer}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => openCourseModal(null)}
+                >
+                    <Text style={styles.buttonText}>Créer un cours</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }

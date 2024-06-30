@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, SectionList, Alert, Image, TouchableOpacity, Modal, Button } from 'react-native';
+import { View, Text, FlatList, Alert, Image, TouchableOpacity, Modal, Button } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -168,36 +168,33 @@ const CoursesScreen = ({ navigation }) => {
         </View>
     );
 
-    const sections = [
-        ...(isLoggedIn ? [{ title: 'Mes prochains cours', data: futureCourses.length ? futureCourses : [renderEmptyMessage('prochains cours')] }] : []),
-        { title: '', data: [{ key: 'button' }] },
-        { title: 'Cours disponibles', data: availableCourses.length ? availableCourses : [renderEmptyMessage('cours disponibles')] }
-    ];
-
     return (
         <View style={styles.container}>
-            <SectionList
-                sections={sections}
+            {isLoggedIn && (
+                <>
+                    <Text style={styles.header}>Mes prochains cours</Text>
+                    <FlatList
+                        data={futureCourses.length ? futureCourses : [renderEmptyMessage('prochains cours')]}
+                        renderItem={futureCourses.length ? renderCourseItem : ({ item }) => item}
+                        keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                    />
+                </>
+            )}
+            <TouchableOpacity
+                onPress={() => navigation.navigate('CoursesHistory')}
+                style={styles.historyButton}
+            >
+                <Text style={styles.historyButtonText}>Voir mon historique</Text>
+            </TouchableOpacity>
+            <Text style={styles.header}>Cours disponibles</Text>
+            <FlatList
+                data={availableCourses.length ? availableCourses : [renderEmptyMessage('cours disponibles')]}
+                renderItem={availableCourses.length ? renderCourseItem : ({ item }) => item}
                 keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
-                renderItem={({ item, section }) => {
-                    if (item.key === 'button' && section.title === '') {
-                        return (
-                            <TouchableOpacity
-                                onPress={() => navigation.navigate('CoursesHistory')}
-                                style={styles.historyButton}
-                            >
-                                <Text style={styles.historyButtonText}>Voir mon historique</Text>
-                            </TouchableOpacity>
-                        );
-                    }
-                    return typeof item === 'object' && item.id ? renderCourseItem({ item }) : item;
-                }}
-                renderSectionHeader={({ section: { title } }) => (
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.header}>{title}</Text>
-                    </View>
-                )}
-                stickySectionHeadersEnabled={true}
+                horizontal
+                showsHorizontalScrollIndicator={false}
             />
             {courseToEnroll && (
                 <Modal
@@ -241,6 +238,7 @@ const CoursesScreen = ({ navigation }) => {
                                 title={modalType === 'enroll' ? "S'inscrire" : 'Se désinscrire'}
                                 onPress={modalType === 'enroll' ? handleEnroll : handleUnenroll}
                                 color="#5DA5B3"
+                                disabled={modalType === 'enroll' && userOffers.length === 0} // Disable the button if no offers are available
                             />
                             <Button
                                 title="Annuler"

@@ -8,11 +8,9 @@ const styles = StyleSheet.create({
     scrollContainer: {
         flexGrow: 1,
         backgroundColor: '#1C1C1F',
-        padding: 16,
-    },
-    innerContainer: {
-        flex: 1,
-        alignItems: 'center',
+        width: '90%',
+        marginTop: 20,
+        alignSelf: 'center',
     },
     title: {
         fontSize: 24,
@@ -20,11 +18,8 @@ const styles = StyleSheet.create({
         color: '#E0E2E8',
         textDecorationLine: 'underline',
         textDecorationColor: '#5DA5B3',
-        marginBottom: 16,
-    },
-    inputContainer: {
-        width: '100%',
-        marginBottom: 16,
+        alignSelf: 'center',
+        marginBottom: 20,
     },
     label: {
         fontSize: 18,
@@ -33,13 +28,12 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     input: {
-        height: 40,
         borderColor: 'gray',
         borderWidth: 1,
         marginBottom: 10,
         padding: 10,
         borderRadius: 5,
-        width: '90%',
+        width: '100%',
         color: '#E0E2E8',
         backgroundColor: '#2C2C2F',
         alignSelf: 'center',
@@ -51,8 +45,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#5DA5B3',
         padding: 15,
         borderRadius: 5,
-        marginTop: 10,
-        width: '90%',
+        width: '100%',
+        alignSelf: 'center',
     },
     buttonText: {
         color: '#FFFFFF',

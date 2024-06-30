@@ -101,7 +101,7 @@ const RegistrationScreen = ({ navigation }) => {
                 <TouchableOpacity style={styles.signUpButton} onPress={handleRegister}>
                     <Text style={styles.signUpButtonText}>S'inscrire</Text>
                 </TouchableOpacity>
-                <View style={styles.divider} />
+                {/*<View style={styles.divider} />
                 <TouchableOpacity style={styles.firmSignUp} onPress={() => navigation.navigate('Register')}>
                     <Icon name="logo-google" size={20} style={styles.firmIcon} />
                     <Text style={styles.firmText}>Continuer avec Google</Text>
@@ -113,7 +113,7 @@ const RegistrationScreen = ({ navigation }) => {
                 <TouchableOpacity style={styles.firmSignUp} onPress={() => navigation.navigate('Register')}>
                     <Icon name="logo-microsoft" size={20} style={styles.firmIcon} />
                     <Text style={styles.firmText}>Continuer avec Microsoft</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>*/}
             </View>
         </View>
     );

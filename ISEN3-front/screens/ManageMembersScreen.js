@@ -20,11 +20,29 @@ const ManageMembersScreen = ({ navigation }) => {
     const [role, setRole] = useState('');
     const [offers, setOffers] = useState([]);
     const [selectedOffer, setSelectedOffer] = useState('');
+    const [search, setSearch] = useState('');
+    const [filteredUsers, setFilteredUsers] = useState([]);
 
     useEffect(() => {
         fetchUsers();
         fetchOffers();
     }, []);
+
+    useEffect(() => {
+        if (search) {
+            const lowercasedSearch = search.toLowerCase();
+            const filtered = users.map(section => ({
+                ...section,
+                data: section.data.filter(user =>
+                    user.name.toLowerCase().includes(lowercasedSearch) ||
+                    user.surname.toLowerCase().includes(lowercasedSearch)
+                ),
+            })).filter(section => section.data.length > 0);
+            setFilteredUsers(filtered);
+        } else {
+            setFilteredUsers(users);
+        }
+    }, [search, users]);
 
     const fetchUsers = async () => {
         try {
@@ -63,7 +81,9 @@ const ManageMembersScreen = ({ navigation }) => {
                 student: 'Élèves'
             };
 
-            setUsers(Object.entries(groupedUsers).map(([role, users]) => ({ title: roleMapping[role], data: users })));
+            const usersData = Object.entries(groupedUsers).map(([role, users]) => ({ title: roleMapping[role], data: users }));
+            setUsers(usersData);
+            setFilteredUsers(usersData);
             setExpandedRoles(Object.keys(groupedUsers).reduce((acc, role) => {
                 acc[roleMapping[role]] = true;
                 return acc;
@@ -241,13 +261,20 @@ const ManageMembersScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Gestion des membres</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Rechercher un membre..."
+                value={search}
+                onChangeText={setSearch}
+                placeholderTextColor="#E0E2E8"
+            />
             <SectionList
-                sections={users}
+                sections={filteredUsers}
                 keyExtractor={(item) => item.id.toString()}
                 renderSectionHeader={({ section: { title } }) => (
                     <TouchableOpacity onPress={() => toggleExpandRole(title)}>
                         <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionHeaderText}>{title}</Text>
+                            <Text style={styles.sectionHeaderText}>{title}                            </Text>
                         </View>
                     </TouchableOpacity>
                 )}
@@ -289,18 +316,21 @@ const ManageMembersScreen = ({ navigation }) => {
                             placeholder="Prénom"
                             value={firstName}
                             onChangeText={setFirstName}
+                            placeholderTextColor="#E0E2E8"
                         />
                         <TextInput
                             style={styles.input}
                             placeholder="Nom"
                             value={surname}
                             onChangeText={setSurname}
+                            placeholderTextColor="#E0E2E8"
                         />
                         <TextInput
                             style={styles.input}
                             placeholder="E-mail"
                             value={email}
                             onChangeText={setEmail}
+                            placeholderTextColor="#E0E2E8"
                         />
                         {user.role === 'administrator' && (
                             <Picker
@@ -389,18 +419,22 @@ const ManageMembersScreen = ({ navigation }) => {
                             placeholder="Prénom"
                             value={firstName}
                             onChangeText={setFirstName}
+                            placeholderTextColor="#E0E2E8"
                         />
                         <TextInput
                             style={styles.input}
                             placeholder="Nom"
                             value={surname}
                             onChangeText={setSurname}
+                            placeholderTextColor="#E0E2E8"
+                            autoCapitalize="characters"
                         />
                         <TextInput
                             style={styles.input}
                             placeholder="E-mail"
                             value={email}
                             onChangeText={setEmail}
+                            placeholderTextColor="#E0E2E8"
                         />
                         <TouchableOpacity
                             style={styles.button}

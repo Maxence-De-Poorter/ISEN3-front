@@ -68,10 +68,11 @@ function LoginScreen({ navigation }) {
                 <TouchableOpacity style={styles.signUpButton} onPress={() => navigation.navigate('Register')}>
                     <Text style={styles.signUpButtonText}>Vous n’avez pas de compte ? Inscription</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.forgotPasswordButton} onPress={() => navigation.navigate('RequestResetPassword')}>
-                    <Text style={styles.forgotPasswordText}>Mot de passe oublié</Text>
+                <TouchableOpacity style={styles.signUpButton} onPress={() => navigation.navigate('RequestResetPassword')}>
+                    <Text style={styles.signUpButtonText}>Mot de passe oublié/1ère connexion</Text>
                 </TouchableOpacity>
-                <View style={styles.divider} />
+
+                {/*<View style={styles.divider} />
                 <TouchableOpacity style={styles.firmSignUp} onPress={() => navigation.navigate('Register')}>
                     <Icon name="logo-google" size={20} style={styles.firmIcon} />
                     <Text style={styles.firmText}>Continuer avec Google</Text>
@@ -83,7 +84,7 @@ function LoginScreen({ navigation }) {
                 <TouchableOpacity style={styles.firmSignUp} onPress={() => navigation.navigate('Register')}>
                     <Icon name="logo-microsoft" size={20} style={styles.firmIcon} />
                     <Text style={styles.firmText}>Continuer avec Microsoft</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>*/}
             </View>
         </View>
     );

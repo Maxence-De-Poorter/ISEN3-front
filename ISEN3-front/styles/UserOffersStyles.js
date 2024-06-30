@@ -37,7 +37,15 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#E0E2E8',
     },
-    purchaseButton: {
+    bottomContainer: {
+        position: 'absolute',
+        bottom: 20,
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+        padding: 20,
+    },
+    button: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -47,7 +55,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         width: '100%',
     },
-    purchaseButtonText: {
+    buttonText: {
         color: '#FFFFFF',
         fontSize: 16,
     },

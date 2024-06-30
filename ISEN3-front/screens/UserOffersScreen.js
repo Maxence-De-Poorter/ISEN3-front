@@ -4,12 +4,19 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../styles/UserOffersStyles';
+import {useFocusEffect} from "@react-navigation/native";
 
 function UserOffersScreen({ navigation }) {
     const { user, checkAndRefreshToken } = useContext(AuthContext);
     const [userOffers, setUserOffers] = useState([]);
     const [usableOffers, setUsableOffers] = useState([]);
     const [expiredOffers, setExpiredOffers] = useState([]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchUserOffers()
+        }, [])
+    );
 
     useEffect(() => {
         fetchUserOffers();
@@ -76,12 +83,14 @@ function UserOffersScreen({ navigation }) {
                     </View>
                 )}
             </ScrollView>
-            <TouchableOpacity
-                style={styles.purchaseButton}
-                onPress={() => navigation.navigate('PurchaseOffers')}
-            >
-                <Text style={styles.purchaseButtonText}>Acheter des offres</Text>
-            </TouchableOpacity>
+            <View style={styles.button}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.navigate('PurchaseOffers')}
+                >
+                    <Text style={styles.buttonText}>Acheter des offres</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }

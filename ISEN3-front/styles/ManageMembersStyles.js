@@ -4,16 +4,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#1C1C1F',
-        padding: 16,
+        paddingLeft: 16,
+        paddingRight: 16,
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        textAlign: 'center',
-        marginVertical: 20,
         color: '#E0E2E8',
         textDecorationLine: 'underline',
         textDecorationColor: '#5DA5B3',
+        alignSelf: 'center',
+        marginTop: 20,
+        marginBottom: 20,
     },
     sectionHeader: {
         backgroundColor: '#2C2C2F',
@@ -66,7 +68,7 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 5,
         marginTop: 10,
-        width: '90%',
+        width: '100%',
     },
     cancelButton: {
         backgroundColor: '#6c757d',
@@ -76,7 +78,7 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 5,
         marginTop: 10,
-        width: '90%',
+        width: '100%',
     },
     modalContainer: {
         flex: 1,
@@ -108,6 +110,7 @@ const styles = StyleSheet.create({
         width: '100%',
         color: '#E0E2E8',
         backgroundColor: '#2C2C2F',
+        alignSelf: 'center',
     },
     picker: {
         width: '90%',
@@ -123,6 +126,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         alignItems: 'center',
+        padding: 20,
     },
     button: {
         flexDirection: 'row',
@@ -132,7 +136,7 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 5,
         marginTop: 10,
-        width: '90%',
+        width: '100%',
     },
     buttonText: {
         color: '#FFFFFF',

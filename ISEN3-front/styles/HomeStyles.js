@@ -10,7 +10,6 @@ const homeStyles = StyleSheet.create({
         backgroundColor: '#1C1C1F',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingVertical: 20,
     },
     homeContainer: {
         width: '90%',
@@ -19,7 +18,6 @@ const homeStyles = StyleSheet.create({
     image: {
         width: '100%',
         height: 250,
-        borderRadius: 10,
         marginBottom: 20,
     },
     title: {

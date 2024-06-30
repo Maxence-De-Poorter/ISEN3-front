@@ -22,23 +22,24 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     courseItem: {
-        flexDirection: 'row',
         alignItems: 'center',
         padding: 10,
         backgroundColor: '#1C1C1F',
         borderRadius: 10,
-        marginVertical: 10,
+        marginHorizontal: 5,
         borderWidth: 1,
         borderColor: '#5DA5B3',
+        width: 200, // Augmenter la largeur pour les éléments horizontaux
+        height: 240, // Augmenter la hauteur pour les éléments horizontaux
     },
     courseImage: {
-        width: 100,
-        height: 100,
+        width: '100%',
+        height: 80,
         borderRadius: 10,
-        marginRight: 10,
+        marginBottom: 10,
     },
     courseInfo: {
-        flex: 1,
+        alignItems: 'center',
     },
     courseInfos: {
         color: '#E0E2E8',
@@ -81,7 +82,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#5DA5B3',
         padding: 15,
         borderRadius: 5,
-        marginTop: 10,
         width: '100%',
     },
     historyButtonText: {
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
         color: '#E0E2E8',
     },
     modalImage: {
-        width: 100,
+        width: '100%',
         height: 100,
         borderRadius: 10,
         marginBottom: 10,

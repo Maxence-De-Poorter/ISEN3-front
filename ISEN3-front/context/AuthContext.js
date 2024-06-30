@@ -26,7 +26,8 @@ export const AuthProvider = ({ children, navigation }) => {
     const verifyToken = useCallback(async () => {
         try {
             const token = await AsyncStorage.getItem('token');
-            const response = await axios.post('https://isen3-back.onrender.com/api/auth/verify-token', { token });
+            const response = await axios.post('https://isen3-back.onrender.com/api/auth/verify-token',{ token },
+            { headers: { Authorization: `Bearer ${token}` } });
             return response.status === 200;
         } catch (error) {
             console.error('Failed to verify token', error);

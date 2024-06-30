@@ -18,6 +18,15 @@ function ManageScreen({ navigation }) {
                     <Text style={styles.buttonText}>Gérer les informations de l'association</Text>
                 </TouchableOpacity>
             )}
+            {user.role === 'administrator' && (
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.navigate('ManageOffers')}
+                >
+                    <Icon name="pricetag-outline" size={20} color="black" style={styles.icon} />
+                    <Text style={styles.buttonText}>Gérer les achats et abonnements</Text>
+                </TouchableOpacity>
+            )}
             {(user.role === 'administrator' || user.role === 'teacher') && (
                 <TouchableOpacity
                     style={styles.button}
@@ -36,15 +45,7 @@ function ManageScreen({ navigation }) {
                     <Text style={styles.buttonText}>Gérer les Cours</Text>
                 </TouchableOpacity>
             )}
-            {user.role === 'administrator' && (
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => navigation.navigate('ManageOffers')}
-                >
-                    <Icon name="pricetag-outline" size={20} color="black" style={styles.icon} />
-                    <Text style={styles.buttonText}>Gérer les achats et abonnements</Text>
-                </TouchableOpacity>
-            )}
+
         </View>
     );
 }
